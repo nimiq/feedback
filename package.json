@@ -1,0 +1,49 @@
+{
+  "name": "nuxt-app",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.11.0",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "prepare": "nuxt prepare",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@nuxt/fonts": "catalog:nuxt",
+    "@nuxt/image": "catalog:nuxt",
+    "@vueuse/core": "catalog:frontend",
+    "nuxt": "catalog:nuxt",
+    "vue": "catalog:frontend",
+    "vue-router": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@iconify/utils": "catalog:unocss",
+    "@nuxt/eslint": "catalog:lint",
+    "@unocss/eslint-plugin": "catalog:unocss",
+    "@unocss/nuxt": "catalog:unocss",
+    "@unocss/reset": "catalog:unocss",
+    "@vueuse/core": "catalog:frontend",
+    "@vueuse/nuxt": "catalog:nuxt",
+    "eslint": "catalog:lint",
+    "eslint-plugin-format": "catalog:lint",
+    "lint-staged": "catalog:",
+    "nimiq-css": "catalog:unocss",
+    "simple-git-hooks": "catalog:",
+    "unocss": "catalog:unocss",
+    "unocss-preset-onmax": "catalog:unocss",
+    "unocss-preset-scale-px": "catalog:unocss"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}
