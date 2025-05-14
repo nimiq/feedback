@@ -12,7 +12,6 @@ const FeedbackSchema = object({
 })
 
 export default defineEventHandler(async (event) => {
-  try {
     const body = await readBody(event)
     
     // Validate input using valibot
@@ -50,12 +49,4 @@ export default defineEventHandler(async (event) => {
       issueUrl: response.data.html_url,
       issueNumber: response.data.number,
     }
-  }
-  catch (error) {
-    console.error('Error creating feedback:', error)
-    return createError({
-      statusCode: 500,
-      message: 'Failed to submit feedback',
-    })
-  }
 })
