@@ -26,6 +26,7 @@
     "@antfu/eslint-config": "catalog:lint",
     "@iconify/utils": "catalog:unocss",
     "@nuxt/eslint": "catalog:lint",
+    "@nuxthub/core": "catalog:server",
     "@unocss/eslint-plugin": "catalog:unocss",
     "@unocss/nuxt": "catalog:unocss",
     "@unocss/reset": "catalog:unocss",
@@ -33,12 +34,13 @@
     "@vueuse/nuxt": "catalog:nuxt",
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
-    "lint-staged": "catalog:",
+    "lint-staged": "catalog:lint",
     "nimiq-css": "catalog:unocss",
-    "simple-git-hooks": "catalog:",
+    "simple-git-hooks": "catalog:lint",
     "unocss": "catalog:unocss",
     "unocss-preset-onmax": "catalog:unocss",
-    "unocss-preset-scale-px": "catalog:unocss"
+    "unocss-preset-scale-px": "catalog:unocss",
+    "wrangler": "catalog:server"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
