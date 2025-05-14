@@ -19,6 +19,8 @@ catalogs:
     nuxt: ^3.17.3
   server:
     '@nuxthub/core': ^0.8.27
+    '@octokit/rest': ^21.1.1
+    valibot: ^1.1.0
     wrangler: ^4.14.4
   unocss:
     '@iconify/utils': ^2.3.0

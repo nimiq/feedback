@@ -17,8 +17,10 @@
   "dependencies": {
     "@nuxt/fonts": "catalog:nuxt",
     "@nuxt/image": "catalog:nuxt",
+    "@octokit/rest": "catalog:server",
     "@vueuse/core": "catalog:frontend",
     "nuxt": "catalog:nuxt",
+    "valibot": "catalog:server",
     "vue": "catalog:frontend",
     "vue-router": "catalog:frontend"
   },
