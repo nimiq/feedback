@@ -21,6 +21,11 @@ export default defineNuxtConfig({
     },
   },
 
+  hub: {
+    database: true,
+    blob: true,
+  },
+
   runtimeConfig: {
     githubToken: process.env.NUXT_GITHUB_TOKEN,
   },
