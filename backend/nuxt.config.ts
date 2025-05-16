@@ -10,7 +10,6 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/image',
     '@vueuse/nuxt',
-    '@unocss/nuxt',
     '@nuxthub/core',
   ],
   future: { compatibilityVersion: 4 },

@@ -8,10 +8,11 @@ declare module '*.vue' {
   export default component
 }
 
-// Global declarations
 declare global {
   interface Window {
     /** Mount the feedback widget into a container */
     mountFeedbackWidget: (selector: string, props?: Record<string, any>) => void
   }
 }
+
+export {}

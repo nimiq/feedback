@@ -1,3 +1,3 @@
 <template>
-  <NuxtPage />
+  Nimiq Feedback!
 </template>

@@ -1,0 +1,45 @@
+{
+  "name": "nimiq-feedback-backend",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.11.0",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "prepare": "nuxt prepare",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "nuxt typecheck",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@nuxt/fonts": "catalog:nuxt",
+    "@nuxt/image": "catalog:nuxt",
+    "@octokit/rest": "catalog:server",
+    "drizzle-orm": "catalog:server",
+    "nuxt": "catalog:nuxt",
+    "valibot": "catalog:server"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@nuxt/eslint": "catalog:lint",
+    "@nuxthub/core": "catalog:server",
+    "@vue/tsconfig": "catalog:types",
+    "@vueuse/nuxt": "catalog:nuxt",
+    "drizzle-kit": "catalog:server",
+    "eslint": "catalog:lint",
+    "eslint-plugin-format": "catalog:lint",
+    "lint-staged": "catalog:lint",
+    "typescript": "catalog:types",
+    "wrangler": "catalog:server"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}

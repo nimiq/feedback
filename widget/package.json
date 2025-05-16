@@ -1,0 +1,34 @@
+{
+  "name": "widget",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "typecheck": "vue-tsc --build --noEmit"
+  },
+  "dependencies": {
+    "reka-ui": "catalog:frontend",
+    "vue": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@iconify/utils": "catalog:unocss",
+    "@rollup/plugin-replace": "catalog:bundle",
+    "@tsconfig/node22": "catalog:types",
+    "@types/node": "catalog:types",
+    "@unocss/reset": "catalog:unocss",
+    "@vitejs/plugin-vue": "catalog:bundle",
+    "@vue/tsconfig": "catalog:types",
+    "nimiq-css": "catalog:unocss",
+    "typescript": "catalog:types",
+    "unocss": "catalog:unocss",
+    "unocss-preset-onmax": "catalog:unocss",
+    "unocss-preset-scale-px": "catalog:unocss",
+    "vite": "catalog:bundle",
+    "vite-plugin-vue-devtools": "catalog:bundle",
+    "vue-tsc": "catalog:types"
+  }
+}
