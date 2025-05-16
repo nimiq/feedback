@@ -7,6 +7,7 @@ import Uno from 'unocss/vite'
 import { defineConfig } from 'vite'
 
 const outDir = resolve(join(fileURLToPath(import.meta.url), '../..', 'backend/public/widgets'))
+const sharedBackendDir = resolve(join(fileURLToPath(import.meta.url), '../..', 'backend/shared'))
 
 export default defineConfig({
   publicDir: false,
@@ -35,5 +36,11 @@ export default defineConfig({
     },
     outDir,
     rollupOptions: {},
+  },
+
+  resolve: {
+    alias: {
+      '#backend': sharedBackendDir,
+    },
   },
 })

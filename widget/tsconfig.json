@@ -5,7 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./*"],
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "#backend/*": ["../backend/shared/*"]
     },
     "resolveJsonModule": true,
     "types": ["vite/client"],

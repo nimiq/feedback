@@ -22,7 +22,6 @@ import {
       </Transition>
       <Transition name="modal">
         <DialogContent
-          :key="name"
           lg="top-1/2 left-1/2 translate--1/2"
           rounded="t-8 lg:8"
           data-modal
