@@ -6,5 +6,6 @@ export default antfu({
   vue: true,
   unocss: true,
   pnpm: true,
+  typescript: true,
   ignores: ['./backend/**/*'],
 })

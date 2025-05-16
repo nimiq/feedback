@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.11.0",
   "scripts": {
     "build": "nr -r build",
-    "play": "pnpm -C widget build && pnpm -C playground run dev",
+    "play": "pnpm -C widget build && nr -r dev",
     "prepare": "pnpm -C backend prepare",
     "postinstall": "nr prepare",
     "dev": "nr -r dev",
@@ -22,6 +22,7 @@
     "lint-staged": "catalog:lint",
     "nimiq-css": "catalog:unocss",
     "simple-git-hooks": "catalog:lint",
+    "typescript": "catalog:types",
     "unocss": "catalog:unocss",
     "unocss-preset-onmax": "catalog:unocss",
     "unocss-preset-scale-px": "catalog:unocss"

@@ -1,9 +1,12 @@
-import { resolve } from 'node:path'
+import { join, resolve } from 'node:path'
 import process from 'node:process'
+import { fileURLToPath } from 'node:url'
 import replace from '@rollup/plugin-replace'
 import vue from '@vitejs/plugin-vue'
 import Uno from 'unocss/vite'
 import { defineConfig } from 'vite'
+
+const outDir = resolve(join(fileURLToPath(import.meta.url), '../..', 'backend/public/widgets'))
 
 export default defineConfig({
   publicDir: false,
@@ -30,7 +33,7 @@ export default defineConfig({
       formats: ['umd'] as const,
       fileName: () => 'feedback-widget.full.js',
     },
-    outDir: '../public/widgets',
+    outDir,
     rollupOptions: {},
   },
 })
