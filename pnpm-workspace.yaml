@@ -1,8 +1,16 @@
 packages:
   - ./
+  - ./playground
+catalog:
+  '@rollup/plugin-replace': ^6.0.2
 catalogs:
+  bundle:
+    '@vitejs/plugin-vue': ^5.2.3
+    vite: ^6.2.4
+    vite-plugin-vue-devtools: ^7.7.2
   frontend:
     '@vueuse/core': ^13.2.0
+    reka-ui: ^2.2.1
     vue: ^3.5.13
     vue-router: ^4.5.1
   lint:
@@ -24,6 +32,13 @@ catalogs:
     drizzle-orm: ^0.43.1
     valibot: ^1.1.0
     wrangler: ^4.14.4
+  types:
+    '@tsconfig/node22': ^22.0.1
+    '@types/node': ^22.14.0
+    '@vue/tsconfig': ^0.7.0
+    typescript: ^5.8.3
+    vue-tsc: ^2.2.8
+
   unocss:
     '@iconify/utils': ^2.3.0
     '@unocss/eslint-plugin': ^66.1.1

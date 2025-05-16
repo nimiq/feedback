@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"],
+      "@/*": ["./*"],
+      "#shared": ["./shared"],
+      "#imports": ["./.nuxt/imports"]
+    },
+    "resolveJsonModule": true,
+    "types": ["vite/client"],
+    "declaration": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.d.ts",
+    "app/**/*.vue",
+    "app/types/**/*.d.ts"
+  ]
+}

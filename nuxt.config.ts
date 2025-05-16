@@ -26,6 +26,15 @@ export default defineNuxtConfig({
     blob: true,
   },
 
+  routeRules: {
+    '/widgets/feedback-widget.js': {
+      headers: {
+        'cross-origin-embedder-policy': 'require-corp',
+        'Access-Control-Allow-Origin': '*',
+      },
+    },
+  },
+
   runtimeConfig: {
     githubToken: process.env.NUXT_GITHUB_TOKEN,
   },
