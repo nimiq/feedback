@@ -9,6 +9,7 @@
     "prepare": "pnpm -C backend prepare",
     "postinstall": "nr prepare",
     "dev": "nr -r dev",
+    "dev:widget": "pnpm -C widget dev:widget",
     "lint": "eslint . && pnpm -C backend lint",
     "lint:fix": "eslint . --fix && pnpm -C backend lint:fix",
     "typecheck": "nr -r typecheck"
@@ -24,8 +25,7 @@
     "simple-git-hooks": "catalog:lint",
     "typescript": "catalog:types",
     "unocss": "catalog:unocss",
-    "unocss-preset-onmax": "catalog:unocss",
-    "unocss-preset-scale-px": "catalog:unocss"
+    "unocss-preset-onmax": "catalog:unocss"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"

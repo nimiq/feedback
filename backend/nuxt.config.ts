@@ -26,15 +26,38 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/widgets/feedback-widget.js': {
+    '/widget.js': {
       headers: {
-        'cross-origin-embedder-policy': 'require-corp',
         'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/javascript',
       },
+      static: true,
+    },
+    '/widget.css': {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'text/css',
+      },
+      static: true,
     },
   },
 
   runtimeConfig: {
     githubToken: process.env.NUXT_GITHUB_TOKEN,
   },
+
+  // nitro: {
+  //   devHandlers: [{
+  //     route: '/',
+  //     handler: (event) => {
+  //       // https://github.com/nitrojs/nitro/issues/539
+
+  //       setHeader(event, 'Access-Control-Allow-Origin', '*')
+  //       setHeader(event, 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  //       setHeader(event, 'Access-Control-Allow-Headers', '*')
+  //       if (event.method === 'OPTIONS')
+  //         return ''
+  //     },
+  //   }],
+  // },
 })

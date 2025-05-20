@@ -7,5 +7,5 @@ export default antfu({
   unocss: true,
   pnpm: true,
   typescript: true,
-  ignores: ['./backend/**/*'],
+  ignores: ['./backend/**/*', './dist/**/*', './node_modules/**/*'],
 })

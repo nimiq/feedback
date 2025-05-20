@@ -6,8 +6,12 @@ import vue from '@vitejs/plugin-vue'
 import Uno from 'unocss/vite'
 import { defineConfig } from 'vite'
 
-const outDir = resolve(join(fileURLToPath(import.meta.url), '../..', 'backend/public/widgets'))
-const sharedBackendDir = resolve(join(fileURLToPath(import.meta.url), '../..', 'backend/shared'))
+const root = resolve(join(fileURLToPath(import.meta.url), '../..'))
+const outDir = resolve(root, 'backend/public')
+const sharedBackendDir = join(root, 'backend/shared')
+const widgetFolder = join(root, 'widget')
+const playgroundFolder = join(root, 'playground')
+const entry = join(widgetFolder, 'src/widget-entry.ts')
 
 export default defineConfig({
   publicDir: false,
@@ -18,6 +22,7 @@ export default defineConfig({
       'preventAssignment': true,
     }),
     Uno({ configFile: '../uno.config.ts' }),
+
   ],
   // Use our custom TypeScript config for widget
   root: __dirname,
@@ -27,15 +32,18 @@ export default defineConfig({
     entries: ['src/widget-entry.ts'],
   },
   build: {
-    emptyOutDir: true,
+    emptyOutDir: false,
     lib: {
-      entry: resolve(__dirname, 'src/widget-entry.ts'),
+      entry,
       name: 'FeedbackWidget',
       formats: ['umd'] as const,
-      fileName: () => 'feedback-widget.full.js',
+      fileName: () => 'widget.js',
     },
     outDir,
     rollupOptions: {},
+    watch: {
+      include: [`${widgetFolder}/**/*`, `${playgroundFolder}/**/*`],
+    },
   },
 
   resolve: {

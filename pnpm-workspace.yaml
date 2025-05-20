@@ -6,21 +6,21 @@ packages:
 catalogs:
   bundle:
     '@rollup/plugin-replace': ^6.0.2
-    '@vitejs/plugin-vue': ^5.2.3
-    vite: ^6.2.4
-    vite-plugin-vue-devtools: ^7.7.2
+    '@vitejs/plugin-vue': ^5.2.4
+    vite: ^6.3.5
+    vite-plugin-vue-devtools: ^7.7.6
   frontend:
     reka-ui: ^2.2.1
-    vue: ^3.5.13
+    vue: ^3.5.14
   lint:
-    '@antfu/eslint-config': ^4.13.0
-    '@nuxt/eslint': 1.3.1
-    eslint: ^9.26.0
+    '@antfu/eslint-config': ^4.13.1
+    '@nuxt/eslint': 1.4.0
+    eslint: ^9.27.0
     eslint-plugin-format: ^1.0.1
     lint-staged: ^16.0.0
     simple-git-hooks: ^2.13.0
   nuxt:
-    '@nuxt/fonts': 0.11.3
+    '@nuxt/fonts': 0.11.4
     '@nuxt/image': 1.10.0
     '@vueuse/nuxt': ^13.2.0
     nuxt: ^3.17.3
@@ -30,19 +30,18 @@ catalogs:
     drizzle-kit: ^0.31.1
     drizzle-orm: ^0.43.1
     valibot: ^1.1.0
-    wrangler: ^4.14.4
+    wrangler: ^4.15.2
   types:
     '@tsconfig/node22': ^22.0.1
-    '@types/node': ^22.14.0
+    '@types/node': ^22.15.19
     '@vue/tsconfig': ^0.7.0
     typescript: ^5.8.3
-    vue-tsc: ^2.2.8
+    vue-tsc: ^2.2.10
   unocss:
     '@iconify/utils': ^2.3.0
-    '@unocss/eslint-plugin': ^66.1.1
-    '@unocss/reset': ^66.1.1
-    nimiq-css: ^1.0.0-beta.22
-    unocss: ^66.1.1
+    '@unocss/eslint-plugin': ^66.1.2
+    nimiq-css: ^1.0.0-beta.27
+    unocss: ^66.1.2
     unocss-preset-onmax: ^1.0.0-beta.19
     unocss-preset-scale-px: 1.0.0-beta.19
 onlyBuiltDependencies:
@@ -50,4 +49,5 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - simple-git-hooks
+  - vue-demi
   - workerd

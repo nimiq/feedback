@@ -9,9 +9,27 @@ const form = useTemplateRef('form')
 const error = ref<string>()
 const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
 
+const title: Record<SubmissionType, string> = {
+  bug: 'Report a bug',
+  idea: 'Share an idea',
+  feedback: 'Give feedback',
+}
+
+// @unocss-include
+const icon: Record<SubmissionType, string> = {
+  bug: 'i-nimiq:alert',
+  idea: 'i-nimiq:leaf-2-filled',
+  feedback: 'i-nimiq:star',
+}
+
+const iconGradient: Record<SubmissionType, string> = {
+  bug: 'bg-gradient-red',
+  idea: 'bg-gradient-green',
+  feedback: 'bg-gradient-gold',
+}
+
 async function submitFeedback() {
   // TODO
-
 }
 
 // Used to reset the form after successful submission
@@ -52,12 +70,19 @@ async function submitFeedback() {
       Error: {{ error }}
     </div>
 
-    <form ref="form" @submit.prevent="() => submitFeedback()">
+    <h2 flex="~ items-center gap-8" text-14 mb-16 px-20 text-balance nq-label>
+      <div :class="iconGradient[type]" rounded-3 shrink-0 size-24 style="box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.07), 0px 1.5px 3px 0px rgba(0, 0, 0, 0.05), 0px 0.337px 2px 0px rgba(0, 0, 0, 0.03);">
+        <span :class="icon[type]" text-white />
+      </div>
+      {{ title[type] }}
+    </h2>
+
+    <form ref="form" px-20 @submit.prevent="() => submitFeedback()">
       <input type="text" name="type" :value="type" sr-only>
       <slot />
 
-      <button type="submit" :disabled="status === 'pending'">
-        {{ status === 'pending' ? 'Submitting...' : 'Submit Feedback' }}
+      <button type="submit" :disabled="status === 'pending'" class="bg-blue">
+        {{ status === "pending" ? "Submitting..." : "Submit Feedback" }}
       </button>
     </form>
   </div>

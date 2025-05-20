@@ -6,6 +6,8 @@ const attachments = ref<File[]>([])
 const maxAttachments = 5
 const attachmentError = ref('')
 
+const placeholder = 'Please, tell us how we can make your Nimiq experience better*'
+
 function handleFileChange(event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files) {
@@ -33,20 +35,15 @@ function removeAttachment(index: number) {
 
 <template>
   <FormContainer type="bug">
-    <div>
-      <h2>BUG DESCRIPTION</h2>
-      <label for="description">Please let us know what's your bug is about*</label>
-      <textarea id="description" name="description" rows="4" required />
-    </div>
+    <label>
+      <span sr-only>{{ placeholder }}</span>
+      <textarea id="description" name="description" :placeholder rows="4" required nq-input-box />
+    </label>
 
     <div>
       <label for="attachments">Upload screenshots of bug* (max 5 files)</label>
       <input
-        id="attachments"
-        type="file"
-        name="attachments"
-        accept="image/png,image/jpeg"
-        multiple
+        id="attachments" type="file" name="attachments" accept="image/png,image/jpeg" multiple
         @change="handleFileChange"
       >
       <small>PNG, JPG</small>
