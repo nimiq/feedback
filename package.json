@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
+    "@antfu/ni": "catalog:tools",
     "@iconify/utils": "catalog:unocss",
     "@unocss/eslint-plugin": "catalog:unocss",
     "eslint": "catalog:lint",

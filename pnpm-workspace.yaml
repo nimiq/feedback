@@ -31,6 +31,8 @@ catalogs:
     drizzle-orm: ^0.43.1
     valibot: ^1.1.0
     wrangler: ^4.16.0
+  tools:
+    '@antfu/ni': ^24.4.0
   types:
     '@tsconfig/node22': ^22.0.2
     '@types/node': ^22.15.19

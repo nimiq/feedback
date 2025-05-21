@@ -76,6 +76,10 @@ catalogs:
     wrangler:
       specifier: ^4.16.0
       version: 4.16.0
+  tools:
+    '@antfu/ni':
+      specifier: ^24.4.0
+      version: 24.4.0
   types:
     '@tsconfig/node22':
       specifier: ^22.0.2
@@ -116,6 +120,9 @@ importers:
       '@antfu/eslint-config':
         specifier: catalog:lint
         version: 4.13.1(@unocss/eslint-plugin@66.1.2(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3))(@vue/compiler-sfc@3.5.14)(eslint-plugin-format@1.0.1(eslint@9.27.0(jiti@2.4.2)))(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3)
+      '@antfu/ni':
+        specifier: catalog:tools
+        version: 24.4.0
       '@iconify/utils':
         specifier: catalog:unocss
         version: 2.3.0
@@ -339,6 +346,10 @@ packages:
 
   '@antfu/install-pkg@1.1.0':
     resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
+
+  '@antfu/ni@24.4.0':
+    resolution: {integrity: sha512-ZjriRbGyWGSrBE1RY2qBIXyilejMWLDWh2Go2dqFottyiuOze36+BpPch2z2WnGEgEbzTBVPetMmQvt0xt+iww==}
+    hasBin: true
 
   '@antfu/utils@0.7.10':
     resolution: {integrity: sha512-+562v9k4aI80m1+VuMHehNJWLOFjBnXn3tdOitzD0il5b7smkSBal4+a3oKiQTbrwMmN/TBUMDvbdoWDehgOww==}
@@ -3831,6 +3842,9 @@ packages:
     resolution: {integrity: sha512-trLf4SzuuUxfusZADLINj+dE8clK1frKdmqiJNb1Es75fmI5oY6X2mxLVUciLLjxqw/xr72Dhy+lER6dGd02FQ==}
     engines: {node: '>=10'}
 
+  fzf@0.5.2:
+    resolution: {integrity: sha512-Tt4kuxLXFKHy8KT40zwsUPUkg1CrsgY25FxA2U/j/0WgEDCk3ddc/zLTCCcbSHX9FcKtLuVaDGtGE/STWC+j3Q==}
+
   gauge@3.0.2:
     resolution: {integrity: sha512-+5J6MS/5XksCuXq++uFRsnUd7Ovu1XenbeuIuNRJxYWjgQbPuFhT14lAvsWfqfAmnwluf1OwMjz39HjfLPci0Q==}
     engines: {node: '>=10'}
@@ -6637,6 +6651,13 @@ snapshots:
 
   '@antfu/install-pkg@1.1.0':
     dependencies:
+      package-manager-detector: 1.3.0
+      tinyexec: 1.0.1
+
+  '@antfu/ni@24.4.0':
+    dependencies:
+      ansis: 4.0.0
+      fzf: 0.5.2
       package-manager-detector: 1.3.0
       tinyexec: 1.0.1
 
@@ -10619,6 +10640,8 @@ snapshots:
   function-bind@1.1.2: {}
 
   fuse.js@7.1.0: {}
+
+  fzf@0.5.2: {}
 
   gauge@3.0.2:
     dependencies:
