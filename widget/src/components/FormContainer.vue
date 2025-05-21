@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { SubmissionType } from '#backend/types'
-import { ref, useTemplateRef } from 'vue'
+import { ref, useTemplateRef, defineEmits } from 'vue'
 
 defineProps<{ type: SubmissionType }>()
+const emit = defineEmits<{(e: 'reset'): void}>()
 // const props = defineProps<{ type: SubmissionType }>()
 const form = useTemplateRef('form')
 
