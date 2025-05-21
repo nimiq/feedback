@@ -12,11 +12,11 @@ export default defineConfig({
       fonts: false,
       attributifyUtilities: true,
     }),
+
     presetIcons({
       collections: {
         ...createExternalPackageIconLoader('nimiq-icons'),
       },
     }),
   ],
-
 })

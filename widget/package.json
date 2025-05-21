@@ -26,7 +26,6 @@
     "typescript": "catalog:types",
     "unocss": "catalog:unocss",
     "unocss-preset-onmax": "catalog:unocss",
-    "unocss-preset-scale-px": "catalog:unocss",
     "vite": "catalog:bundle",
     "vite-plugin-vue-devtools": "catalog:bundle",
     "vue-tsc": "catalog:types"

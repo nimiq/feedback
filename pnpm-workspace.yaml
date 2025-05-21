@@ -30,9 +30,9 @@ catalogs:
     drizzle-kit: ^0.31.1
     drizzle-orm: ^0.43.1
     valibot: ^1.1.0
-    wrangler: ^4.15.2
+    wrangler: ^4.16.0
   types:
-    '@tsconfig/node22': ^22.0.1
+    '@tsconfig/node22': ^22.0.2
     '@types/node': ^22.15.19
     '@vue/tsconfig': ^0.7.0
     typescript: ^5.8.3
@@ -40,10 +40,9 @@ catalogs:
   unocss:
     '@iconify/utils': ^2.3.0
     '@unocss/eslint-plugin': ^66.1.2
-    nimiq-css: ^1.0.0-beta.27
+    nimiq-css: ^1.0.0-beta.30
     unocss: ^66.1.2
-    unocss-preset-onmax: ^1.0.0-beta.19
-    unocss-preset-scale-px: 1.0.0-beta.19
+    unocss-preset-onmax: ^1.0.0-beta.25
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild

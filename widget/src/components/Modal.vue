@@ -24,8 +24,8 @@ const cmp = computed(() => {
 <template>
   <DialogRoot>
     <DialogTrigger
-      text="22/24 neutral-0" outline="~ 1.5  offset--1.5 white/8" f-size="36/40"
-      stack rounded-full bg-neutral shadow-lg fixed f-bottom-md f-right-md
+      text="22/24 neutral-0" outline=" 1.5  offset--1.5 white/8" f-size="36/40" stack rounded-full
+      bg-neutral shadow-lg fixed f-bottom-md f-right-md
     >
       <div i-nimiq:thumb-up-thumb-down />
     </DialogTrigger>
@@ -35,30 +35,27 @@ const cmp = computed(() => {
       </Transition>
       <Transition name="modal">
         <DialogContent
-          lg="f-bottom-md f-right-md" rounded="t-8 lg:8"
-          data-modal outline-none h-max max-h-85dvh w-full shadow-lg transform fixed z-200 of-y-auto lg:max-w-500
+          lg="f-bottom-md f-right-md" rounded="t-8 lg:8" data-modal outline-none h-max max-h-85dvh w-full
+          shadow-lg transform fixed z-200 of-y-auto lg:max-w-500
         >
           <div ring="1.5 neutral/3" bg-neutral-0 relative f-pt-xl f-pb-sm>
-            <TransitionGroup
+            <DialogClose aria-label="Close" bg-transparent size-48 right-4 top-4 absolute>
+              <div bg="neutral-400 hocus:neutral-500" stack mx-auto rounded-full size-24 transition-colors>
+                <div text-white size-12 i-nimiq:cross />
+              </div>
+            </DialogClose>
+
+            <button
+              aria-label="Go back" text="neutral-500 hocus:neutral-600" text-32 bg-transparent size-48
+              transition-colors left-12 top-4 absolute nq-arrow-back before:left-8 @click="activeForm = undefined"
+            />
+
+            <Transition
               enter-from-class="op-0" enter-to-class="op-100" leave-to-class="op-0"
               enter-active-class="transition-opacity duration-200" leave-active-class="transition-opacity duration-200"
               mode="out-in"
             >
-              <DialogClose aria-label="Close" bg-transparent size-48 right-4 top-4 absolute>
-                <div
-                  bg="neutral-400 hocus:neutral-500"
-                  stack mx-auto rounded-full size-24 transition-colors
-                >
-                  <div text-white size-12 i-nimiq:cross />
-                </div>
-              </DialogClose>
-
-              <button
-                aria-label="Go back"
-                text="neutral-500 hocus:neutral-600" text-32 bg-transparent size-48 transition-colors left-12 top-4 absolute nq-arrow-back before:left-8 @click="activeForm = undefined"
-              />
-
-              <template v-if="!activeForm">
+              <div v-if="!activeForm">
                 <DialogTitle text="24 center neutral lh-24" font-bold lh-none mb-12 px-24 lg:px-40 as="h2">
                   Send your feedback
                 </DialogTitle>
@@ -70,7 +67,7 @@ const cmp = computed(() => {
                       <span>Bug report</span>
                     </button>
 
-                    <button data-color="green" @click="activeForm = 'issue'">
+                    <button data-color="green" @click="activeForm = 'idea'">
                       <div i-nimiq:leaf-2-filled />
                       <span>Got an idea?</span>
                     </button>
@@ -85,11 +82,9 @@ const cmp = computed(() => {
                       Terms and conditions</a> apply
                   </p>
                 </div>
-              </template>
-              <template v-else>
-                <component :is="cmp" />
-              </template>
-            </TransitionGroup>
+              </div>
+              <component :is="cmp" v-else />
+            </Transition>
           </div>
         </DialogContent>
       </Transition>
