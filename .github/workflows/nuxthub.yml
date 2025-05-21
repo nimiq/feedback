@@ -40,3 +40,4 @@ jobs:
         id: deploy
         with:
           project-key: nq-feedback-4u0k
+          directory: backend/dist
