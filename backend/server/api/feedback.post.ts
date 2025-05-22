@@ -1,7 +1,9 @@
 import type { BlobObject } from '@nuxthub/core'
 import type { InferOutput } from 'valibot'
+import type { App, FeedbackResponse, FeedbackResponseError } from '~~/shared/types'
 import { Octokit } from '@octokit/rest'
 import { array, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, safeParse, string, transform } from 'valibot'
+import { apps, imageMimeTypes } from '~~/shared/utils'
 
 // TODO rename to production
 const baseUrl = 'https://nq-feedback.maximogarciamtnez.workers.dev/'
@@ -33,10 +35,10 @@ const FormSchema = object({
 
 export default defineEventHandler(async (event) => {
   const formData = await readFormData(event)
-  // const formAttachments = formData.getAll('attachments')
+  const formAttachments = formData.getAll('attachments')
   const data = Object.fromEntries(formData.entries()) as Record<string, any>
-  // if (formAttachments.length > 0)
-  // data.attachments = formAttachments
+  if (formAttachments.length > 0)
+    data.attachments = formAttachments
 
   const { output, issues } = safeParse(FormSchema, data)
   if (issues) {
@@ -81,10 +83,7 @@ export default defineEventHandler(async (event) => {
     attachments: hubFiles.map(file => file.pathname),
   }).where(eq(tables.submissions.id, newSubmission.id)).execute()
 
-  return {
-    success: true,
-    github,
-  } satisfies FeedbackResponse
+  return { success: true, github } satisfies FeedbackResponse
 })
 
 async function writeToGitHubIssue({ app, description, type, email, rating }: InferOutput<typeof FormSchema>, hubFiles: BlobObject[]) {

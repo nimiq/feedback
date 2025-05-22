@@ -17,6 +17,7 @@ export default defineNuxtConfig({
   eslint: {
     config: {
       standalone: false,
+      autoInit: false,
     },
   },
 
