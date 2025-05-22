@@ -1,9 +1,17 @@
+import type { FeedbackResponseError } from '~~/shared/types'
 import { Octokit } from '@octokit/rest'
-import { array, literal, maxLength, maxValue, minLength, minValue, object, optional, pipe, safeParse, string, transform, union } from 'valibot'
+import { array, file, integer, literal, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, pipe, safeParse, string, transform, variant } from 'valibot'
+import { imageMimeTypes } from '~~/shared/utils'
 
-const descriptionSchema = string('Description must be a string')
-const attachementsSchema = optional(pipe(
-  array(string()),
+const DescriptionSchema = string('Description must be a string')
+const ImageSchema = pipe(
+  file('Select an image file.'),
+  mimeType(imageMimeTypes as `${string}/${string}`[], 'Select an image.'),
+  maxSize(1024 * 1024 * 10, 'Select a file smaller than 10 MB.'),
+)
+
+const AttachmentsSchema = optional(pipe(
+  array(ImageSchema, 'Attachments must be an array of images'),
   minLength(0),
   maxLength(5),
 ))
@@ -12,39 +20,55 @@ const FeedbackSchema = object({
   type: literal('feedback'),
   rating: pipe(
     string(),
-    transform(input => Number.parseInt(input)),
+    transform(Number),
+    integer('Rating must be an integer'),
     minValue(0, 'Rating must be at least 0'),
     maxValue(5, 'Rating cannot exceed 5'),
   ),
-  description: descriptionSchema,
+  description: DescriptionSchema,
 })
 
 const BugSchema = object({
   type: literal('bug'),
-  description: descriptionSchema,
+  description: DescriptionSchema,
   email: optional(string('Email must be a string')),
-  attachements: attachementsSchema,
+  attachments: AttachmentsSchema,
 })
 
 const IdeaSchema = object({
   type: literal('idea'),
-  description: descriptionSchema,
-  attachements: attachementsSchema,
+  description: DescriptionSchema,
+  attachments: AttachmentsSchema,
 })
 
 // Combined schema for all submission types
-const SubmissionSchema = union([FeedbackSchema, BugSchema, IdeaSchema])
+const SubmissionSchema = variant('type', [FeedbackSchema, BugSchema, IdeaSchema])
 
 export default defineEventHandler(async (event) => {
   const formData = await readFormData(event)
-  const submissionData = Object.fromEntries(formData.entries())
-  const fileUrls: string[] = []
+  // Extract the attachments from the FormData
+  const attachments = formData.getAll('attachments')
+  // Retrieve the rest of the form data
+  const submissionData = Object.fromEntries(formData.entries()) as Record<string, any>
+  // Then collect attachments separately
+  if (attachments.length > 0)
+    submissionData.attachments = attachments
 
   const { output, issues } = safeParse(SubmissionSchema, submissionData)
-  if (issues)
-    return createError({ statusCode: 400, statusMessage: 'Invalid submission data', message: JSON.stringify(issues) })
+  if (issues) {
+    console.error('Validation issues:', issues)
+    // return createError({ statusCode: 400, message: `Invalid submission data: ${JSON.stringify(issues)} ${JSON.stringify(submissionData)}` })
+    setResponseStatus(event, 400)
+    return {
+      success: false,
+      message: 'Invalid submission data',
+      details: issues,
+      issues: issues.map(issue => issue.message),
+    } satisfies FeedbackResponseError
+  }
 
   const contentType = getRequestHeader(event, 'content-type')
+  const fileUrls: string[] = []
   if (contentType?.includes('multipart/form-data')) {
     // Handle form data
     // Validate input using valibot
@@ -60,7 +84,6 @@ export default defineEventHandler(async (event) => {
       for (const file of attachmentFiles) {
         if (file instanceof File && file.size) {
           try {
-            ensureBlob(file, { maxSize: '1MB', types: ['image/jpeg', 'image/png'] })
             const uploadResult = await hubBlob().put(file.name, file, { addRandomSuffix: true, prefix: `${submissionData.type || 'unknown'}-attachments` })
             fileUrls.push(uploadResult as unknown as string)
           }
@@ -124,5 +147,5 @@ export default defineEventHandler(async (event) => {
     success: true,
     issueUrl: response.data.html_url,
     issueNumber: response.data.number,
-  }
+  } satisfies FeedbackResponse
 })

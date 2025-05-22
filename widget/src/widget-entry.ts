@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import Modal from './components/Modal.vue'
 
+import 'virtual:uno.css'
+
 window.mountFeedbackWidget = (selector: string, props = {}) => {
   const el = document.querySelector(selector)
   if (!el)

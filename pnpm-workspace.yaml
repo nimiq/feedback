@@ -13,8 +13,8 @@ catalogs:
     reka-ui: ^2.2.1
     vue: ^3.5.14
   lint:
-    '@antfu/eslint-config': ^4.13.1
-    '@nuxt/eslint': 1.4.0
+    '@antfu/eslint-config': ^4.13.2
+    '@nuxt/eslint': 1.4.1
     eslint: ^9.27.0
     eslint-plugin-format: ^1.0.1
     lint-staged: ^16.0.0
@@ -23,7 +23,7 @@ catalogs:
     '@nuxt/fonts': 0.11.4
     '@nuxt/image': 1.10.0
     '@vueuse/nuxt': ^13.2.0
-    nuxt: ^3.17.3
+    nuxt: ^3.17.4
   server:
     '@nuxthub/core': ^0.8.27
     '@octokit/rest': ^21.1.1
@@ -35,14 +35,14 @@ catalogs:
     '@antfu/ni': ^24.4.0
   types:
     '@tsconfig/node22': ^22.0.2
-    '@types/node': ^22.15.19
+    '@types/node': ^22.15.21
     '@vue/tsconfig': ^0.7.0
     typescript: ^5.8.3
     vue-tsc: ^2.2.10
   unocss:
     '@iconify/utils': ^2.3.0
     '@unocss/eslint-plugin': ^66.1.2
-    nimiq-css: ^1.0.0-beta.30
+    nimiq-css: ^1.0.0-beta.37
     unocss: ^66.1.2
     unocss-preset-onmax: ^1.0.0-beta.25
 onlyBuiltDependencies:

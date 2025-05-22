@@ -14,7 +14,7 @@ export const submissions = sqliteTable('submissions', {
   description: text('description').notNull(),
   email: text('email'),
   rating: integer('rating'),
-  attachements: text('attachements', { mode: 'json' }).$type<string[]>(),
+  attachments: text('attachments', { mode: 'json' }).$type<string[]>(),
 }, table => [
   check('rating', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
   index('submissions_status_idx').on(table.status),

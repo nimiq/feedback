@@ -34,10 +34,7 @@ const cmp = computed(() => {
         <DialogOverlay bg-darkblue op-60 inset-0 fixed z-200 />
       </Transition>
       <Transition name="modal">
-        <DialogContent
-          lg="f-bottom-md f-right-md" rounded="t-8 lg:8" data-modal outline-none h-max max-h-85dvh w-full
-          shadow-lg transform fixed z-200 of-y-auto lg:max-w-500
-        >
+        <DialogContent lg="f-bottom-md f-right-md" rounded="t-8 lg:8" data-modal h-full max-h-85dvh w-full shadow-lg transform fixed z-200 of-y-auto lg:max-w-500>
           <div ring="1.5 neutral/3" bg-neutral-0 relative f-pt-xl f-pb-sm>
             <DialogClose aria-label="Close" bg-transparent size-48 right-4 top-4 absolute>
               <div bg="neutral-400 hocus:neutral-500" stack mx-auto rounded-full size-24 transition-colors>
@@ -63,7 +60,7 @@ const cmp = computed(() => {
                 <div flex="~ col gap-32">
                   <div grid="~ rows-2 cols-2 gap-16" f-mt-sm f-p-md class="grid-container">
                     <button data-color="red" col-span-2 @click="activeForm = 'issue'">
-                      <div i-nimiq:alert />
+                      <div i-nimiq:exclamation />
                       <span>Bug report</span>
                     </button>
 
@@ -78,7 +75,7 @@ const cmp = computed(() => {
                     </button>
                   </div>
                   <p text="center f-sm neutral-800">
-                    <a href="https://nimiq.com" target="_blank" underline>
+                    <a href="https://nimiq.com" target="_blank" un-text-current underline hocus:bg-transparent>
                       Terms and conditions</a> apply
                   </p>
                 </div>
@@ -99,7 +96,7 @@ ul li {
 
 .grid-container {
   button {
-    --uno: 'flex flex-col gap-8 items-center justify-center text-white nq-hoverable f-text-sm f-p-md f-rounded-md';
+    --uno: 'flex flex-col gap-8 items-center justify-center text-white nq-hoverable f-text-sm f-p-md f-rounded-md cursor-pointer';
 
     &[data-color='green'] {
       --uno: 'bg-gradient-green hocus:bg-gradient-green-darkened';

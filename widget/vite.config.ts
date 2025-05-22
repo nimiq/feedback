@@ -22,7 +22,6 @@ export default defineConfig({
       'preventAssignment': true,
     }),
     Uno({ configFile: '../uno.config.ts' }),
-
   ],
   // Use our custom TypeScript config for widget
   root: __dirname,

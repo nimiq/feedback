@@ -40,6 +40,9 @@ export default defineNuxtConfig({
       },
       static: true,
     },
+    '/api/feedback': {
+      cors: true,
+    },
   },
 
   runtimeConfig: {
