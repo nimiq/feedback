@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const { maxFiles = 5 } = defineProps<{ maxFiles?: number }>()
 const files = defineModel<File[]>({ default: [] })
@@ -20,12 +20,12 @@ function removeFile(index: number) {
   files.value.splice(index, 1)
 }
 
-// onMounted(async () => {
-//   // Uncomment to fetch random images on mount
-//   await Promise.allSettled(['https://picsum.photos/400/400', 'https://picsum.photos/640/360'].map(async (url, i) => {
-//     await fetch(url).then(async (r) => files.value.push(new File([await r.blob()], `random-image-${i}.jpeg`, { type: 'image/jpeg' })))
-//   }))
-// })
+onMounted(async () => {
+  // Uncomment to fetch random images on mount
+  await Promise.allSettled(['https://picsum.photos/400/400', 'https://picsum.photos/640/360'].map(async (url, i) => {
+    await fetch(url).then(async r => files.value.push(new File([await r.blob()], `random-image-${i}.jpeg`, { type: 'image/jpeg' })))
+  }))
+})
 </script>
 
 <template>

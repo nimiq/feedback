@@ -4,8 +4,10 @@ export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
 
 export interface FeedbackResponse {
   success: true
-  issueUrl?: string
-  issueNumber?: number
+  github: {
+    issueUrl: string
+    issueNumber: number
+  }
 }
 
 export interface FeedbackResponseError {

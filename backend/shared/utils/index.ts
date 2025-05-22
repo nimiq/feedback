@@ -1,3 +1,5 @@
+export const apps = ['playground'] as const
+
 export const imageMimeTypes = [
   'image/jpeg',
   'image/png',

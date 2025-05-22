@@ -1,60 +1,49 @@
-import type { FeedbackResponseError } from '~~/shared/types'
+import type { BlobObject } from '@nuxthub/core'
+import type { InferOutput } from 'valibot'
+import type { FeedbackResponse, FeedbackResponseError } from '~~/shared/types'
 import { Octokit } from '@octokit/rest'
-import { array, file, integer, literal, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, pipe, safeParse, string, transform, variant } from 'valibot'
-import { imageMimeTypes } from '~~/shared/utils'
+import { array, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, safeParse, string, transform } from 'valibot'
+import { apps, imageMimeTypes } from '~~/shared/utils'
 
-const DescriptionSchema = string('Description must be a string')
-const ImageSchema = pipe(
-  file('Select an image file.'),
-  mimeType(imageMimeTypes as `${string}/${string}`[], 'Select an image.'),
-  maxSize(1024 * 1024 * 10, 'Select a file smaller than 10 MB.'),
-)
+// TODO rename to production
+const baseUrl = 'https://nq-feedback.maximogarciamtnez.workers.dev/'
 
-const AttachmentsSchema = optional(pipe(
-  array(ImageSchema, 'Attachments must be an array of images'),
-  minLength(0),
-  maxLength(5),
-))
-
-const FeedbackSchema = object({
-  type: literal('feedback'),
-  rating: pipe(
+// In the backend we don't distinguish between the different types of forms,
+// instead we treat them as a single form with different types.
+const FormSchema = object({
+  type: picklist(['feedback', 'bug', 'idea'], 'Invalid submission type'),
+  app: picklist(apps, `Invalid app name. Use one of the following: ${apps.join(', ')}`),
+  description: string('Description must be a string'),
+  email: optional(string('Email must be a string')),
+  rating: optional(pipe(
     string(),
     transform(Number),
     integer('Rating must be an integer'),
     minValue(0, 'Rating must be at least 0'),
     maxValue(5, 'Rating cannot exceed 5'),
-  ),
-  description: DescriptionSchema,
+  )),
+  attachments: optional(pipe(
+    array(pipe(
+      file('Select an image file.'),
+      mimeType(imageMimeTypes as `${string}/${string}`[], 'Select an image.'),
+      maxSize(1024 * 1024 * 10, 'Select a file smaller than 10 MB.'),
+    ), 'Attachments must be an array of images'),
+    minLength(0),
+    maxLength(5),
+  ), []),
 })
-
-const BugSchema = object({
-  type: literal('bug'),
-  description: DescriptionSchema,
-  email: optional(string('Email must be a string')),
-  attachments: AttachmentsSchema,
-})
-
-const IdeaSchema = object({
-  type: literal('idea'),
-  description: DescriptionSchema,
-  attachments: AttachmentsSchema,
-})
-
-// Combined schema for all submission types
-const SubmissionSchema = variant('type', [FeedbackSchema, BugSchema, IdeaSchema])
 
 export default defineEventHandler(async (event) => {
   const formData = await readFormData(event)
   // Extract the attachments from the FormData
-  const attachments = formData.getAll('attachments')
+  const formAttachments = formData.getAll('attachments')
   // Retrieve the rest of the form data
-  const submissionData = Object.fromEntries(formData.entries()) as Record<string, any>
+  const data = Object.fromEntries(formData.entries()) as Record<string, any>
   // Then collect attachments separately
-  if (attachments.length > 0)
-    submissionData.attachments = attachments
+  if (formAttachments.length > 0)
+    data.attachments = formAttachments
 
-  const { output, issues } = safeParse(SubmissionSchema, submissionData)
+  const { output, issues } = safeParse(FormSchema, data)
   if (issues) {
     console.error('Validation issues:', issues)
     // return createError({ statusCode: 400, message: `Invalid submission data: ${JSON.stringify(issues)} ${JSON.stringify(submissionData)}` })
@@ -67,85 +56,60 @@ export default defineEventHandler(async (event) => {
     } satisfies FeedbackResponseError
   }
 
-  const contentType = getRequestHeader(event, 'content-type')
-  const fileUrls: string[] = []
-  if (contentType?.includes('multipart/form-data')) {
-    // Handle form data
-    // Validate input using valibot
+  const { type, app, attachments } = output
+  const hubFiles: BlobObject[] = []
 
-    // Handle file uploads if present
-    if (formData.has('attachments')) {
-      const attachmentFiles = formData.getAll('attachments')
-
-      if (attachmentFiles.length > 5)
-        return createError({ statusCode: 400, statusMessage: 'Too many attachments', message: 'A maximum of 5 attachments is allowed' })
-
-      // Process each attachment
-      for (const file of attachmentFiles) {
-        if (file instanceof File && file.size) {
-          try {
-            const uploadResult = await hubBlob().put(file.name, file, { addRandomSuffix: true, prefix: `${submissionData.type || 'unknown'}-attachments` })
-            fileUrls.push(uploadResult as unknown as string)
-          }
-          catch (error: any) {
-            return createError({ statusCode: 400, statusMessage: error.message || 'File upload error', message: error.message || 'Error processing attachment' })
-          }
-        }
-      }
+  // Handle file uploads if present
+  for (const file of attachments) {
+    try {
+      // TODO Add issue id to the filename instead of random suffix. Also improved tracking of the file/issue
+      const name = encodeURI(`${app}/${type}/${file.name}`)
+      hubFiles.push(await hubBlob().put(name, file, { addRandomSuffix: true }))
+    }
+    catch (error: any) {
+      return createError({ statusCode: 400, statusMessage: error.message || 'File upload error', message: error.message || 'Error processing attachment' })
     }
   }
 
-  const { type, description } = output
+  const github = await writeToGitHubIssue(output, hubFiles)
+
+  return {
+    success: true,
+    github,
+  } satisfies FeedbackResponse
+})
+
+async function writeToGitHubIssue({ app, description, type, email, rating }: InferOutput<typeof FormSchema>, hubFiles: BlobObject[]) {
   const config = useRuntimeConfig()
 
   // Check if GitHub token exists
   if (!config.githubToken)
-    return createError({ statusCode: 500, message: 'GitHub token not configured' })
-
-  // Initialize Octokit with GitHub token
+    throw createError({ statusCode: 500, message: 'GitHub token not configured' })
   const octokit = new Octokit({ auth: config.githubToken })
 
-  // Prepare the body text with attachments if present
   let bodyText = description
-
-  // Add attachments to the body if present
-  if (fileUrls && fileUrls.length > 0) {
-    bodyText += '\n\n### Attachments:\n'
-    fileUrls.forEach((url: string, index: number) => bodyText += `\n${index + 1}. ${url}`)
+  if (hubFiles.length > 0) {
+    bodyText += '\n\n### Attachments:\n\n'
+    hubFiles.forEach((file: BlobObject, index: number) => bodyText += `![Image for ${type}-${index}](${baseUrl}${file.pathname})\n`)
   }
+  if (email)
+    bodyText += `\n\n### Contact\n\n${email}`
 
   // Prepare issue creation params based on submission type
-  const issueParams: any = {
-    owner: 'onmax',
-    repo: 'nimiq-feedback',
-    body: bodyText,
-    labels: [type],
-  }
+  const issueParams: any = { owner: 'onmax', repo: 'nimiq-feedback', body: bodyText, labels: [`app/${app}`, `kind/${type}`] }
+  issueParams.title = {
+    feedback: `[${app}] Feedback`,
+    bug: `[${app}] Bug Report`,
+    idea: `[${app}] Feature Idea`,
+  }[type]
 
-  // Add type-specific data to issue
-  switch (type) {
-    case 'feedback': {
-      const { rating } = output
-      issueParams.title = `Feedback: Rating ${rating}/5`
-      issueParams.labels.push(`rating-${rating}`)
-      break
-    }
-    case 'bug':
-      issueParams.title = 'Bug Report'
-      if (output.email)
-        issueParams.body += `\n\nContact: ${output.email}`
-      break
-    case 'idea':
-      issueParams.title = 'Feature Idea'
-      break
-  }
+  if (type === 'feedback')
+    issueParams.labels.push(`rating-${rating}`)
 
   // Create issue in the repo
   const response = await octokit.issues.create(issueParams)
+  if (response.status !== 201)
+    throw createError({ statusCode: 500, message: 'Error creating issue on GitHub' })
 
-  return {
-    success: true,
-    issueUrl: response.data.html_url,
-    issueNumber: response.data.number,
-  } satisfies FeedbackResponse
-})
+  return { issueUrl: response.data.url, issueNumber: response.data.number } satisfies FeedbackResponse['github']
+}

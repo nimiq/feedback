@@ -81,6 +81,8 @@ async function submitFeedback(event: SubmitEvent) {
 
     <form v-else px-20 flex="~ col gap-16" @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
+      <!-- TODO: Make it dynamic -->
+      <input type="text" name="app" value="playground" sr-only>
 
       <slot />
 
