@@ -72,8 +72,12 @@ async function submitFeedback(event: SubmitEvent) {
       {{ title[type] }}
     </h2>
 
-    <div v-if="status === 'success'" role="alert">
+    <div v-if="status === 'success'" role="alert" f-px-sm>
       Thank you for your feedback! Your issue has been created.
+      <a :href="response.github.issueUrl" target="_blank" un-text-white f-px-sm nq-arrow nq-pill-blue>
+        <div text-white size-16 i-nimiq:logos-github />
+        Check it out on GitHub
+      </a>
       <pre>
         {{ { response } }}
       </pre>

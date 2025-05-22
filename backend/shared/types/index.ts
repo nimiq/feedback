@@ -28,3 +28,6 @@ export interface FeedbackResponseError {
   issues?: string[]
   details?: any
 }
+
+export type Result<T> = Promise<[true, undefined, T] | [false, string, undefined]>
+export type SyncResult<T> = Awaited<Result<T>>

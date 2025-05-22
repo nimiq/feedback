@@ -4,7 +4,6 @@ import consola from 'consola'
 import { safeParse } from 'valibot'
 
 // TODO rename to production
-const baseUrl = 'https://nq-feedback.maximogarciamtnez.workers.dev/'
 
 // In the backend we don't distinguish between the different types of forms,
 // instead we treat them as a single form with different types.
@@ -24,35 +23,26 @@ export default defineEventHandler(async (event) => {
 
   const id = randomUUID()
 
-  const filesUrls: string[] = []
-  const promises = form.attachments.map(async (file) => {
-    try {
-      const name = encodeURI(`${form.app}/${form.type}/${id}__${file.name}`)
-      const hubFile = await hubBlob().put(name, file)
-      filesUrls.push(`${baseUrl}${hubFile.pathname}`)
-    }
-    catch (error: any) {
-      throw new Error(`Error processing attachment: ${JSON.stringify(error)}`)
-    }
-  })
-
-  const results = await Promise.allSettled(promises)
-  const errors = results.filter(result => result.status === 'rejected')
-  if (errors.length > 0) {
-    consola.error('File upload errors:', errors)
+  const [fileUploadOk, errorUpload, filesUrls] = await uploadFiles(id, form)
+  if (!fileUploadOk) {
+    consola.error('File upload error:', errorUpload)
     setResponseStatus(event, 400)
-    return { success: false, message: 'Error processing attachments', details: errors.map(error => error.reason) } satisfies FeedbackResponseError
+    return { success: false, message: 'There was an error uploading the files', details: errorUpload } satisfies FeedbackResponseError
   }
 
-  const { type, app, rating } = form
-  const title = `[${app}] - ${{ feedback: 'Feedback', bug: 'Bug report', idea: 'Idea' }[type]}`
-  const labels = [`app/${app}`, `kind/${type}`, type === 'feedback' ? `rating-${rating}` : undefined].filter(Boolean) as string[]
-  const markdown = submissionToMarkdown(id, form)
-  const github = await createGitHubIssue({ title, labels, markdown })
+  const markdown = submissionToMarkdown(id, form, filesUrls)
+  const [githubIssueOk, githubIssueError, github] = await createGitHubIssue({ form, markdown })
+  if (!githubIssueOk) {
+    consola.error('GitHub issue error:', githubIssueError)
+    setResponseStatus(event, 500)
+    return { success: false, message: 'There was an error creating the GitHub issue', details: githubIssueError } satisfies FeedbackResponseError
+  }
 
   const fullSubmission = await useDrizzle().insert(tables.submissions).values({
     ...form,
     id,
+    email: form.email || null,
+    rating: form.rating || null,
     githubIssue: github.issueUrl,
     attachments: filesUrls,
   }).returning().get()

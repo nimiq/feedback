@@ -1,29 +1,30 @@
 import type { RestEndpointMethodTypes } from '@octokit/rest'
+import type { InferOutput } from 'valibot'
 import { Octokit } from '@octokit/rest'
+import { ratingToEmoji } from './rating-to-emoji'
 
 export interface CreateGitHubIssueOptions {
-  title: string
+  form: InferOutput<typeof FormSchema>
   markdown: string
-  labels: string[]
 }
 
 type Issue = RestEndpointMethodTypes['issues']['create']['parameters']
 
-export async function createGitHubIssue({ title, markdown: body, labels }: CreateGitHubIssueOptions) {
-  const config = useRuntimeConfig()
+type CreateGitHubResult = Result<{ issueUrl: string }>
 
-  // Check if GitHub token exists
-  if (!config.githubToken)
-    throw createError({ statusCode: 500, message: 'GitHub token not configured' })
-  const octokit = new Octokit({ auth: config.githubToken })
+export async function createGitHubIssue({ markdown: body, form: { app, type, rating } }: CreateGitHubIssueOptions): CreateGitHubResult {
+  const { token, owner, repo } = useRuntimeConfig().github
 
-  const owner = 'onmax'
-  const repo = 'nimiq-feedback'
+  const title = `[${app}] - ${{ feedback: 'Feedback', bug: 'Bug report', idea: 'Idea' }[type]}`
+  const labels = [`app/${app}`, `kind/${type}`]
+  if (type === 'feedback')
+    labels.push(ratingToEmoji(rating))
   const issueParams: Issue = { title, body, owner, repo, labels }
 
+  const octokit = new Octokit({ auth: token })
   const response = await octokit.issues.create(issueParams)
   if (response.status !== 201)
-    throw createError({ statusCode: 500, message: 'Error creating issue on GitHub' })
+    return [false, 'Error creating issue on GitHub', undefined]
 
-  return { issueUrl: response.data.url, issueNumber: response.data.number } satisfies FeedbackResponse['github']
+  return [true, undefined, { issueUrl: response.data.html_url }]
 }

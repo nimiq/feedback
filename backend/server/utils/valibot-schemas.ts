@@ -1,4 +1,5 @@
 import { array, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, string, transform } from 'valibot'
+import { imageMimeTypes } from '~~/shared/utils'
 
 export const FormSchema = object({
   type: picklist(['feedback', 'bug', 'idea'], 'Invalid submission type'),

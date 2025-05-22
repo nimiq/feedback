@@ -1,6 +1,11 @@
 import process from 'node:process'
 import { defineNuxtConfig } from 'nuxt/config'
 
+import { validateEnv } from './lib/env'
+
+// Verify environment variables. Throw an error if any are missing.
+validateEnv()
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -26,6 +31,15 @@ export default defineNuxtConfig({
     blob: true,
   },
 
+  runtimeConfig: {
+    github: {
+      owner: process.env.NUXT_GITHUB_OWNER,
+      repo: process.env.NUXT_GITHUB_REPO,
+      token: process.env.NUXT_GITHUB_TOKEN,
+    },
+    productionUrl: process.env.NUXT_PRODUCTION_URL,
+  },
+
   routeRules: {
     '/widget.js': {
       headers: {
@@ -45,11 +59,6 @@ export default defineNuxtConfig({
       cors: true,
     },
   },
-
-  runtimeConfig: {
-    githubToken: process.env.NUXT_GITHUB_TOKEN,
-  },
-
   // nitro: {
   //   devHandlers: [{
   //     route: '/',

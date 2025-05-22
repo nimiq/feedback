@@ -3,7 +3,7 @@ import { defineModel } from 'vue'
 import FormContainer from './FormContainer.vue'
 
 const placeholder = 'Please, tell us how we can make your Nimiq experience better*'
-const rating = defineModel<number>()
+const rating = defineModel<number>({ default: 0 })
 </script>
 
 <template>

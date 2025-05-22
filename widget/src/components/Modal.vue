@@ -34,7 +34,7 @@ const cmp = computed(() => {
         <DialogOverlay bg-darkblue op-60 inset-0 fixed z-200 />
       </Transition>
       <Transition name="modal">
-        <DialogContent lg="f-bottom-md f-right-md" rounded="t-8 lg:8" data-modal h-full max-h-85dvh w-full shadow-lg transform fixed z-200 of-y-auto lg:max-w-500>
+        <DialogContent lg="f-bottom-md f-right-md" rounded="t-8 lg:8" data-modal h-max max-h-85dvh w-full shadow-lg transform fixed z-200 of-y-auto lg:max-w-500>
           <div ring="1.5 neutral/3" bg-neutral-0 relative f-pt-xl f-pb-sm>
             <DialogClose aria-label="Close" bg-transparent size-48 right-4 top-4 absolute>
               <div bg="neutral-400 hocus:neutral-500" stack mx-auto rounded-full size-24 transition-colors>
