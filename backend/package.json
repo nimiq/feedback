@@ -29,6 +29,7 @@
     "@nuxthub/core": "catalog:server",
     "@vue/tsconfig": "catalog:types",
     "@vueuse/nuxt": "catalog:nuxt",
+    "consola": "catalog:",
     "drizzle-kit": "catalog:server",
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",

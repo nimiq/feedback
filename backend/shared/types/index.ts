@@ -8,6 +8,18 @@ export interface FeedbackResponse {
     issueUrl: string
     issueNumber: number
   }
+  submission: {
+    type: SubmissionType
+    app: App
+    description: string
+    email: string | null
+    rating: number | null
+    attachments: string[] | null
+    id: string
+    createdAt: string
+    updatedAt: string
+    githubIssue: string | null
+  }
 }
 
 export interface FeedbackResponseError {

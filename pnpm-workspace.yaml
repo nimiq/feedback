@@ -3,6 +3,8 @@ packages:
   - ./playground
   - ./backend
   - ./widget
+catalog:
+  consola: ^3.4.2
 catalogs:
   bundle:
     '@rollup/plugin-replace': ^6.0.2

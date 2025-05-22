@@ -7,7 +7,7 @@ import { check, index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-cor
 // in the future, but for now, a simple label in the issue will be enough.
 
 export const submissions = sqliteTable('submissions', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id').primaryKey(),
   // status: text('status').$type<SubmissionStatus>().notNull().default('pending'),
 
   app: text('app').$type<App>().notNull(),

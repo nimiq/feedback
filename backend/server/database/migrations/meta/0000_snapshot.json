@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "fdc8553f-b516-4ebe-aaa3-6012c461833b",
+  "id": "d9d3281b-699f-42de-84fe-3d859c32aafd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "submissions": {
@@ -9,10 +9,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "app": {
           "name": "app",

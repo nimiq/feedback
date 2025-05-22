@@ -1,5 +1,5 @@
 CREATE TABLE `submissions` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`app` text NOT NULL,
 	`type` text NOT NULL,
 	`description` text NOT NULL,
