@@ -1,4 +1,6 @@
-export const apps = ['playground'] as const
+import type { App } from '../types'
+
+export const apps: App[] = ['playground']
 
 export const imageMimeTypes = [
   'image/jpeg',
