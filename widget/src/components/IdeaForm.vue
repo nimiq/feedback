@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import AttachmentUploader from './AttachmentUploader.vue'
-import FormContainer from './FormContainer.vue'
+
+const files = defineModel<File[]>({ default: [] })
 
 const placeholder = 'Please, tell us how we can make your Nimiq experience better*'
 </script>
 
 <template>
-  <FormContainer type="idea">
-    <label>
-      <textarea id="description" name="description" :placeholder rows="4" required nq-input-box />
-    </label>
+  <label>
+    <textarea id="description" name="description" :placeholder rows="4" required nq-input-box />
+  </label>
 
-    <AttachmentUploader :max-files="5" />
+  <AttachmentUploader :max-files="5" :files />
 
-    <p text-neutral-800 mt--8>
-      For example a screenshot of a feature from another app
-    </p>
-  </FormContainer>
+  <p text-neutral-800 mt--8>
+    For example a screenshot of a feature from another app
+  </p>
 </template>

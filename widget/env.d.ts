@@ -10,8 +10,7 @@ declare module '*.vue' {
 
 declare global {
   interface Window {
-    /** Mount the feedback widget into a container */
-    mountFeedbackWidget: (selector: string, props?: Record<string, any>) => void
+    mountFeedbackWidget: (selector: string, props?: WidgetProps) => WidgetInstance
   }
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Modal from './components/Modal.vue'
+import FeedbackWidget from './components/FeedbackWidget.vue'
 </script>
 
 <template>
-  <Modal />
+  <FeedbackWidget />
 </template>

@@ -1,20 +1,27 @@
 <script setup lang="ts">
+import type { FormContainerEmits } from './FormContainer.vue'
 import { defineModel } from 'vue'
 import FormContainer from './FormContainer.vue'
+
+const emit = defineEmits<FormContainerEmits>()
 
 const placeholder = 'Please, tell us how we can make your Nimiq experience better*'
 const rating = defineModel<number>({ default: 0 })
 </script>
 
 <template>
-  <FormContainer type="feedback">
-    <div flex="~ items-center justify-center gap-24" outline="[&:has(:focus-visible)]:1.5 blue" mx-auto rounded-4 w-max f-p-sm>
+  <FormContainer type="feedback" @form-error="emit('formError', $event)" @form-success="$emit('formSuccess', $event)">
+    <div
+      flex="~ items-center justify-center gap-24" outline="[&:has(:focus-visible)]:1.5 blue" mx-auto rounded-4 w-max
+      f-p-sm
+    >
       <template v-for="i in 5" :key="i">
         <input :id="`rating-${i}`" v-model="rating" type="radio" name="rating" :value="i" sr-only>
         <label
-          :for="`rating-${i}`" :data-state="i <= rating ? 'active' : undefined" text="neutral-300 reka-active:gold hocus:gold [&:has(~_label:hover)]:gold"
-          :style="`--i: ${i}; --b:40ms`" delay="[calc(25ms*var(--i))] group-hocus:[calc(var(--b)*(5-var(--i)))]"
-          size-40 cursor-pointer transition-colors ease-out i-nimiq:star
+          :for="`rating-${i}`" :data-state="i <= rating ? 'active' : undefined"
+          text="neutral-300 reka-active:gold hocus:gold [&:has(~_label:hover)]:gold" :style="`--i: ${i}; --b:40ms`"
+          delay="[calc(25ms*var(--i))] group-hocus:[calc(var(--b)*(5-var(--i)))]" size-40 cursor-pointer
+          transition-colors ease-out i-nimiq:star
         />
       </template>
     </div>

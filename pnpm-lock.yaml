@@ -19,6 +19,9 @@ catalogs:
       specifier: ^7.7.6
       version: 7.7.6
   default:
+    '@vueuse/core':
+      specifier: ^13.2.0
+      version: 13.2.0
     consola:
       specifier: ^3.4.2
       version: 3.4.2
@@ -218,10 +221,16 @@ importers:
 
   playground:
     dependencies:
+      reka-ui:
+        specifier: catalog:frontend
+        version: 2.2.1(typescript@5.8.3)(vue@3.5.14(typescript@5.8.3))
       vue:
         specifier: catalog:frontend
         version: 3.5.14(typescript@5.8.3)
     devDependencies:
+      '@iconify/utils':
+        specifier: catalog:unocss
+        version: 2.3.0
       '@tsconfig/node22':
         specifier: catalog:types
         version: 22.0.2
@@ -234,9 +243,21 @@ importers:
       '@vue/tsconfig':
         specifier: catalog:types
         version: 0.7.0(typescript@5.8.3)(vue@3.5.14(typescript@5.8.3))
+      '@vueuse/core':
+        specifier: 'catalog:'
+        version: 13.2.0(vue@3.5.14(typescript@5.8.3))
+      nimiq-css:
+        specifier: catalog:unocss
+        version: 1.0.0-beta.37(@unocss/webpack@66.1.2(webpack@5.99.8))(postcss@8.5.3)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))
       typescript:
         specifier: catalog:types
         version: 5.8.3
+      unocss:
+        specifier: catalog:unocss
+        version: 66.1.2(@unocss/webpack@66.1.2(webpack@5.99.8))(postcss@8.5.3)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))
+      unocss-preset-onmax:
+        specifier: catalog:unocss
+        version: 1.0.0-beta.25(@unocss/preset-wind3@66.1.2)(@unocss/webpack@66.1.2(webpack@5.99.8))(postcss@8.5.3)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))
       vite:
         specifier: catalog:bundle
         version: 6.3.5(@types/node@22.15.21)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0)

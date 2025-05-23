@@ -1,27 +1,37 @@
+<script lang="ts">
+</script>
+
 <script setup lang="ts">
-import type { FeedbackResponse, FeedbackResponseError, SubmissionType } from '#backend/types'
+import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
 import { ref } from 'vue'
 
-const { type, files = [] } = defineProps<{ type: SubmissionType, files?: File[] }>()
+export interface FormContainerEmits {
+  formSuccess: [data: FeedbackResponse]
+  formError: [{ error: string, details?: any }]
+}
+
+const { type, files = [] } = defineProps<{ type: FormType, files?: File[] }>()
+
+const emit = defineEmits<FormContainerEmits>()
 
 const error = ref<FeedbackResponseError>()
 const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
 const response = ref<FeedbackResponse>()
 
-const title: Record<SubmissionType, string> = {
+const title: Record<FormType, string> = {
   bug: 'Report a bug',
   idea: 'Got an idea?',
   feedback: 'Give feedback',
 }
 
 // @unocss-include
-const icon: Record<SubmissionType, string> = {
+const icon: Record<FormType, string> = {
   bug: 'i-nimiq:exclamation',
   idea: 'i-nimiq:leaf-2-filled',
   feedback: 'i-nimiq:star',
 }
 
-const iconGradient: Record<SubmissionType, string> = {
+const iconGradient: Record<FormType, string> = {
   bug: 'bg-gradient-red',
   idea: 'bg-gradient-green',
   feedback: 'bg-gradient-gold',
@@ -52,17 +62,19 @@ async function submitFeedback(event: SubmitEvent) {
   if (!res.ok) {
     status.value = 'error'
     error.value = await res.json() as FeedbackResponseError
+    emit('formError', { error: error.value.message, details: error.value })
     return
   }
 
   response.value = await res.json() as FeedbackResponse
   status.value = 'success'
+  emit('formSuccess', response.value)
 }
 </script>
 
 <template>
   <div>
-    <h2 flex="~ items-center gap-8" text-14 mb-16 px-20 text-balance nq-label>
+    <h2 flex="~ items-center gap-8" text-14 mb-16 text-balance nq-label>
       <div
         :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
         style="box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.07), 0px 1.5px 3px 0px rgba(0, 0, 0, 0.05), 0px 0.337px 2px 0px rgba(0, 0, 0, 0.03);"
@@ -72,25 +84,19 @@ async function submitFeedback(event: SubmitEvent) {
       {{ title[type] }}
     </h2>
 
-    <div v-if="status === 'success'" role="alert" f-px-sm>
-      Thank you for your feedback! Your issue has been created.
-      <a :href="response.github.issueUrl" target="_blank" un-text-white f-px-sm nq-arrow nq-pill-blue>
-        <div text-white size-16 i-nimiq:logos-github />
-        Check it out on GitHub
-      </a>
-      <pre>
-        {{ { response } }}
-      </pre>
+    <div v-if="status === 'success'" role="alert">
+      <!-- Success state will be handled by host -->
+      <p>Submission successful! Please wait...</p>
     </div>
 
-    <form v-else px-20 flex="~ col gap-16" @submit.prevent="submitFeedback">
+    <form v-else flex="~ col gap-16" @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
       <!-- TODO: Make it dynamic -->
       <input type="text" name="app" value="playground" sr-only>
 
       <slot />
 
-      <div v-if="status === 'error'" role="alert" text="f-xs red-1100" font-semibold f-px-xs>
+      <div v-if="status === 'error'" role="alert" text="f-xs red-1100" font-semibold>
         <p>
           <strong>Error:</strong> {{ error?.message }}
         </p>
@@ -103,7 +109,7 @@ async function submitFeedback(event: SubmitEvent) {
         </details>
       </div>
 
-      <button type="submit" :disabled="status === 'pending'" f-mt-lg nq-pill-xl nq-pill-blue disabled:op-60>
+      <button type="submit" :disabled="status === 'pending'" mx-0 f-mt-lg nq-pill-xl nq-pill-blue disabled:op-60>
         <div v-if="status === 'pending'" i-nimiq:spinner />
         {{ status === "pending" ? "Sending..." : "Submit Feedback" }}
       </button>

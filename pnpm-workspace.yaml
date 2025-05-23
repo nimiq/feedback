@@ -4,6 +4,7 @@ packages:
   - ./backend
   - ./widget
 catalog:
+  '@vueuse/core': ^13.2.0
   consola: ^3.4.2
 catalogs:
   bundle:

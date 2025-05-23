@@ -1,5 +1,5 @@
 export type App = 'nimiq-wallet' | 'nimiq-pay' | 'playground'
-export type SubmissionType = 'bug' | 'idea' | 'feedback'
+export type FormType = 'bug' | 'idea' | 'feedback'
 // export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
 
 export interface FeedbackResponse {
@@ -9,7 +9,7 @@ export interface FeedbackResponse {
     issueNumber: number
   }
   submission: {
-    type: SubmissionType
+    type: FormType
     app: App
     description: string
     email: string | null

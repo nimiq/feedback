@@ -8,10 +8,28 @@ declare module '*.vue' {
   export default component
 }
 
+// Widget types
+export type FormType = 'bug' | 'idea' | 'feedback'
+
+export interface WidgetInstance {
+  showFormGrid: () => void
+  showForm: (type: FormType) => void
+  closeWidget: () => void
+  goBack: () => void
+  destroy: () => void
+  communication?: {
+    on: <K extends string>(event: K, callback: (data: any) => void) => void
+    off: <K extends string>(event: K, callback?: (data: any) => void) => void
+    emit: <K extends string>(event: K, data: any) => void
+  }
+}
+
 declare global {
   interface Window {
     /** Mount the feedback widget into a container */
-    mountFeedbackWidget: (selector: string, props?: Record<string, any>) => void
+    mountFeedbackWidget: (
+      selector: string
+    ) => WidgetInstance
   }
 }
 
