@@ -29,12 +29,22 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+        env:
+          NUXT_GITHUB_OWNER: ${{ vars.NUXT_GITHUB_OWNER }}
+          NUXT_GITHUB_REPO: ${{ vars.NUXT_GITHUB_REPO }}
+          NUXT_GITHUB_TOKEN: ${{ vars.NUXT_GITHUB_TOKEN }}
+          NUXT_PRODUCTION_URL: ${{ vars.NUXT_PRODUCTION_URL }}
 
       - name: Ensure NuxtHub module is installed
         run: pnpx nuxthub@latest ensure
 
       - name: Build application
         run: pnpm build
+        env:
+          NUXT_GITHUB_OWNER: ${{ vars.NUXT_GITHUB_OWNER }}
+          NUXT_GITHUB_REPO: ${{ vars.NUXT_GITHUB_REPO }}
+          NUXT_GITHUB_TOKEN: ${{ vars.NUXT_GITHUB_TOKEN }}
+          NUXT_PRODUCTION_URL: ${{ vars.NUXT_PRODUCTION_URL }}
 
       - name: Deploy to NuxtHub
         uses: nuxt-hub/action@v1
