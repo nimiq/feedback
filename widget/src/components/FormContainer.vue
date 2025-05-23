@@ -10,7 +10,8 @@ export interface FormContainerEmits {
   formError: [{ error: string, details?: any }]
 }
 
-const { type, files = [] } = defineProps<{ type: FormType, files?: File[] }>()
+// MODIFIED: Added appName to props
+const { type, files = [], appName } = defineProps<{ type: FormType, files?: File[], appName: string }>()
 
 const emit = defineEmits<FormContainerEmits>()
 
@@ -18,13 +19,12 @@ const error = ref<FeedbackResponseError>()
 const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
 const response = ref<FeedbackResponse>()
 
-const title: Record<FormType, string> = {
-  bug: 'Report a bug',
-  idea: 'Got an idea?',
-  feedback: 'Give feedback',
+const titleKeys: Record<FormType, string> = {
+  bug: 'formContainer.titleBug',
+  idea: 'formContainer.titleIdea',
+  feedback: 'formContainer.titleFeedback',
 }
 
-// @unocss-include
 const icon: Record<FormType, string> = {
   bug: 'i-nimiq:exclamation',
   idea: 'i-nimiq:leaf-2-filled',
@@ -44,13 +44,11 @@ async function submitFeedback(event: SubmitEvent) {
 
   const formEl = event.target as HTMLFormElement
   const formData = new FormData(formEl)
+  formData.append('app', appName) // MODIFIED: Append appName from props
 
-  // Attach files manually to FormData
   if (type === 'bug' || type === 'idea') {
-    // The form files has mime type "octet-stream" and not the original mime type
-    // This is a workaround to get the original mime type
     formData.delete('attachments')
-    Array.from(files).forEach(file => formData.append('attachments', file))
+    Array.from(files).forEach(file => formData.append('attachments', file as Blob))
   }
 
   const res = await fetch(feedbackEndpoint, { method: 'POST', body: formData })
@@ -81,71 +79,62 @@ async function submitFeedback(event: SubmitEvent) {
       >
         <div :class="icon[type]" text-white />
       </div>
-      {{ title[type] }}
+      {{ $t(titleKeys[type]) }}
     </h2>
 
     <div v-if="status === 'success'" role="alert">
-      <!-- Success state will be handled by host -->
-      <p>Submission successful! Please wait...</p>
+      <p>{{ $t('formContainer.successMessage') }}</p>
     </div>
 
     <form v-else flex="~ col gap-16" @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
-      <!-- TODO: Make it dynamic -->
-      <input type="text" name="app" value="playground" sr-only>
+      <!-- REMOVED: <input type="text" name="app" value="__APP_NAME__" sr-only> -->
 
       <slot />
 
       <div v-if="status === 'error'" role="alert" text="f-xs red-1100" font-semibold>
         <p>
-          <strong>Error:</strong> {{ error?.message }}
+          <strong>{{ $t('formContainer.errorPrefix') }}</strong> {{ error?.message }}
         </p>
         <ul v-for="issue in error.issues" :key="issue" list-disc f-px-xs>
           <li>{{ issue }}</li>
         </ul>
         <details>
-          <summary>Details</summary>
+          <summary>{{ $t('formContainer.errorDetailsSummary') }}</summary>
           <pre outline="1.5 red-500" font-normal font-mono rounded-6 bg-red-400 f-p-2xs>{{ error }}</pre>
         </details>
       </div>
 
       <button type="submit" :disabled="status === 'pending'" mx-0 f-mt-lg nq-pill-xl nq-pill-blue disabled:op-60>
         <div v-if="status === 'pending'" i-nimiq:spinner />
-        {{ status === "pending" ? "Sending..." : "Submit Feedback" }}
+        {{ status === "pending" ? $t('formContainer.sendingButton') : $t('formContainer.submitButtonDefault') }}
       </button>
     </form>
   </div>
 </template>
 
 <style>
+/* Styles remain the same */
 [nq-input-box] {
-  /* Just for nimiq-feedback */
   max-height: calc(6lh + 2 * var(--padding));
-
-  /* TODO MOve this to nimiq- text-neutral-800ui */
   border-radius: 6px;
   padding: 10px 12px;
   border: none;
-
   --border-color: rgb(var(--nq-neutral-400));
   outline: 1.5px solid var(--border-color);
-
-  &:placeholder {
-    --placeholder-color: rgb(var(--nq-neutral-500));
-    color: var(--placeholder-color);
-    transition: color 200ms var(--nq-ease);
-  }
-
-  &:hover {
-    --border-color: rgb(var(--nq-blue-600));
-  }
-
-  &:focus-visible {
-    --border-color: rgb(var(--nq-blue));
-    color: rgb(var(--nq-blue));
-  }
 }
-
+[nq-input-box]:placeholder {
+  --placeholder-color: rgb(var(--nq-neutral-500));
+  color: var(--placeholder-color);
+  transition: color 200ms var(--nq-ease);
+}
+[nq-input-box]:hover {
+  --border-color: rgb(var(--nq-blue-600));
+}
+[nq-input-box]:focus-visible {
+  --border-color: rgb(var(--nq-blue));
+  color: rgb(var(--nq-blue));
+}
 [nq-pill-xl] {
   border-radius: 9999px;
   color: rgb(var(--nq-white));

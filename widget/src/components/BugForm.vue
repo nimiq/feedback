@@ -3,13 +3,13 @@ import AttachmentUploader from './AttachmentUploader.vue'
 
 const files = defineModel<File[]>({ default: [] })
 
-const placeholder = 'Please, tell us how we can make your Nimiq experience better*'
+// placeholder constant removed
 </script>
 
 <template>
   <label>
     <textarea
-      id="description" name="description" :placeholder value="This is a test, awesome!" rows="4" required
+      id="description" name="description" :placeholder="$t('bugForm.descriptionPlaceholder')" :value="$t('bugForm.descriptionDefaultValue')" rows="4" required
       nq-input-box
     />
   </label>
@@ -17,7 +17,7 @@ const placeholder = 'Please, tell us how we can make your Nimiq experience bette
   <AttachmentUploader v-model="files" :max-files="5" />
 
   <label>
-    <h2 mb-8 text="12 neutral-800" nq-label>Email</h2>
-    <input id="email" type="email" nq-input-box name="email" placeholder="If we need more information*">
+    <h2 mb-8 text="12 neutral-800" nq-label>{{ $t('bugForm.emailLabel') }}</h2>
+    <input id="email" type="email" nq-input-box name="email" :placeholder="$t('bugForm.emailPlaceholder')">
   </label>
 </template>

@@ -28,9 +28,10 @@ declare global {
   interface Window {
     /** Mount the feedback widget into a container */
     mountFeedbackWidget: (
-      selector: string
+      selector: string,
+      options: { app: string, lang: string }
     ) => WidgetInstance
   }
 }
 
-export {} // Add this to ensure it's a module
+export { } // Add this to ensure it's a module
