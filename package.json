@@ -23,6 +23,7 @@
     "eslint-plugin-format": "catalog:lint",
     "lint-staged": "catalog:lint",
     "nimiq-css": "catalog:unocss",
+    "pncat": "catalog:cli",
     "simple-git-hooks": "catalog:lint",
     "typescript": "catalog:types",
     "unocss": "catalog:unocss",

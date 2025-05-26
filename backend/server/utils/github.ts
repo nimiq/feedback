@@ -10,7 +10,9 @@ export interface CreateGitHubIssueOptions {
 
 type Issue = RestEndpointMethodTypes['issues']['create']['parameters']
 
-type CreateGitHubResult = Result<{ issueUrl: string }>
+export interface GitHubIssue { issueUrl: string }
+
+type CreateGitHubResult = Result<GitHubIssue>
 
 export async function createGitHubIssue({ markdown: body, form: { app, type, rating } }: CreateGitHubIssueOptions): CreateGitHubResult {
   const { token, owner, repo } = useRuntimeConfig().github

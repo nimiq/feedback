@@ -8,7 +8,4 @@ export default antfu({
   pnpm: true,
   typescript: true,
   ignores: ['./backend/**/*', './dist/**/*', './node_modules/**/*'],
-  rules: {
-    'no-console': 'off', // TODO Remove me
-  },
 })

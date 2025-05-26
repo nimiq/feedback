@@ -11,12 +11,12 @@ import 'virtual:uno.css'
 // i18n initialization
 const i18n = createI18n({
   legacy: false,
-  locale: en, // Default locale
-  fallbackLocale: en,
+  locale: 'en', // Default locale
+  fallbackLocale: 'en',
   messages: {
     en: enMessages,
     es: esMessages,
   },
 })
 
-createApp(App).use(i18n).mount(#app) // Use i18n
+createApp(App).use(i18n).mount('#app')

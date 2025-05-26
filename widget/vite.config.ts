@@ -9,14 +9,13 @@ import { defineConfig } from 'vite'
 const root = resolve(join(fileURLToPath(import.meta.url), '../..'))
 const sharedBackendDir = join(root, 'backend/shared')
 const widgetFolder = join(root, 'widget')
-const playgroundFolder = join(root, 'playground') // Kept for watch, though not strictly necessary for build output
 const entry = join(widgetFolder, 'src/widget-entry.ts')
 
 export default defineConfig({
   publicDir: false,
   plugins: [
     vue(),
-    replace({ // MODIFIED: Removed __APP_NAME__ and __LANG_CODE__
+    replace({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
       'preventAssignment': true,
     }),
@@ -34,11 +33,8 @@ export default defineConfig({
       formats: ['umd'] as const,
       fileName: () => 'widget.js', // Ensured this is correct
     },
-    outDir: resolve(root, 'backend/public'), // MODIFIED: Reverted to single output directory
+    outDir: resolve(root, 'backend/public'),
     rollupOptions: {},
-    watch: { // Kept watch configuration as it was not mentioned to be removed
-      include: [`${widgetFolder}/**/*`, `${playgroundFolder}/**/*`],
-    },
   },
   resolve: {
     alias: {

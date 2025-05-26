@@ -1,9 +1,6 @@
-import type { FeedbackResponse, FeedbackResponseError } from '~~/shared/types'
 import { randomUUID } from 'node:crypto'
 import consola from 'consola'
 import { safeParse } from 'valibot'
-
-// TODO rename to production
 
 // In the backend we don't distinguish between the different types of forms,
 // instead we treat them as a single form with different types.
@@ -38,6 +35,10 @@ export default defineEventHandler(async (event) => {
     return { success: false, message: 'There was an error creating the GitHub issue', details: githubIssueError } satisfies FeedbackResponseError
   }
 
+  const [slack, slackMessageError] = await createSlackMessage({ form, markdown, github })
+  if (!slack)
+    consola.warn('Slack message error:', slackMessageError)
+
   const fullSubmission = await useDrizzle().insert(tables.submissions).values({
     ...form,
     id,
@@ -49,5 +50,5 @@ export default defineEventHandler(async (event) => {
 
   consola.success('Submission created:', fullSubmission)
 
-  return { success: true, github, submission: fullSubmission } satisfies FeedbackResponse
+  return { success: true, github, slack, submission: fullSubmission } satisfies FeedbackResponse
 })

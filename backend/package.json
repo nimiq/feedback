@@ -21,20 +21,25 @@
     "@octokit/rest": "catalog:server",
     "drizzle-orm": "catalog:server",
     "nuxt": "catalog:nuxt",
+    "reka-ui": "catalog:frontend",
     "valibot": "catalog:server"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@nuxt/eslint": "catalog:lint",
+    "@nuxt/scripts": "catalog:dev",
     "@nuxthub/core": "catalog:server",
+    "@unocss/nuxt": "catalog:style",
     "@vue/tsconfig": "catalog:types",
+    "@vueuse/core": "catalog:utils",
     "@vueuse/nuxt": "catalog:nuxt",
-    "consola": "catalog:",
+    "consola": "catalog:node",
     "drizzle-kit": "catalog:server",
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
     "lint-staged": "catalog:lint",
     "typescript": "catalog:types",
+    "unocss": "catalog:unocss",
     "wrangler": "catalog:server"
   },
   "simple-git-hooks": {

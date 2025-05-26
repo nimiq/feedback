@@ -1,11 +1,12 @@
 import process from 'node:process'
-import { object, safeParse, string } from 'valibot'
+import { object, optional, safeParse, string } from 'valibot'
 
 const EnvSchema = object({
   NUXT_GITHUB_OWNER: string(),
   NUXT_GITHUB_REPO: string(),
   NUXT_GITHUB_TOKEN: string(),
   NUXT_PRODUCTION_URL: string(),
+  NUXT_SLACK_WEBHOOK_URL: optional(string()),
 })
 
 // Function to validate environment variables

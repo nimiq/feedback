@@ -30,7 +30,7 @@ onMounted(async () => {
 
 <template>
   <label
-    for="attachments" outline=" 1.5 offset--1.5 neutral-400 hocus:blue-500"
+    for="attachments" outline=" 1.5 neutral-400 hocus:blue-500"
     :class="{ 'cursor-pointer': files.length === 0 }" group rounded-8 w-full transition-colors f-py-sm
   >
     <div grid="~ gap-16 justify-center cols-[repeat(auto-fit,128px)]" mx-auto w-full>

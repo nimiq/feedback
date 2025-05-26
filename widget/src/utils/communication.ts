@@ -1,4 +1,4 @@
-import type { WidgetEvents } from '../types/communication'
+import type { WidgetEvents } from '#backend/types'
 
 export class SimpleWidgetCommunication {
   private listeners: Partial<{

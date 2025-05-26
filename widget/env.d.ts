@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+import type { MountFeedbackWidgetFn } from '#backend/types'
+
 // This specifically handles Vue component import declarations
 declare module '*.vue' {
   import type { DefineComponent } from 'vue'
@@ -10,8 +12,8 @@ declare module '*.vue' {
 
 declare global {
   interface Window {
-    mountFeedbackWidget: (selector: string, props?: WidgetProps) => WidgetInstance
+    mountFeedbackWidget: MountFeedbackWidgetFn
   }
 }
 
-export {}
+export { }

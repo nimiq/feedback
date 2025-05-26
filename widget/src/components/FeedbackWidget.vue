@@ -7,8 +7,7 @@ import FeedbackForm from './FeedbackForm.vue'
 import FormContainer from './FormContainer.vue'
 import IdeaForm from './IdeaForm.vue'
 
-// MODIFIED: Added appName to props
-const props = defineProps<{ appName: string }>()
+defineProps<{ app: string }>()
 
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
@@ -32,14 +31,11 @@ function selectForm(type: FormType) {
 }
 
 function goBack() {
-  console.log('Widget goBack called, resetting activeForm')
   activeForm.value = undefined
   communication.emit('go-back', undefined)
 }
 
-// Handle form submission events
 function handleFormSuccess(data: any) {
-  console.log('Form submitted successfully WIDGET:', data)
   communication.emit('form-submitted', { success: true, data })
 }
 
@@ -53,7 +49,6 @@ defineExpose({
     activeForm.value = undefined
   },
   showForm(type: FormType) {
-    console.log('showForm widget', type)
     activeForm.value = type
   },
   closeWidget() {
@@ -102,9 +97,8 @@ const files = ref<File[]>([])
       </div>
     </div>
 
-    <!-- MODIFIED: Pass appName to FormContainer -->
     <FormContainer
-      v-else :files="files" :type="activeForm!" :app-name="props.appName" @form-success="handleFormSuccess"
+      v-else :files="files" :type="activeForm!" :app @form-success="handleFormSuccess"
       @form-error="handleFormError"
     >
       <component :is="cmp" />

@@ -1,21 +1,22 @@
 packages:
   - ./
-  - ./playground
   - ./backend
   - ./widget
-catalog:
-  '@vueuse/core': ^13.2.0
-  consola: ^3.4.2
-  vue-i18n: ^11.1.3
 catalogs:
   bundle:
     '@rollup/plugin-replace': ^6.0.2
     '@vitejs/plugin-vue': ^5.2.4
     vite: ^6.3.5
     vite-plugin-vue-devtools: ^7.7.6
+  cli:
+    pncat: ^0.2.3
+  dev:
+    '@nuxt/scripts': ^0.11.7
   frontend:
     reka-ui: ^2.2.1
     vue: ^3.5.14
+  i18n:
+    vue-i18n: ^11.1.4
   lint:
     '@antfu/eslint-config': ^4.13.2
     '@nuxt/eslint': 1.4.1
@@ -23,18 +24,22 @@ catalogs:
     eslint-plugin-format: ^1.0.1
     lint-staged: ^16.0.0
     simple-git-hooks: ^2.13.0
+  node:
+    consola: ^3.4.2
   nuxt:
-    '@nuxt/fonts': 0.11.4
-    '@nuxt/image': 1.10.0
+    '@nuxt/fonts': ^0.11.4
+    '@nuxt/image': ^1.10.0
     '@vueuse/nuxt': ^13.2.0
     nuxt: ^3.17.4
   server:
     '@nuxthub/core': ^0.8.27
-    '@octokit/rest': ^21.1.1
+    '@octokit/rest': ^22.0.0
     drizzle-kit: ^0.31.1
     drizzle-orm: ^0.43.1
     valibot: ^1.1.0
-    wrangler: ^4.16.0
+    wrangler: ^4.16.1
+  style:
+    '@unocss/nuxt': ^66.1.2
   tools:
     '@antfu/ni': ^24.4.0
   types:
@@ -49,6 +54,10 @@ catalogs:
     nimiq-css: ^1.0.0-beta.37
     unocss: ^66.1.2
     unocss-preset-onmax: ^1.0.0-beta.25
+  utils:
+    '@vueuse/core': ^13.2.0
+ignoredBuiltDependencies:
+  - pncat
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild

@@ -1,6 +1,3 @@
-<script lang="ts">
-</script>
-
 <script setup lang="ts">
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
 import { ref } from 'vue'
@@ -10,8 +7,7 @@ export interface FormContainerEmits {
   formError: [{ error: string, details?: any }]
 }
 
-// MODIFIED: Added appName to props
-const { type, files = [], appName } = defineProps<{ type: FormType, files?: File[], appName: string }>()
+const { type, files = [], app } = defineProps<{ type: FormType, files?: File[], app: string }>()
 
 const emit = defineEmits<FormContainerEmits>()
 
@@ -44,7 +40,6 @@ async function submitFeedback(event: SubmitEvent) {
 
   const formEl = event.target as HTMLFormElement
   const formData = new FormData(formEl)
-  formData.append('app', appName) // MODIFIED: Append appName from props
 
   if (type === 'bug' || type === 'idea') {
     formData.delete('attachments')
@@ -86,9 +81,9 @@ async function submitFeedback(event: SubmitEvent) {
       <p>{{ $t('formContainer.successMessage') }}</p>
     </div>
 
-    <form v-else flex="~ col gap-16" @submit.prevent="submitFeedback">
+    <form v-else flex="~ col gap-16" px-1.5 @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
-      <!-- REMOVED: <input type="text" name="app" value="__APP_NAME__" sr-only> -->
+      <input type="text" name="app" :value="app" sr-only>
 
       <slot />
 
@@ -123,18 +118,22 @@ async function submitFeedback(event: SubmitEvent) {
   --border-color: rgb(var(--nq-neutral-400));
   outline: 1.5px solid var(--border-color);
 }
+
 [nq-input-box]:placeholder {
   --placeholder-color: rgb(var(--nq-neutral-500));
   color: var(--placeholder-color);
   transition: color 200ms var(--nq-ease);
 }
+
 [nq-input-box]:hover {
   --border-color: rgb(var(--nq-blue-600));
 }
+
 [nq-input-box]:focus-visible {
   --border-color: rgb(var(--nq-blue));
   color: rgb(var(--nq-blue));
 }
+
 [nq-pill-xl] {
   border-radius: 9999px;
   color: rgb(var(--nq-white));

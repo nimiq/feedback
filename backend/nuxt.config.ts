@@ -16,8 +16,15 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vueuse/nuxt',
     '@nuxthub/core',
+    'reka-ui/nuxt',
+    '@unocss/nuxt',
+    '@nuxt/scripts',
   ],
   future: { compatibilityVersion: 4 },
+
+  unocss: {
+    configFile: '../uno.config.ts',
+  },
 
   eslint: {
     config: {
@@ -37,8 +44,19 @@ export default defineNuxtConfig({
       repo: process.env.NUXT_GITHUB_REPO,
       token: process.env.NUXT_GITHUB_TOKEN,
     },
+    slack: {
+      webhookUrl: process.env.NUXT_SLACK_WEBHOOK_URL,
+    },
     productionUrl: process.env.NUXT_PRODUCTION_URL,
   },
+
+  typescript: {
+    tsConfig: {
+      include: ['./app/types.d.ts'],
+    },
+  },
+
+  watch: ['../widget/**/*.{ts,vue,js,css}'],
 
   routeRules: {
     '/widget.js': {
