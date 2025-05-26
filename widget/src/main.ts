@@ -1,22 +1,26 @@
-import { createApp } from 'vue'
-// i18n imports
-import { createI18n } from 'vue-i18n'
+import type { I18nContext } from './locales/types'
 
+import { createApp } from 'vue'
 import App from './App.vue'
-import enMessages from './locales/en.json'
-import esMessages from './locales/es.json'
+import { enMessages } from './locales/en'
+import { esMessages } from './locales/es'
+import { I18nInjectionKey } from './locales/types'
+import { createTranslationFunction } from './utils/i18n'
 
 import 'virtual:uno.css'
 
-// i18n initialization
-const i18n = createI18n({
-  legacy: false,
-  locale: 'en', // Default locale
-  fallbackLocale: 'en',
-  messages: {
-    en: enMessages,
-    es: esMessages,
-  },
-})
+// Default locale setup
+const defaultLocale = 'en'
+const localeMessages = {
+  en: enMessages,
+  es: esMessages,
+}
 
-createApp(App).use(i18n).mount('#app')
+const currentMessages = localeMessages[defaultLocale]
+const i18nContext: I18nContext = {
+  locale: defaultLocale,
+  messages: currentMessages,
+  t: createTranslationFunction(currentMessages),
+}
+
+createApp(App).provide(I18nInjectionKey, i18nContext).mount('#app')

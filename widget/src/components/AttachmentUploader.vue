@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useT } from '../composables/useI18n'
 
 const { maxFiles = 5 } = defineProps<{ maxFiles?: number }>()
 const files = defineModel<File[]>({ default: [] })
 
+const t = useT()
 const fileInput = ref<HTMLInputElement>()
 
 const previews = computed(() => files.value.map(file => URL.createObjectURL(file)))
@@ -39,11 +41,11 @@ onMounted(async () => {
         outline=" 1.5 neutral-200"
       >
         <img
-          :src="preview" :alt="$t('attachmentUploader.previewAlt', { number: index + 1 })" rounded-4 bg-neutral-100
+          :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })" rounded-4 bg-neutral-100
           object-contain
         >
         <button
-          type="button" :aria-label="$t('attachmentUploader.deleteImageLabel')" outline="1.5 offset--1.5 white/8"
+          type="button" :aria-label="t('attachmentUploader.deleteImageLabel')" outline="1.5 offset--1.5 white/8"
           stack rounded-full bg-white size-24 shadow self-start right--12 top--12 justify-self-end
           @click.stop="removeFile(index)"
         >
@@ -53,8 +55,8 @@ onMounted(async () => {
 
       <div flex="~ col justify-center items-center" rounded-4 size-128 aspect-square outline="1.5 neutral/15">
         <div text="24 neutral-700 group-hocus:neutral-800" transition-colors i-nimiq:mountain-frame />
-        <span font-semibold mt-6>{{ $t('attachmentUploader.uploadHere') }}</span>
-        <span text="f-xs neutral-800" mt-2>{{ $t('attachmentUploader.anyImageFormat') }}</span>
+        <span font-semibold mt-6>{{ t('attachmentUploader.uploadHere') }}</span>
+        <span text="f-xs neutral-800" mt-2>{{ t('attachmentUploader.anyImageFormat') }}</span>
       </div>
     </div>
 

@@ -13,8 +13,7 @@
   },
   "dependencies": {
     "reka-ui": "catalog:frontend",
-    "vue": "catalog:frontend",
-    "vue-i18n": "catalog:i18n"
+    "vue": "catalog:frontend"
   },
   "devDependencies": {
     "@iconify/utils": "catalog:unocss",

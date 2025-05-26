@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { defineModel } from 'vue'
+import { useT } from '../composables/useI18n'
 
 // placeholder constant removed
 const rating = defineModel<number>({ default: 0 })
+const t = useT()
 </script>
 
 <template>
@@ -23,7 +25,7 @@ const rating = defineModel<number>({ default: 0 })
 
   <label f-mt-sm>
     <textarea
-      id="description" name="description" :placeholder="$t('feedbackForm.descriptionPlaceholder')" rows="4"
+      id="description" name="description" :placeholder="t('feedbackForm.descriptionPlaceholder')" rows="4"
       required nq-input-box
     />
   </label>

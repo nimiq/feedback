@@ -2,8 +2,6 @@ import type { FormType, WidgetInstance, WidgetProps } from '#backend/types'
 import type { ComponentPublicInstance } from 'vue'
 import type { SimpleWidgetCommunication } from './utils/communication'
 import { createApp } from 'vue'
-// i18n imports
-import { createI18n } from 'vue-i18n'
 
 import FeedbackWidget from './components/FeedbackWidget.vue'
 import enMessages from './locales/en.json'

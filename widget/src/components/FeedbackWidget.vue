@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormType } from '#backend/types'
 import { computed, ref } from 'vue'
+import { useT } from '../composables/useI18n'
 import { createWidgetCommunication } from '../utils/communication'
 import BugForm from './BugForm.vue'
 import FeedbackForm from './FeedbackForm.vue'
@@ -11,6 +12,7 @@ defineProps<{ app: string }>()
 
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
+const t = useT()
 
 const cmp = computed(() => {
   switch (activeForm.value) {
@@ -70,29 +72,29 @@ const files = ref<File[]>([])
     <!-- Form selection grid -->
     <div v-if="!activeForm">
       <h2 text="24 center neutral lh-24" font-bold lh-none mb-12>
-        {{ $t('feedbackWidget.title') }}
+        {{ t('feedbackWidget.title') }}
       </h2>
 
       <div flex="~ col gap-32">
         <div grid="~ rows-2 cols-2 gap-16" f-mt-lg f-mb-md class="grid-container">
           <button data-color="red" col-span-2 nq-hoverable @click="selectForm('bug')">
             <div i-nimiq:exclamation />
-            <span>{{ $t('feedbackWidget.bugReportButton') }}</span>
+            <span>{{ t('feedbackWidget.bugReportButton') }}</span>
           </button>
 
           <button data-color="green" nq-hoverable @click="selectForm('idea')">
             <div i-nimiq:leaf-2-filled />
-            <span>{{ $t('feedbackWidget.ideaButton') }}</span>
+            <span>{{ t('feedbackWidget.ideaButton') }}</span>
           </button>
 
           <button data-color="gold" nq-hoverable @click="selectForm('feedback')">
             <div i-nimiq:star />
-            <span>{{ $t('feedbackWidget.feedbackButton') }}</span>
+            <span>{{ t('feedbackWidget.feedbackButton') }}</span>
           </button>
         </div>
         <p text="center f-sm neutral-800">
           <a href="https://nimiq.com" target="_blank" un-text-current underline hocus:bg-transparent>
-            {{ $t('feedbackWidget.termsAndConditionsLink') }}</a>{{ $t('feedbackWidget.termsApplySuffix') }}
+            {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}
         </p>
       </div>
     </div>

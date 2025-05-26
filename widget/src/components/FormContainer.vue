@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
 import { ref } from 'vue'
+import { useT } from '../composables/useI18n'
 
 export interface FormContainerEmits {
   formSuccess: [data: FeedbackResponse]
@@ -10,6 +11,7 @@ export interface FormContainerEmits {
 const { type, files = [], app } = defineProps<{ type: FormType, files?: File[], app: string }>()
 
 const emit = defineEmits<FormContainerEmits>()
+const t = useT()
 
 const error = ref<FeedbackResponseError>()
 const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
@@ -74,11 +76,11 @@ async function submitFeedback(event: SubmitEvent) {
       >
         <div :class="icon[type]" text-white />
       </div>
-      {{ $t(titleKeys[type]) }}
+      {{ t(titleKeys[type]) }}
     </h2>
 
     <div v-if="status === 'success'" role="alert">
-      <p>{{ $t('formContainer.successMessage') }}</p>
+      <p>{{ t('formContainer.successMessage') }}</p>
     </div>
 
     <form v-else flex="~ col gap-16" px-1.5 @submit.prevent="submitFeedback">
@@ -89,20 +91,20 @@ async function submitFeedback(event: SubmitEvent) {
 
       <div v-if="status === 'error'" role="alert" text="f-xs red-1100" font-semibold>
         <p>
-          <strong>{{ $t('formContainer.errorPrefix') }}</strong> {{ error?.message }}
+          <strong>{{ t('formContainer.errorPrefix') }}</strong> {{ error?.message }}
         </p>
         <ul v-for="issue in error.issues" :key="issue" list-disc f-px-xs>
           <li>{{ issue }}</li>
         </ul>
         <details>
-          <summary>{{ $t('formContainer.errorDetailsSummary') }}</summary>
+          <summary>{{ t('formContainer.errorDetailsSummary') }}</summary>
           <pre outline="1.5 red-500" font-normal font-mono rounded-6 bg-red-400 f-p-2xs>{{ error }}</pre>
         </details>
       </div>
 
       <button type="submit" :disabled="status === 'pending'" mx-0 f-mt-lg nq-pill-xl nq-pill-blue disabled:op-60>
         <div v-if="status === 'pending'" i-nimiq:spinner />
-        {{ status === "pending" ? $t('formContainer.sendingButton') : $t('formContainer.submitButtonDefault') }}
+        {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
       </button>
     </form>
   </div>

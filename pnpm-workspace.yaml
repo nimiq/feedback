@@ -15,8 +15,6 @@ catalogs:
   frontend:
     reka-ui: ^2.2.1
     vue: ^3.5.14
-  i18n:
-    vue-i18n: ^11.1.4
   lint:
     '@antfu/eslint-config': ^4.13.2
     '@nuxt/eslint': 1.4.1
@@ -60,6 +58,7 @@ ignoredBuiltDependencies:
   - pncat
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - better-sqlite3
   - esbuild
   - sharp
   - simple-git-hooks

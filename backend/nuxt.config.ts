@@ -1,6 +1,6 @@
 import process from 'node:process'
-import { defineNuxtConfig } from 'nuxt/config'
 
+import { defineNuxtConfig } from 'nuxt/config'
 import { validateEnv } from './lib/env'
 
 // Verify environment variables. Throw an error if any are missing.
@@ -8,7 +8,7 @@ validateEnv()
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
+  compatibilityDate: '2024-05-05',
   devtools: { enabled: true },
   modules: [
     '@nuxt/eslint',
@@ -56,7 +56,7 @@ export default defineNuxtConfig({
     },
   },
 
-  watch: ['../widget/**/*.{ts,vue,js,css}'],
+  watch: ['~~/../widget/**/*.{ts,vue,js,css}'],
 
   routeRules: {
     '/widget.js': {
