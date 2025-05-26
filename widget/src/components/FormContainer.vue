@@ -71,8 +71,8 @@ async function submitFeedback(event: SubmitEvent) {
 </script>
 
 <template>
-  <div>
-    <h2 flex="~ items-center gap-8" sie-full text-14 mb-16 text-balance nq-label>
+  <div flex="~ col">
+    <h2 flex="~ items-center gap-8" text-14 mb-16 size-full text-balance nq-label>
       <div
         :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
         style="box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.07), 0px 1.5px 3px 0px rgba(0, 0, 0, 0.05), 0px 0.337px 2px 0px rgba(0, 0, 0, 0.03);"
@@ -105,7 +105,7 @@ async function submitFeedback(event: SubmitEvent) {
         </details>
       </div>
 
-      <button type="submit" :disabled="status === 'pending'" mx-0 f-mt-lg nq-pill-xl nq-pill-blue disabled:op-60>
+      <button type="submit" :disabled="status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
         <div v-if="status === 'pending'" i-nimiq:spinner />
         {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
       </button>

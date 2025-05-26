@@ -70,12 +70,12 @@ const files = ref<File[]>([])
     mode="out-in"
   >
     <!-- Form selection grid -->
-    <div v-if="!activeForm" size-full>
+    <div v-if="!activeForm" size-full flex="~ col">
       <h2 text="24 center neutral lh-24" font-bold lh-none mb-12>
         {{ t('feedbackWidget.title') }}
       </h2>
 
-      <div flex="~ col gap-32">
+      <div flex="~ col gap-32" h-full>
         <div grid="~ rows-2 cols-2 gap-16" f-mt-lg f-mb-md class="grid-container">
           <button data-color="red" col-span-2 nq-hoverable @click="selectForm('bug')">
             <div i-nimiq:exclamation />
@@ -92,7 +92,7 @@ const files = ref<File[]>([])
             <span>{{ t('feedbackWidget.feedbackButton') }}</span>
           </button>
         </div>
-        <p text="center f-sm neutral-800">
+        <p text="center f-sm neutral-800" mt-auto>
           <a href="https://nimiq.com" target="_blank" un-text-current underline hocus:bg-transparent>
             {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}
         </p>
