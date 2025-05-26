@@ -50,6 +50,7 @@ Mount the widget to any DOM element:
     const widget = window.mountFeedbackWidget('#feedback-widget', {
       app: 'nimiq-wallet', // 'nimiq-wallet' | 'nimiq-pay' | 'playground'
       lang: 'en', // 'en' | 'es' (optional, defaults to 'en')
+      feedbackEndpoint: 'http://localhost:3000/api/feedback',
     })
 
     // Use widget methods
@@ -75,6 +76,7 @@ export type FormType = 'bug' | 'idea' | 'feedback'
 export interface WidgetProps {
   app: App
   lang?: string
+  feedbackEndpoint?: string
 }
 
 export interface WidgetEvents {

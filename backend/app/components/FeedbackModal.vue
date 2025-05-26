@@ -5,7 +5,7 @@ import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, Di
 
 import { nextTick, ref, watch } from 'vue'
 
-const { lang = 'en' } = defineProps<{ lang?: string }>()
+const { lang = 'en', feedbackEndpoint = '/api/feedback' } = defineProps<{ lang?: string, feedbackEndpoint?: string }>()
 
 useHead({ link: [{ rel: 'stylesheet', href: '/widget.css' }] })
 useScript('/widget.js')
@@ -26,8 +26,8 @@ function mountWidget() {
         return
       }
       if (window.mountFeedbackWidget) {
-        console.log(`Mounting widget for app: playground, lang: ${lang}`)
-        widgetInstance.value = window.mountFeedbackWidget('#widget-container', { app: 'playground', lang })
+        console.log(`Mounting widget for app: playground, lang: ${lang}, feedbackEndpoint: ${feedbackEndpoint}`)
+        widgetInstance.value = window.mountFeedbackWidget('#widget-container', { app: 'playground', lang, feedbackEndpoint })
         setupCommunicationListeners()
       }
       else {

@@ -18,7 +18,7 @@ interface FeedbackWidgetInstance extends ComponentPublicInstance {
   communication: SimpleWidgetCommunication
 }
 
-window.mountFeedbackWidget = (selector: string, { app, lang = 'en' }: WidgetProps): WidgetInstance => {
+window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndpoint }: WidgetProps): WidgetInstance => {
   const el = document.querySelector(selector)
   if (!el)
     throw new Error(`Mount target ${selector} not found`)
@@ -38,7 +38,7 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en' }: WidgetProp
       },
     })
 
-    const vueApp = createApp(FeedbackWidget, { app }).use(i18n)
+    const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint }).use(i18n)
     const instance = vueApp.mount(el) as FeedbackWidgetInstance
 
     // Return the widget instance that the host can control

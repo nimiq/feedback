@@ -8,7 +8,12 @@ export interface FormContainerEmits {
   formError: [{ error: string, details?: any }]
 }
 
-const { type, files = [], app } = defineProps<{ type: FormType, files?: File[], app: string }>()
+const { type, files = [], app, feedbackEndpoint = 'https://nq-feedback.maximogarciamtnez.workers.dev/api/feedback' } = defineProps<{
+  type: FormType
+  files?: File[]
+  app: string
+  feedbackEndpoint?: string
+}>()
 
 const emit = defineEmits<FormContainerEmits>()
 const t = useT()
@@ -34,8 +39,6 @@ const iconGradient: Record<FormType, string> = {
   idea: 'bg-gradient-green',
   feedback: 'bg-gradient-gold',
 }
-
-const feedbackEndpoint = 'http://localhost:3000/api/feedback'
 
 async function submitFeedback(event: SubmitEvent) {
   status.value = 'pending'
@@ -69,7 +72,7 @@ async function submitFeedback(event: SubmitEvent) {
 
 <template>
   <div>
-    <h2 flex="~ items-center gap-8" text-14 mb-16 text-balance nq-label>
+    <h2 flex="~ items-center gap-8" sie-full text-14 mb-16 text-balance nq-label>
       <div
         :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
         style="box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.07), 0px 1.5px 3px 0px rgba(0, 0, 0, 0.05), 0px 0.337px 2px 0px rgba(0, 0, 0, 0.03);"

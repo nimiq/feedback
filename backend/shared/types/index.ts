@@ -49,6 +49,7 @@ export interface WidgetEvents {
   'form-selected': FormType
   'go-back': void
   'form-submitted': { success: true, data: any }
+  'formError': { success: false, error: string, details?: any }
   'form-error': { success: false, error: string, details?: any }
 }
 
@@ -63,6 +64,7 @@ export interface WidgetProps2 {
 export interface WidgetProps {
   app: App
   lang?: string
+  feedbackEndpoint?: string
 }
 
 export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance

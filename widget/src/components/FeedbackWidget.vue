@@ -8,7 +8,7 @@ import FeedbackForm from './FeedbackForm.vue'
 import FormContainer from './FormContainer.vue'
 import IdeaForm from './IdeaForm.vue'
 
-defineProps<{ app: string }>()
+defineProps<{ app: string, feedbackEndpoint?: string }>()
 
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
@@ -42,7 +42,7 @@ function handleFormSuccess(data: any) {
 }
 
 function handleFormError({ error, details }: { error: string, details?: any }) {
-  communication.emit('formError', { success: false, error, details })
+  communication.emit('form-error', { success: false, error, details })
 }
 
 // Expose widget control methods
@@ -70,7 +70,7 @@ const files = ref<File[]>([])
     mode="out-in"
   >
     <!-- Form selection grid -->
-    <div v-if="!activeForm">
+    <div v-if="!activeForm" size-full>
       <h2 text="24 center neutral lh-24" font-bold lh-none mb-12>
         {{ t('feedbackWidget.title') }}
       </h2>
@@ -100,8 +100,8 @@ const files = ref<File[]>([])
     </div>
 
     <FormContainer
-      v-else :files="files" :type="activeForm!" :app @form-success="handleFormSuccess"
-      @form-error="handleFormError"
+      v-else :files :type="activeForm!" :app :feedback-endpoint
+      @form-success="handleFormSuccess" @form-error="handleFormError"
     >
       <component :is="cmp" />
     </FormContainer>
