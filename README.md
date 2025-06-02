@@ -4,7 +4,7 @@ A customizable feedback widget for Vue 3 applications that allows users to submi
 
 ## Quick Start
 
-### 1. Import the JavaScript
+### 1. Import the JavaScript and CSS (not recommended for production)
 
 Add the widget script to your HTML:
 
@@ -12,15 +12,13 @@ Add the widget script to your HTML:
 <script src="http://localhost:3000/widget.js" defer></script>
 ```
 
-### 2. Import the CSS
-
 Add the widget styles to your HTML:
 
 ```html
 <link rel="stylesheet" href="http://localhost:3000/widget.css" />
 ```
 
-### 3. Deferred Loading (Recommended)
+### 2. Deferred Loading (Recommended)
 
 For better performance, load both CSS and JS with deferred loading:
 
@@ -38,7 +36,7 @@ For better performance, load both CSS and JS with deferred loading:
 <script src="http://localhost:3000/widget.js" defer></script>
 ```
 
-### 4. Mount the Widget
+### 3. Mount the Widget
 
 Mount the widget to any DOM element:
 
@@ -63,12 +61,12 @@ Mount the widget to any DOM element:
 </script>
 ```
 
-### 5. TypeScript Support
+### 4. TypeScript Support
 
 Add these type declarations to your Vue 3 project (e.g., in `env.d.ts` or `types.d.ts`):
 
 ```typescript
-// widget.types.ts
+// widget.types.d.ts
 
 export type App = 'nimiq-wallet' | 'nimiq-pay' | 'playground'
 export type FormType = 'bug' | 'idea' | 'feedback'
@@ -99,21 +97,13 @@ export interface WidgetInstance {
   }
 }
 
-export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance
-```
-
-### Window Declaration
-
-```typescript
-/// window.d.ts
-
-import type { MountFeedbackWidgetFn } from './types'
-
 declare global {
   interface Window {
     mountFeedbackWidget: MountFeedbackWidgetFn
   }
 }
+
+export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance
 
 export {}
 ```
