@@ -2,6 +2,8 @@ export type App = 'nimiq-wallet' | 'nimiq-pay' | 'playground'
 export type FormType = 'bug' | 'idea' | 'feedback'
 // export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
 
+export interface GitHubIssue { issueUrl: string }
+
 export interface FeedbackResponse {
   success: true
   github: GitHubIssue

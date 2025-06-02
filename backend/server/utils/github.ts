@@ -10,8 +10,6 @@ export interface CreateGitHubIssueOptions {
 
 type Issue = RestEndpointMethodTypes['issues']['create']['parameters']
 
-export interface GitHubIssue { issueUrl: string }
-
 type CreateGitHubResult = Result<GitHubIssue>
 
 export async function createGitHubIssue({ markdown: body, form: { app, type, rating } }: CreateGitHubIssueOptions): CreateGitHubResult {

@@ -3,5 +3,5 @@ import FeedbackWidget from './components/FeedbackWidget.vue'
 </script>
 
 <template>
-  <FeedbackWidget />
+  <FeedbackWidget app="playground" />
 </template>
