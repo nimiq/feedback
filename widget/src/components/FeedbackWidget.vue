@@ -32,11 +32,6 @@ function selectForm(type: FormType) {
   communication.emit('form-selected', type)
 }
 
-function goBack() {
-  activeForm.value = undefined
-  communication.emit('go-back', undefined)
-}
-
 function handleFormSuccess(data: any) {
   communication.emit('form-submitted', { success: true, data })
 }
@@ -56,7 +51,10 @@ defineExpose({
   closeWidget() {
     activeForm.value = undefined
   },
-  goBack,
+  goBack() {
+    activeForm.value = undefined
+    communication.emit('go-back', undefined)
+  },
   communication,
 })
 

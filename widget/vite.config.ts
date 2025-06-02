@@ -14,7 +14,14 @@ const entry = join(widgetFolder, 'src/widget-entry.ts')
 export default defineConfig({
   publicDir: false,
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          // This forces *every* SFC to use as its scope ID
+          scopeId: 'v-nq-feedback',
+        },
+      },
+    }),
     replace({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
       'preventAssignment': true,
