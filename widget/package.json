@@ -23,6 +23,7 @@
     "@vitejs/plugin-vue": "catalog:bundle",
     "@vue/tsconfig": "catalog:types",
     "nimiq-css": "catalog:unocss",
+    "nimiq-icons": "catalog:",
     "typescript": "catalog:types",
     "unocss": "catalog:unocss",
     "unocss-preset-onmax": "catalog:unocss",

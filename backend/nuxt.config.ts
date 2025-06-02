@@ -1,5 +1,4 @@
 import process from 'node:process'
-
 import { defineNuxtConfig } from 'nuxt/config'
 import { validateEnv } from './lib/env'
 
@@ -23,7 +22,7 @@ export default defineNuxtConfig({
   future: { compatibilityVersion: 4 },
 
   unocss: {
-    configFile: '../uno.config.ts',
+    configFile: './uno.config.ts',
   },
 
   eslint: {

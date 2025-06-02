@@ -12,7 +12,7 @@ const t = useT()
   <label>
     <textarea
       id="description" name="description" :placeholder="t('bugForm.descriptionPlaceholder')" :value="t('bugForm.descriptionDefaultValue')" rows="4" required
-      nq-input-box
+      nq-input-box focus-visible:outline-blue
     />
   </label>
 

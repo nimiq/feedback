@@ -125,10 +125,7 @@ function goBack() {
 
 <template>
   <DialogRoot @update:open="handleOpenChange">
-    <DialogTrigger
-      text="22/24 neutral-0" outline="1.5 offset--1.5 white/8" f-size="36/40" stack rounded-full bg-neutral
-      shadow-lg fixed f-bottom-md f-right-md
-    >
+    <DialogTrigger text="22/24 neutral-0" outline="1.5 offset--1.5 white/8" f-size="36/40" stack text-neutral-0 rounded-full bg-neutral shadow-lg fixed f-bottom-md f-right-md>
       <div i-nimiq:thumb-up-thumb-down />
     </DialogTrigger>
 
@@ -156,7 +153,7 @@ function goBack() {
           />
 
           <div v-if="currentView === 'success'" class="success-view f-p-md">
-            <DialogTitle text="24 center neutral lh-24" font-bold lh-none mb-12 px-24 lg:px-40 as="h2">
+            <DialogTitle text="24 center neutral lh-24" lh-none font-bold mb-12 px-24 lg:px-40 as="h2">
               <div i-nimiq:check />
               Thank you for your feedback!
             </DialogTitle>
@@ -172,7 +169,7 @@ function goBack() {
                 View on GitHub
               </a>
               <DialogClose
-                class="text-white mx-auto mt-4 px-4 py-2 rounded-md bg-gray-600 block transition-colors hover:bg-gray-700"
+                class="bg-gray-600 hover:bg-gray-700 text-white mx-auto mt-4 px-4 py-2 rounded-md block transition-colors"
               >
                 Close
               </DialogClose>
@@ -180,7 +177,7 @@ function goBack() {
           </div>
 
           <div v-else-if="currentView === 'error'" class="error-view f-p-md">
-            <DialogTitle text="24 center neutral lh-24" font-bold lh-none mb-12 px-24 lg:px-40 as="h2">
+            <DialogTitle text="24 center neutral lh-24" lh-none font-bold mb-12 px-24 lg:px-40 as="h2">
               <div i-nimiq:exclamation />
               Something went wrong
             </DialogTitle>
@@ -189,7 +186,7 @@ function goBack() {
                 {{ errorData?.error || 'An error occurred while submitting your feedback.' }}
               </p>
               <button
-                class="text-white mx-auto mt-4 px-4 py-2 rounded-md bg-blue-600 block transition-colors hover:bg-blue-700"
+                class="hover:bg-blue-700 text-white mx-auto mt-4 px-4 py-2 rounded-md bg-blue-600 block transition-colors"
                 @click="goBack"
               >
                 Try Again

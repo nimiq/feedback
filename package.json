@@ -21,6 +21,7 @@
     "@unocss/eslint-plugin": "catalog:unocss",
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
+    "eslint-plugin-pnpm-catalog": "catalog:",
     "lint-staged": "catalog:lint",
     "nimiq-css": "catalog:unocss",
     "pncat": "catalog:cli",

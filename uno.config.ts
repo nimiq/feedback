@@ -6,12 +6,16 @@ import { presetOnmax } from 'unocss-preset-onmax'
 
 export default defineConfig({
   presets: [
-    presetOnmax(),
+    presetOnmax({
+      presets: {
+        wind4: { preflights: { reset: false } },
+        unoVue: false,
+      },
+    }),
     presetNimiq({
       utilities: true,
       fonts: false,
       attributifyUtilities: true,
-      typography: true,
     }),
 
     presetIcons({

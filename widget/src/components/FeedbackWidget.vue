@@ -71,23 +71,23 @@ const files = ref<File[]>([])
   >
     <!-- Form selection grid -->
     <div v-if="!activeForm" size-full flex="~ col">
-      <h2 text="24 center neutral lh-24" font-bold lh-none mb-12>
+      <h2 text="24 center neutral lh-24" lh-none font-bold mb-12>
         {{ t('feedbackWidget.title') }}
       </h2>
 
       <div flex="~ col gap-32" h-full>
         <div grid="~ rows-2 cols-2 gap-16" f-mt-lg f-mb-md class="grid-container">
-          <button data-color="red" col-span-2 nq-hoverable @click="selectForm('bug')">
+          <button col-span-2 nq-hoverable-red @click="selectForm('bug')">
             <div i-nimiq:exclamation />
             <span>{{ t('feedbackWidget.bugReportButton') }}</span>
           </button>
 
-          <button data-color="green" nq-hoverable @click="selectForm('idea')">
+          <button nq-hoverable-green @click="selectForm('idea')">
             <div i-nimiq:leaf-2-filled />
             <span>{{ t('feedbackWidget.ideaButton') }}</span>
           </button>
 
-          <button data-color="gold" nq-hoverable @click="selectForm('feedback')">
+          <button nq-hoverable-gold @click="selectForm('feedback')">
             <div i-nimiq:star />
             <span>{{ t('feedbackWidget.feedbackButton') }}</span>
           </button>
@@ -112,18 +112,6 @@ const files = ref<File[]>([])
 .grid-container {
   button {
     --uno: 'flex flex-col gap-8 items-center justify-center text-white f-text-sm f-p-md f-rounded-md cursor-pointer';
-
-    &[data-color='green'] {
-      --uno: 'bg-gradient-green hocus:bg-gradient-green-darkened';
-    }
-
-    &[data-color='red'] {
-      --uno: 'bg-gradient-red hocus:bg-gradient-red-darkened';
-    }
-
-    &[data-color='gold'] {
-      --uno: 'bg-gradient-gold hocus:bg-gradient-gold-darkened';
-    }
 
     > div:first-child {
       --uno: 'f-size-md';

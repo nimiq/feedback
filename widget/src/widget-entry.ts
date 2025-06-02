@@ -1,12 +1,15 @@
 import type { FormType, WidgetInstance, WidgetProps } from '#backend/types'
 import type { ComponentPublicInstance } from 'vue'
+import type { I18nContext } from './locales/types'
 import type { SimpleWidgetCommunication } from './utils/communication'
-import { createApp } from 'vue'
 
+import { createApp } from 'vue'
 import FeedbackWidget from './components/FeedbackWidget.vue'
 import enMessages from './locales/en.json'
-import esMessages from './locales/es.json'
 
+import esMessages from './locales/es.json'
+import { I18nInjectionKey } from './locales/types'
+import { createTranslationFunction } from './utils/i18n'
 import 'virtual:uno.css'
 
 // Define type for the component instance
@@ -27,18 +30,22 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
   console.log(`Mounting feedback widget for app: ${app}, lang: ${lang}`, selector)
 
   try {
-    // i18n initialization
-    const i18n = createI18n({
-      legacy: false, // Use Composition API
-      locale: lang,
-      fallbackLocale: 'en',
-      messages: {
-        en: enMessages,
-        es: esMessages,
-      },
-    })
+    // Default locale setup
+    const defaultLocale = 'en'
+    const localeMessages = {
+      en: enMessages,
+      es: esMessages,
+    }
 
-    const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint }).use(i18n)
+    const currentMessages = localeMessages[defaultLocale]
+    const i18nContext: I18nContext = {
+      locale: defaultLocale,
+      messages: currentMessages,
+      t: createTranslationFunction(currentMessages),
+    }
+
+    const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint })
+    vueApp.provide(I18nInjectionKey, i18nContext).mount('#app')
     const instance = vueApp.mount(el) as FeedbackWidgetInstance
 
     // Return the widget instance that the host can control

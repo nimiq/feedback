@@ -101,7 +101,7 @@ async function submitFeedback(event: SubmitEvent) {
         </ul>
         <details>
           <summary>{{ t('formContainer.errorDetailsSummary') }}</summary>
-          <pre outline="1.5 red-500" font-normal font-mono rounded-6 bg-red-400 f-p-2xs>{{ error }}</pre>
+          <pre outline="1.5 red-500" font-mono font-normal rounded-6 bg-red-400 f-p-2xs>{{ error }}</pre>
         </details>
       </div>
 
@@ -120,28 +120,31 @@ async function submitFeedback(event: SubmitEvent) {
   border-radius: 6px;
   padding: 10px 12px;
   border: none;
-  --border-color: rgb(var(--nq-neutral-400));
+  --border-color: var(--colors-neutral-400);
   outline: 1.5px solid var(--border-color);
 }
 
 [nq-input-box]:placeholder {
-  --placeholder-color: rgb(var(--nq-neutral-500));
+  --placeholder-color: var(--colors-neutral-500);
   color: var(--placeholder-color);
   transition: color 200ms var(--nq-ease);
 }
 
 [nq-input-box]:hover {
-  --border-color: rgb(var(--nq-blue-600));
+  --border-color: var(--colors-blue-600);
 }
 
+[nq-input-box]:focus,
 [nq-input-box]:focus-visible {
-  --border-color: rgb(var(--nq-blue));
-  color: rgb(var(--nq-blue));
+  --border-color: var(--colors-blue);
+  color: var(--colors-blue);
+  outline-style: solid;
+  outline-width: 1.5px;
 }
 
 [nq-pill-xl] {
   border-radius: 9999px;
-  color: rgb(var(--nq-white));
+  color: var(--colors-white);
   width: 100%;
   padding: 1.5lh;
   line-height: 1;
