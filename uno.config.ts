@@ -24,4 +24,6 @@ export default defineConfig({
       },
     }),
   ],
+
+  outputToCssLayers: false,
 })
