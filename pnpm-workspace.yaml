@@ -52,7 +52,7 @@ catalogs:
   unocss:
     '@iconify/utils': ^2.3.0
     '@unocss/eslint-plugin': ^66.1.3
-    nimiq-css: ^1.0.0-beta.53
+    nimiq-css: ^1.0.0-beta.54
     unocss: ^66.1.3
     unocss-preset-onmax: ^1.0.0-beta.35
   utils:
