@@ -1,6 +1,6 @@
 import type { LocaleMessages } from './types'
 
-export const esMessages: LocaleMessages = {
+export default {
   attachmentUploader: {
     previewAlt: 'Vista previa',
     deleteImageLabel: 'Eliminar imagen',
@@ -38,4 +38,4 @@ export const esMessages: LocaleMessages = {
     descriptionPlaceholder: 'Por favor, cuéntanos cómo podemos mejorar tu experiencia con Nimiq*',
     exampleHint: 'Por ejemplo, una captura de pantalla de una función de otra aplicación',
   },
-}
+} satisfies LocaleMessages

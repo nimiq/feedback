@@ -5,9 +5,7 @@ import type { SimpleWidgetCommunication } from './utils/communication'
 
 import { createApp } from 'vue'
 import FeedbackWidget from './components/FeedbackWidget.vue'
-import enMessages from './locales/en.json'
-
-import esMessages from './locales/es.json'
+import { localeMessages } from './locales'
 import { I18nInjectionKey } from './locales/types'
 import { createTranslationFunction } from './utils/i18n'
 import 'virtual:uno.css'
@@ -30,14 +28,7 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
   console.log(`Mounting feedback widget for app: ${app}, lang: ${lang}`, selector)
 
   try {
-    // Default locale setup
-    const defaultLocale = 'en'
-    const localeMessages = {
-      en: enMessages,
-      es: esMessages,
-    }
-
-    const currentMessages = localeMessages[defaultLocale]
+    const currentMessages = localeMessages[lang]
     const i18nContext: I18nContext = {
       locale: defaultLocale,
       messages: currentMessages,
