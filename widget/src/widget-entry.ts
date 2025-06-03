@@ -10,7 +10,7 @@ import enMessages from './locales/en.json'
 import esMessages from './locales/es.json'
 import { I18nInjectionKey } from './locales/types'
 import { createTranslationFunction } from './utils/i18n'
-import 'virtual:uno.css'
+import 'uno.css'
 
 // Define type for the component instance
 interface FeedbackWidgetInstance extends ComponentPublicInstance {

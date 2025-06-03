@@ -5,6 +5,14 @@ import { defineConfig, presetIcons } from 'unocss'
 import { presetOnmax } from 'unocss-preset-onmax'
 
 export default defineConfig({
+  content: {
+    pipeline: {
+      include: [
+        // add JS/TS files so UnoCSS sees your classes in widget-entry.ts
+        'widget/src/**/*.{js,ts,vue}',
+      ],
+    },
+  },
   presets: [
     presetOnmax({
       presets: {
@@ -14,6 +22,7 @@ export default defineConfig({
     }),
     presetNimiq({
       utilities: true,
+      // preflight: false,
       fonts: false,
       attributifyUtilities: true,
     }),
