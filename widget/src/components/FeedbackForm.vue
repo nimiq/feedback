@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineModel } from 'vue'
 import { useT } from '../composables/useI18n'
 
 // placeholder constant removed

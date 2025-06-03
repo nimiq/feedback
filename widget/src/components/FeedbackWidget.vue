@@ -73,27 +73,21 @@ const files = ref<File[]>([])
         {{ t('feedbackWidget.title') }}
       </h2>
 
-      <div flex="~ col gap-32" h-full>
-        <div grid="~ rows-2 cols-2 gap-16" f-mt-lg f-mb-md class="grid-container">
-          <button col-span-2 nq-hoverable-red @click="selectForm('bug')">
-            <div i-nimiq:exclamation />
-            <span>{{ t('feedbackWidget.bugReportButton') }}</span>
-          </button>
+      <div grid="~ rows-2 cols-2 gap-16" class="grid-container" h-full f-mt-lg f-mb-md>
+        <button col-span-2 nq-hoverable-red @click="selectForm('bug')">
+          <div i-nimiq:exclamation />
+          <span>{{ t('feedbackWidget.bugReportButton') }}</span>
+        </button>
 
-          <button nq-hoverable-green @click="selectForm('idea')">
-            <div i-nimiq:leaf-2-filled />
-            <span>{{ t('feedbackWidget.ideaButton') }}</span>
-          </button>
+        <button nq-hoverable-green @click="selectForm('idea')">
+          <div i-nimiq:leaf-2-filled />
+          <span>{{ t('feedbackWidget.ideaButton') }}</span>
+        </button>
 
-          <button nq-hoverable-gold @click="selectForm('feedback')">
-            <div i-nimiq:star />
-            <span>{{ t('feedbackWidget.feedbackButton') }}</span>
-          </button>
-        </div>
-        <p text="center f-sm neutral-800" mt-auto>
-          <a href="https://nimiq.com" target="_blank" un-text-current underline hocus:bg-transparent>
-            {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}
-        </p>
+        <button nq-hoverable-gold @click="selectForm('feedback')">
+          <div i-nimiq:star />
+          <span>{{ t('feedbackWidget.feedbackButton') }}</span>
+        </button>
       </div>
     </div>
 

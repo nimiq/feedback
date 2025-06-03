@@ -7,6 +7,6 @@ export default withNuxt(
     vue: true,
     unocss: true,
     pnpm: true,
-    ignores: ['./public/widgets/*', './public/widget.*'],
+    ignores: ['./public/widget.*'],
   }),
 )

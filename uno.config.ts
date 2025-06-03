@@ -6,17 +6,12 @@ import { presetOnmax } from 'unocss-preset-onmax'
 
 export default defineConfig({
   content: {
-    pipeline: {
-      include: [
-        // add JS/TS files so UnoCSS sees your classes in widget-entry.ts
-        'widget/src/**/*.{js,ts,vue}',
-      ],
-    },
+    filesystem: ['widget/src/**/*.{js,ts,vue}'],
   },
   presets: [
     presetOnmax({
       presets: {
-        wind4: { preflights: { reset: false } },
+        wind4: { preflights: { reset: false, theme: true } },
         unoVue: false,
       },
     }),
@@ -33,6 +28,4 @@ export default defineConfig({
       },
     }),
   ],
-
-  outputToCssLayers: false,
 })

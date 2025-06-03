@@ -1,9 +1,10 @@
-import { array, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, string, transform } from 'valibot'
+import { array, boolean, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, string, transform } from 'valibot'
 import { imageMimeTypes } from '~~/shared/utils'
 
 export const FormSchema = object({
   type: picklist(['feedback', 'bug', 'idea'], 'Invalid submission type'),
   app: picklist(apps as App[], `Invalid app name. Use one of the following: ${apps.join(', ')}`),
+  acceptTerms: boolean('You need to accept the legal terms'),
   description: string('Description must be a string'),
   email: optional(string('Email must be a string')),
   rating: optional(pipe(

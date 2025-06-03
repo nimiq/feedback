@@ -17,22 +17,15 @@ const successData = ref<any>()
 const errorData = ref<any>()
 const isModalOpen = ref(false)
 
+const feedbackWidgetId = 'feedback-widget'
+
 function mountWidget() {
   // Ensure #widget-container is in the DOM before mounting, especially if currentView changes could affect its presence.
   if ((currentView.value === 'grid' || currentView.value === 'form')) {
     nextTick().then(() => { // Use nextTick to ensure DOM is updated
-      if (!document.getElementById('widget-container')) {
-        console.error('#widget-container not found. Aborting mount.')
-        return
-      }
-      if (window.mountFeedbackWidget) {
-        console.log(`Mounting widget for app: playground, lang: ${lang}, feedbackEndpoint: ${feedbackEndpoint}`)
-        widgetInstance.value = window.mountFeedbackWidget('#widget-container', { app: 'playground', lang, feedbackEndpoint })
-        setupCommunicationListeners()
-      }
-      else {
-        console.error('window.mountFeedbackWidget is not available.')
-      }
+      console.log(`Mounting widget for app: playground, lang: ${lang}, feedbackEndpoint: ${feedbackEndpoint}`)
+      widgetInstance.value = window.mountFeedbackWidget(`#${feedbackWidgetId}`, { app: 'playground', lang, feedbackEndpoint })
+      setupCommunicationListeners()
     })
   }
   else {
@@ -125,7 +118,10 @@ function goBack() {
 
 <template>
   <DialogRoot @update:open="handleOpenChange">
-    <DialogTrigger text="22/24 neutral-0" outline="1.5 offset--1.5 white/8" f-size="36/40" stack text-neutral-0 rounded-full bg-neutral shadow-lg fixed f-bottom-md f-right-md>
+    <DialogTrigger
+      text="22/24 neutral-0" outline="1.5 offset--1.5 white/8" f-size="36/40" stack text-neutral-0
+      rounded-full bg-neutral shadow-lg fixed f-bottom-md f-right-md
+    >
       <div i-nimiq:thumb-up-thumb-down />
     </DialogTrigger>
 
@@ -193,7 +189,7 @@ function goBack() {
               </button>
             </div>
           </div>
-          <div v-else id="widget-container" ref="widgetContainer" />
+          <div v-else id="feedback-widget" ref="widgetContainer" />
         </DialogContent>
       </Transition>
     </DialogPortal>

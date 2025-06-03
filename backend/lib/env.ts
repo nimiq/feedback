@@ -11,6 +11,12 @@ const EnvSchema = object({
 
 // Function to validate environment variables
 function tryParseEnv(schema: any, buildEnv: Record<string, string | undefined> = process.env) {
+  // skip validation if we are running nuxt prepare. Useful for the CI.
+  const command = process.env.COMMAND?.split(' ').at(0) || 'unkwown'
+  const skipEnvValidation = ['nuxt-prepare', 'nuxt-typecheck'].includes(command)
+  if (skipEnvValidation)
+    return buildEnv
+
   const result = safeParse(schema, buildEnv)
 
   if (!result.success) {

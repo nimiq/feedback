@@ -8,11 +8,11 @@
     "dev": "nuxt dev --remote --open",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "prepare": "nuxt prepare",
-    "postinstall": "nuxt prepare",
+    "prepare": "COMMAND=nuxt-prepare nuxt prepare",
+    "postinstall": "nr prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "nuxt typecheck",
+    "typecheck": "COMMAND=nuxt-typecheck nuxt typecheck",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
+    "@antfu/ni": "catalog:tools",
     "@nuxt/eslint": "catalog:lint",
     "@nuxt/scripts": "catalog:dev",
     "@nuxthub/core": "catalog:server",

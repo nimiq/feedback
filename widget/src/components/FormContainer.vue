@@ -8,14 +8,17 @@ export interface FormContainerEmits {
   formError: [{ error: string, details?: any }]
 }
 
-const { type, files = [], app, feedbackEndpoint = 'https://nq-feedback.maximogarciamtnez.workers.dev/api/feedback' } = defineProps<{
+const { type, files = [], app, feedbackEndpoint } = defineProps<{
   type: FormType
   files?: File[]
   app: string
-  feedbackEndpoint?: string
+  feedbackEndpoint: string
 }>()
 
 const emit = defineEmits<FormContainerEmits>()
+
+const acceptTerms = ref(true)
+
 const t = useT()
 
 const error = ref<FeedbackResponseError>()
@@ -34,6 +37,7 @@ const icon: Record<FormType, string> = {
   feedback: 'i-nimiq:star',
 }
 
+// @unocss-include
 const iconGradient: Record<FormType, string> = {
   bug: 'bg-gradient-red',
   idea: 'bg-gradient-green',
@@ -92,6 +96,14 @@ async function submitFeedback(event: SubmitEvent) {
 
       <slot />
 
+      <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
+        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" required nq-switch>
+        <span text-neutral-800>
+          <a href="https://nimiq.com" target="_blank" un-text-current>
+            {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}
+        </span>
+      </label>
+
       <div v-if="status === 'error'" role="alert" text="f-xs red-1100" font-semibold>
         <p>
           <strong>{{ t('formContainer.errorPrefix') }}</strong> {{ error?.message }}
@@ -105,7 +117,7 @@ async function submitFeedback(event: SubmitEvent) {
         </details>
       </div>
 
-      <button type="submit" :disabled="status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
+      <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
         <div v-if="status === 'pending'" i-nimiq:spinner />
         {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
       </button>
