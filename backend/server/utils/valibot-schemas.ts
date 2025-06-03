@@ -4,7 +4,7 @@ import { imageMimeTypes } from '~~/shared/utils'
 export const FormSchema = object({
   type: picklist(['feedback', 'bug', 'idea'], 'Invalid submission type'),
   app: picklist(apps as App[], `Invalid app name. Use one of the following: ${apps.join(', ')}`),
-  acceptTerms: boolean('You need to accept the legal terms'),
+  acceptTerms: pipe(string(), transform(value => value === 'true'), boolean('You need to accept the legal terms')),
   description: string('Description must be a string'),
   email: optional(string('Email must be a string')),
   rating: optional(pipe(

@@ -17,7 +17,7 @@ const { type, files = [], app, feedbackEndpoint } = defineProps<{
 
 const emit = defineEmits<FormContainerEmits>()
 
-const acceptTerms = ref(true)
+const acceptTerms = ref('on')
 
 const t = useT()
 
@@ -97,7 +97,7 @@ async function submitFeedback(event: SubmitEvent) {
       <slot />
 
       <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
-        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" required nq-switch>
+        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" :value="acceptTerms === 'on'" required nq-switch>
         <span text-neutral-800 select-none>
           <a href="https://nimiq.com" target="_blank" un-text-current>
             {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}
@@ -117,7 +117,7 @@ async function submitFeedback(event: SubmitEvent) {
         </details>
       </div>
 
-      <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
+      <button type="submit" :disabled="acceptTerms !== 'on' || status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
         <div v-if="status === 'pending'" i-nimiq:spinner />
         {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
       </button>
