@@ -17,6 +17,7 @@ export const submissions = sqliteTable('submissions', {
   email: text('email'),
   rating: integer('rating'),
   attachments: text('attachments', { mode: 'json' }).$type<string[]>(),
+  logs: text('logs'),
 
   createdAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`).$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),

@@ -23,4 +23,6 @@ export const FormSchema = object({
     minLength(0),
     maxLength(5),
   ), []),
+  shareDebugInfo: optional(pipe(string(), transform(value => value === 'true' || value === 'on'), boolean('Share debug info must be a boolean')), false),
+  logs: optional(string('Logs must be a string')),
 })

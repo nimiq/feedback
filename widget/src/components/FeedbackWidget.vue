@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { FormType } from '#backend/types'
-import { computed, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { CommunicationInjectionKey } from '../types'
 import { createWidgetCommunication } from '../utils/communication'
 import BugForm from './BugForm.vue'
 import FeedbackForm from './FeedbackForm.vue'
@@ -13,6 +14,9 @@ defineProps<{ app: string, feedbackEndpoint?: string }>()
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
 const { t } = useI18n()
+
+// Provide communication to child components
+provide(CommunicationInjectionKey, communication)
 
 const cmp = computed(() => {
   switch (activeForm.value) {

@@ -29,7 +29,14 @@ export default defineEventHandler(async (event) => {
     return { success: false, message: 'There was an error uploading the files', details: errorUpload } satisfies FeedbackResponseError
   }
 
-  const markdown = submissionToMarkdown(id, form, filesUrls)
+  const [logsUploadOk, logsUploadError, logsUrl] = await uploadLogs(id, form)
+  if (!logsUploadOk) {
+    consola.error('Logs upload error:', logsUploadError)
+    setResponseStatus(event, 400)
+    return { success: false, message: 'There was an error uploading the logs', details: logsUploadError } satisfies FeedbackResponseError
+  }
+
+  const markdown = submissionToMarkdown(id, form, filesUrls, logsUrl)
   const [githubIssueOk, githubIssueError, github] = await createGitHubIssue({ form, markdown })
   if (!githubIssueOk) {
     consola.error('GitHub issue error:', githubIssueError)
@@ -48,6 +55,7 @@ export default defineEventHandler(async (event) => {
     rating: form.rating || null,
     githubIssue: github.issueUrl,
     attachments: filesUrls,
+    logs: form.logs || null,
   }).returning().get()
 
   consola.success('Submission created:', fullSubmission)

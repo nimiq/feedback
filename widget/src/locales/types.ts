@@ -12,6 +12,7 @@ export interface LocaleMessages {
     descriptionDefaultValue: string
     emailLabel: string
     emailPlaceholder: string
+    shareDebugInfoLabel: string
   }
   feedbackForm: {
     descriptionPlaceholder: string

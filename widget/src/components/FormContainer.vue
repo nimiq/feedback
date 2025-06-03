@@ -2,7 +2,7 @@
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
 import { inject, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
-import { FilesInjectionKey } from '../types'
+import { CommunicationInjectionKey, FilesInjectionKey } from '../types'
 
 export interface FormContainerEmits {
   formSuccess: [data: FeedbackResponse]
@@ -17,6 +17,7 @@ const { type, app, feedbackEndpoint } = defineProps<{
 const emit = defineEmits<FormContainerEmits>()
 
 const { files } = inject(FilesInjectionKey)
+const communication = inject(CommunicationInjectionKey)
 
 const acceptTerms = ref(false)
 
@@ -63,6 +64,9 @@ async function submitFeedback(event: SubmitEvent) {
     Array.from(files.value).forEach(file => formData.append('attachments', file as Blob))
     console.log('Form data after appending files:', Array.from(formData.entries()))
   }
+
+  // Emit before-submit hook to allow host to add additional data (like debug logs)
+  communication?.emit('before-submit', { formData, type, app })
 
   const res = await fetch(feedbackEndpoint, { method: 'POST', body: formData })
     .catch((err) => {

@@ -18,3 +18,24 @@ export async function uploadFiles(id: string, { app, type, attachments }: InferO
 
   return [true, undefined, filesUrls] as const
 }
+
+export async function uploadLogs(id: string, { app, logs }: InferOutput<typeof FormSchema>): Result<string | null> {
+  if (!logs) {
+    return [true, undefined, null] as const
+  }
+
+  const { productionUrl } = useRuntimeConfig()
+  const imagesUrl = new URL('/images/', productionUrl)
+
+  try {
+    const name = encodeURI(`${app}/logs/${id}.txt`)
+    const logBlob = new Blob([logs], { type: 'text/plain' })
+    const hubFile = await hubBlob().put(name, logBlob)
+    const logUrl = new URL(`./${hubFile.pathname}`, imagesUrl).toString()
+
+    return [true, undefined, logUrl] as const
+  }
+  catch (error) {
+    return [false, `Error uploading logs: ${JSON.stringify(error)}`, undefined] as const
+  }
+}

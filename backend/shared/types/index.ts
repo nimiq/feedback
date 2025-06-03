@@ -53,6 +53,7 @@ export interface WidgetEvents {
   'form-submitted': { success: true, data: any }
   'formError': { success: false, error: string, details?: any }
   'form-error': { success: false, error: string, details?: any }
+  'before-submit': { formData: FormData, type: FormType, app: App }
 }
 
 export interface WidgetProps2 {

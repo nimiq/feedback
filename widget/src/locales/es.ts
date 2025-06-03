@@ -12,6 +12,7 @@ export default {
     descriptionDefaultValue: '¡Esto es una prueba, genial!',
     emailLabel: 'Correo electrónico',
     emailPlaceholder: 'Si necesitamos más información*',
+    shareDebugInfoLabel: 'Acepto compartir información de depuración para ayudar a resolver este problema',
   },
   feedbackForm: {
     descriptionPlaceholder: 'Por favor, cuéntanos cómo podemos mejorar tu experiencia con Nimiq*',
