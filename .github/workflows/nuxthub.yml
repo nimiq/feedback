@@ -33,15 +33,6 @@ jobs:
           NUXT_GITHUB_TOKEN: ${{ secrets.NUXT_GITHUB_TOKEN }}
           NUXT_SLACK_WEBHOOK_URL: ${{ secrets.NUXT_SLACK_WEBHOOK_URL }}
 
-      - name: Ensure NuxtHub module is installed
-        run: pnpx nuxthub@latest ensure
-        env:
-          NUXT_GITHUB_OWNER: ${{ vars.NUXT_GITHUB_OWNER }}
-          NUXT_GITHUB_REPO: ${{ vars.NUXT_GITHUB_REPO }}
-          NUXT_PRODUCTION_URL: ${{ vars.NUXT_PRODUCTION_URL }}
-          NUXT_GITHUB_TOKEN: ${{ secrets.NUXT_GITHUB_TOKEN }}
-          NUXT_SLACK_WEBHOOK_URL: ${{ secrets.NUXT_SLACK_WEBHOOK_URL }}
-
       - name: Build application
         run: pnpm build
         env:

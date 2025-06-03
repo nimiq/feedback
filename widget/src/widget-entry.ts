@@ -45,7 +45,7 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
     }
 
     const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint })
-    vueApp.provide(I18nInjectionKey, i18nContext).mount(selector)
+    vueApp.provide(I18nInjectionKey, i18nContext)
     const instance = vueApp.mount(el) as FeedbackWidgetInstance
 
     // Return the widget instance that the host can control
