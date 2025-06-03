@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useT } from '../composables/useI18n'
+import { ref, watch } from 'vue'
+import { useI18n } from '../composables/useI18n'
 
 const { maxFiles = 5 } = defineProps<{ maxFiles?: number }>()
 const files = defineModel<File[]>({ default: [] })
 
-const t = useT()
-const fileInput = ref<HTMLInputElement>()
+const previews = ref<string[]>([])
+watch(files, () => {
+  previews.value.forEach(url => URL.revokeObjectURL(url))
+  previews.value = files.value.map(file => URL.createObjectURL(file))
+}, { immediate: true })
 
-const previews = computed(() => files.value.map(file => URL.createObjectURL(file)))
+const { t } = useI18n()
+const fileInput = ref<HTMLInputElement>()
 
 function handleFileSelect() {
   if (!fileInput.value)
@@ -21,22 +25,18 @@ function handleFileSelect() {
 function removeFile(index: number) {
   files.value.splice(index, 1)
 }
-
-onMounted(async () => {
-  // Uncomment to fetch random images on mount
-  await Promise.allSettled(['https://picsum.photos/400/400', 'https://picsum.photos/640/360'].map(async (url, i) => {
-    await fetch(url).then(async r => files.value.push(new File([await r.blob()], `random-image-${i}.jpeg`, { type: 'image/jpeg' })))
-  }))
-})
 </script>
 
 <template>
   <label for="attachments" :class="{ 'cursor-pointer': files.length === 0 }" group w-full>
     <div grid="~ gap-16 cols-[repeat(auto-fit,128px)]" w-full>
-      <div v-for="(preview, index) in previews" :key="index" stack rounded-4 size-128 aspect-square outline=" 1.5 neutral-200">
+      <div
+        v-for="(preview, index) in previews" :key="preview" stack rounded-4 size-128 aspect-square
+        outline=" 1.5 neutral-200"
+      >
         <img
-          :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })" rounded-4 bg-neutral-100
-          object-contain
+          :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })"
+          rounded-4 bg-neutral-100 h-full object-contain
         >
         <button
           type="button" :aria-label="t('attachmentUploader.deleteImageLabel')" outline="1.5 offset--1.5 white/8"

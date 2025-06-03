@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormType } from '#backend/types'
 import { computed, ref } from 'vue'
-import { useT } from '../composables/useI18n'
+import { useI18n } from '../composables/useI18n'
 import { createWidgetCommunication } from '../utils/communication'
 import BugForm from './BugForm.vue'
 import FeedbackForm from './FeedbackForm.vue'
@@ -12,7 +12,7 @@ defineProps<{ app: string, feedbackEndpoint?: string }>()
 
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
-const t = useT()
+const { t } = useI18n()
 
 const cmp = computed(() => {
   switch (activeForm.value) {

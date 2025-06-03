@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { useT } from '../composables/useI18n'
+import { useI18n } from '../composables/useI18n'
 
-// placeholder constant removed
 const rating = defineModel<number>({ default: 0 })
-const t = useT()
+const { t } = useI18n()
 </script>
 
 <template>

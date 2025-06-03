@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
 import { ref } from 'vue'
-import { useT } from '../composables/useI18n'
+import { useI18n } from '../composables/useI18n'
 
 export interface FormContainerEmits {
   formSuccess: [data: FeedbackResponse]
@@ -19,7 +19,7 @@ const emit = defineEmits<FormContainerEmits>()
 
 const acceptTerms = ref(false)
 
-const t = useT()
+const { t } = useI18n()
 
 const error = ref<FeedbackResponseError>()
 const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
@@ -118,7 +118,7 @@ async function submitFeedback(event: SubmitEvent) {
       </div>
 
       <div mt-auto>
-        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
+        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60>
           <div v-if="status === 'pending'" i-nimiq:spinner />
           {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
         </button>

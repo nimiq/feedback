@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useT } from '../composables/useI18n'
+import { useI18n } from '../composables/useI18n'
 import AttachmentUploader from './AttachmentUploader.vue'
 
 const files = defineModel<File[]>({ default: [] })
-const t = useT()
+const { t } = useI18n()
 
 // placeholder constant removed
 </script>

@@ -2,7 +2,7 @@ import type { LocaleMessages } from './types'
 
 export const esMessages: LocaleMessages = {
   attachmentUploader: {
-    previewAlt: 'Vista previa {number}',
+    previewAlt: 'Vista previa',
     deleteImageLabel: 'Eliminar imagen',
     uploadHere: 'Subir aquí',
     anyImageFormat: 'Cualquier formato de imagen',

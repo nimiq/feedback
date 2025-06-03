@@ -2,7 +2,7 @@ import type { LocaleMessages } from './types'
 
 export const enMessages: LocaleMessages = {
   attachmentUploader: {
-    previewAlt: 'Preview {number}',
+    previewAlt: 'Preview',
     deleteImageLabel: 'Delete image',
     uploadHere: 'Upload here',
     anyImageFormat: 'Any image format',
