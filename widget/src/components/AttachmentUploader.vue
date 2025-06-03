@@ -31,15 +31,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <label
-    for="attachments" outline=" 1.5 neutral-400 hocus:blue-500"
-    :class="{ 'cursor-pointer': files.length === 0 }" group rounded-8 w-full transition-colors f-py-sm
-  >
-    <div grid="~ gap-16 justify-center cols-[repeat(auto-fit,128px)]" mx-auto w-full>
-      <div
-        v-for="(preview, index) in previews" :key="index" stack rounded-4 size-128 aspect-square
-        outline=" 1.5 neutral-200"
-      >
+  <label for="attachments" :class="{ 'cursor-pointer': files.length === 0 }" group w-full>
+    <div grid="~ gap-16 cols-[repeat(auto-fit,128px)]" w-full>
+      <div v-for="(preview, index) in previews" :key="index" stack rounded-4 size-128 aspect-square outline=" 1.5 neutral-200">
         <img
           :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })" rounded-4 bg-neutral-100
           object-contain
