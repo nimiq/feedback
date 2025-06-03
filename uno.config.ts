@@ -11,7 +11,7 @@ export default defineConfig({
   presets: [
     presetOnmax({
       presets: {
-        wind4: { preflights: { reset: false, theme: true } },
+        wind4: { preflights: { reset: false, theme: { mode: true } } },
         unoVue: false,
       },
     }),

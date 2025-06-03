@@ -103,7 +103,7 @@ const files = ref<File[]>([])
 <style scoped>
 .grid-container {
   button {
-    --uno: 'flex flex-col gap-8 items-center justify-center text-white f-text-sm f-p-md f-rounded-md cursor-pointer';
+    --uno: 'flex flex-col gap-8 items-center border-none justify-center text-white f-text-sm f-p-md f-rounded-md cursor-pointer';
 
     > div:first-child {
       --uno: 'f-size-md';
