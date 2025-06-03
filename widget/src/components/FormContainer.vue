@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { FilesInjectionKey } from '../types'
 
 export interface FormContainerEmits {
   formSuccess: [data: FeedbackResponse]
   formError: [{ error: string, details?: any }]
 }
 
-const { type, files = [], app, feedbackEndpoint } = defineProps<{
+const { type, app, feedbackEndpoint } = defineProps<{
   type: FormType
-  files?: File[]
   app: string
   feedbackEndpoint: string
 }>()
-
 const emit = defineEmits<FormContainerEmits>()
+
+const { files } = inject(FilesInjectionKey)
 
 const acceptTerms = ref(false)
 
@@ -50,9 +51,17 @@ async function submitFeedback(event: SubmitEvent) {
   const formEl = event.target as HTMLFormElement
   const formData = new FormData(formEl)
 
+  /* eslint-disable no-console */
   if (type === 'bug' || type === 'idea') {
+    console.log('Submitting feedback:', {
+      type: formData.get('type'),
+      app: formData.get('app'),
+      attachments: files.value,
+    })
     formData.delete('attachments')
-    Array.from(files).forEach(file => formData.append('attachments', file as Blob))
+    console.log('Files to be attached:', files.value)
+    Array.from(files.value).forEach(file => formData.append('attachments', file as Blob))
+    console.log('Form data after appending files:', Array.from(formData.entries()))
   }
 
   const res = await fetch(feedbackEndpoint, { method: 'POST', body: formData })
@@ -117,7 +126,7 @@ async function submitFeedback(event: SubmitEvent) {
         </details>
       </div>
 
-      <div mt-auto>
+      <div mt-auto flex>
         <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60>
           <div v-if="status === 'pending'" i-nimiq:spinner />
           {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}

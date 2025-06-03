@@ -57,8 +57,6 @@ defineExpose({
   },
   communication,
 })
-
-const files = ref<File[]>([])
 </script>
 
 <template>
@@ -92,7 +90,7 @@ const files = ref<File[]>([])
     </div>
 
     <FormContainer
-      v-else :files :type="activeForm!" :app :feedback-endpoint
+      v-else :type="activeForm!" :app :feedback-endpoint
       @form-success="handleFormSuccess" @form-error="handleFormError"
     >
       <component :is="cmp" />

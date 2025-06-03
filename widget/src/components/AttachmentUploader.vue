@@ -1,15 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { inject, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { FilesInjectionKey } from '../types'
 
 const { maxFiles = 5 } = defineProps<{ maxFiles?: number }>()
-const files = defineModel<File[]>({ default: [] })
+const { files, updateFiles } = inject(FilesInjectionKey)
 
 const previews = ref<string[]>([])
-watch(files, () => {
-  previews.value.forEach(url => URL.revokeObjectURL(url))
-  previews.value = files.value.map(file => URL.createObjectURL(file))
-}, { immediate: true })
 
 const { t } = useI18n()
 const fileInput = ref<HTMLInputElement>()
@@ -18,7 +15,9 @@ function handleFileSelect() {
   if (!fileInput.value)
     return
   const newFiles = [...files.value, ...(Array.from(fileInput.value.files))].slice(0, maxFiles)
-  files.value = newFiles
+  updateFiles(newFiles)
+  previews.value.forEach(url => URL.revokeObjectURL(url))
+  previews.value = files.value.map(file => URL.createObjectURL(file))
   fileInput.value.value = undefined
 }
 

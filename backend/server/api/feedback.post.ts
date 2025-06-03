@@ -19,6 +19,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const id = randomUUID()
+  consola.info(`Creating submission with ID ${id} - [${form.type}] ${form.app}`)
+  consola.info(form)
 
   const [fileUploadOk, errorUpload, filesUrls] = await uploadFiles(id, form)
   if (!fileUploadOk) {
