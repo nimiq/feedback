@@ -17,7 +17,7 @@ const { type, files = [], app, feedbackEndpoint } = defineProps<{
 
 const emit = defineEmits<FormContainerEmits>()
 
-const acceptTerms = ref('on')
+const acceptTerms = ref(false)
 
 const t = useT()
 
@@ -75,7 +75,7 @@ async function submitFeedback(event: SubmitEvent) {
 </script>
 
 <template>
-  <div flex="~ col">
+  <div flex="~ col" h-full>
     <h2 flex="~ items-center gap-8" text-14 mb-16 size-full text-balance nq-label>
       <div
         :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
@@ -90,14 +90,14 @@ async function submitFeedback(event: SubmitEvent) {
       <p>{{ t('formContainer.successMessage') }}</p>
     </div>
 
-    <form v-else flex="~ col gap-16" px-1.5 @submit.prevent="submitFeedback">
+    <form v-else flex="~ col gap-16" px-1.5 h-full @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
       <input type="text" name="app" :value="app" sr-only>
 
       <slot />
 
       <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
-        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" :value="acceptTerms === 'on'" required nq-switch>
+        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" required nq-switch>
         <span text-neutral-800 select-none>
           <a href="https://nimiq.com" target="_blank" un-text-current>
             {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}
@@ -117,10 +117,12 @@ async function submitFeedback(event: SubmitEvent) {
         </details>
       </div>
 
-      <button type="submit" :disabled="acceptTerms !== 'on' || status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
-        <div v-if="status === 'pending'" i-nimiq:spinner />
-        {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
-      </button>
+      <div mt-auto>
+        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 mt-auto nq-pill-xl nq-pill-blue disabled:op-60>
+          <div v-if="status === 'pending'" i-nimiq:spinner />
+          {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
+        </button>
+      </div>
     </form>
   </div>
 </template>
