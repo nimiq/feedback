@@ -30,7 +30,7 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
   try {
     const currentMessages = localeMessages[lang]
     const i18nContext: I18nContext = {
-      locale: defaultLocale,
+      locale: lang,
       messages: currentMessages,
       t: createTranslationFunction(currentMessages),
     }

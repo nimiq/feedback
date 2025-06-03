@@ -8,7 +8,9 @@ import { createTranslationFunction } from './utils/i18n'
 
 import 'virtual:uno.css'
 
-const currentMessages = localeMessages.en
+const defaultLocale = 'en'
+
+const currentMessages = localeMessages[defaultLocale]
 const i18nContext: I18nContext = {
   locale: defaultLocale,
   messages: currentMessages,
