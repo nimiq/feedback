@@ -7,6 +7,7 @@ const { maxFiles = 5 } = defineProps<{ maxFiles?: number }>()
 const { files, updateFiles } = inject(FilesInjectionKey)
 
 const previews = ref<string[]>([])
+const imageAspectRatios = ref<number[]>([])
 
 const { t } = useI18n()
 const fileInput = ref<HTMLInputElement>()
@@ -17,21 +18,46 @@ function handleFileSelect() {
   const newFiles = [...files.value, ...(Array.from(fileInput.value.files))].slice(0, maxFiles)
   updateFiles(newFiles)
   previews.value.forEach(url => URL.revokeObjectURL(url))
-  previews.value = files.value.map(file => URL.createObjectURL(file))
+
+  // Create previews and calculate aspect ratios
+  previews.value = []
+  imageAspectRatios.value = []
+
+  files.value.forEach((file, index) => {
+    const url = URL.createObjectURL(file)
+    previews.value.push(url)
+
+    // Load image to get dimensions
+    const img = new Image()
+    img.onload = () => {
+      const aspectRatio = img.width / img.height
+      imageAspectRatios.value[index] = aspectRatio
+    }
+    img.src = url
+  })
+
   fileInput.value.value = undefined
 }
 
 function removeFile(index: number) {
+  URL.revokeObjectURL(previews.value[index])
   files.value.splice(index, 1)
+  previews.value.splice(index, 1)
+  imageAspectRatios.value.splice(index, 1)
 }
 </script>
 
 <template>
   <label for="attachments" :class="{ 'cursor-pointer': files.length === 0 }" group w-full>
+    <h3 mb-8 text="12 neutral-800" nq-label>{{ t('attachmentUploader.title') }}</h3>
+
     <div grid="~ gap-16 cols-[repeat(auto-fit,128px)]" w-full>
       <div
-        v-for="(preview, index) in previews" :key="preview" stack rounded-4 size-128 aspect-square
-        outline=" 1.5 neutral-200"
+        v-for="(preview, index) in previews" :key="preview"
+        class="stack outline-1.5 outline-neutral-200 rounded-4 size-128" :class="[
+          imageAspectRatios[index] < 1 ? '' : 'aspect-square',
+        ]"
+        :style="imageAspectRatios[index] < 1 ? { aspectRatio: imageAspectRatios[index] } : {}"
       >
         <img
           :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })"
@@ -46,7 +72,10 @@ function removeFile(index: number) {
         </button>
       </div>
 
-      <div flex="~ col justify-center items-center" rounded-4 size-128 aspect-square outline="1.5 neutral/15">
+      <div
+        v-if="files.length < maxFiles"
+        flex="~ col justify-center items-center" rounded-4 size-128 aspect-square outline="1.5 neutral/15"
+      >
         <div text="24 neutral-700 group-hocus:neutral-800" transition-colors i-nimiq:mountain-frame />
         <span font-semibold mt-6>{{ t('attachmentUploader.uploadHere') }}</span>
         <span text="f-xs neutral-800" mt-2>{{ t('attachmentUploader.anyImageFormat') }}</span>

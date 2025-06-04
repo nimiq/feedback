@@ -2,10 +2,13 @@ import type { InferOutput } from 'valibot'
 import type { FormSchema } from './valibot-schemas'
 import { ratingToEmoji } from './rating-to-emoji'
 
-export function submissionToMarkdown(id: string, form: InferOutput<typeof FormSchema>, filesUrl: string[] = [], logsUrl?: string | null): string {
-  const { app, description, type, email, rating, logs } = form
+export function submissionToMarkdown(id: string, form: InferOutput<typeof FormSchema>, filesUrl: string[] = [], logsUrl?: string | undefined): string {
+  const { app, description, type, email, rating, logs, dev } = form
 
-  let markdown = `# ${app} - ${type}\n\n> ID: ${id}\n\n## Description\n\n${description.trim()}\n\n`
+  let markdown = `# ${app} - ${type}\n\n> ID: ${id}\n\n`
+  if (dev)
+    markdown += `🔧 **Development Environment**\n\n`
+  markdown += `## Description\n\n${description.trim()}\n\n`
   if (email)
     markdown += `✉️: ${email}\n\n`
   if (rating)
@@ -17,7 +20,7 @@ export function submissionToMarkdown(id: string, form: InferOutput<typeof FormSc
     })
   }
   if (logs && logsUrl) {
-    markdown += `## Debug Logs\n\n[Download Debug Logs](${logsUrl})\n\n<details>\n<summary>Debug Information</summary>\n\n\`\`\`\n${logs}\n\`\`\`\n\n</details>\n\n`
+    markdown += `## Debug Logs\n\n[Download Debug Logs](${logsUrl})\n\n`
   }
 
   return markdown

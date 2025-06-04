@@ -6,13 +6,14 @@ export default {
     deleteImageLabel: 'Eliminar imagen',
     uploadHere: 'Subir aquí',
     anyImageFormat: 'Cualquier formato de imagen',
+    title: 'Adjuntos',
   },
   bugForm: {
     descriptionPlaceholder: 'Por favor, cuéntanos cómo podemos mejorar tu experiencia con Nimiq*',
     descriptionDefaultValue: '¡Esto es una prueba, genial!',
     emailLabel: 'Correo electrónico',
     emailPlaceholder: 'Si necesitamos más información*',
-    shareDebugInfoLabel: 'Acepto compartir información de depuración para ayudar a resolver este problema',
+    shareDebugInfoLabel: 'Incluir detalles técnicos para ayudarnos a solucionar este problema más rápido',
   },
   feedbackForm: {
     descriptionPlaceholder: 'Por favor, cuéntanos cómo podemos mejorar tu experiencia con Nimiq*',

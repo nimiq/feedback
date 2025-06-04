@@ -14,8 +14,11 @@ export default defineEventHandler(async (event) => {
   const { output: form, issues } = safeParse(FormSchema, submission)
   if (issues) {
     consola.error('Validation issues:', issues)
-    setResponseStatus(event, 400)
-    return { success: false, message: 'Invalid submission data', details: issues, issues: issues.map(issue => issue.message) } satisfies FeedbackResponseError
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid submission data',
+      data: { success: false, message: 'Invalid submission data', issues: issues.map(issue => issue.message) },
+    })
   }
 
   const id = randomUUID()
@@ -25,23 +28,32 @@ export default defineEventHandler(async (event) => {
   const [fileUploadOk, errorUpload, filesUrls] = await uploadFiles(id, form)
   if (!fileUploadOk) {
     consola.error('File upload error:', errorUpload)
-    setResponseStatus(event, 400)
-    return { success: false, message: 'There was an error uploading the files', details: errorUpload } satisfies FeedbackResponseError
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'File upload error',
+      data: { success: false, message: 'There was an error uploading the files', details: errorUpload },
+    })
   }
 
   const [logsUploadOk, logsUploadError, logsUrl] = await uploadLogs(id, form)
   if (!logsUploadOk) {
     consola.error('Logs upload error:', logsUploadError)
-    setResponseStatus(event, 400)
-    return { success: false, message: 'There was an error uploading the logs', details: logsUploadError } satisfies FeedbackResponseError
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Logs upload error',
+      data: { success: false, message: 'There was an error uploading the logs', details: logsUploadError },
+    })
   }
 
   const markdown = submissionToMarkdown(id, form, filesUrls, logsUrl)
   const [githubIssueOk, githubIssueError, github] = await createGitHubIssue({ form, markdown })
   if (!githubIssueOk) {
     consola.error('GitHub issue error:', githubIssueError)
-    setResponseStatus(event, 500)
-    return { success: false, message: 'There was an error creating the GitHub issue', details: githubIssueError } satisfies FeedbackResponseError
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'GitHub issue error',
+      data: { success: false, message: 'There was an error creating the GitHub issue', details: githubIssueError },
+    })
   }
 
   const [slack, slackMessageError] = await createSlackMessage({ form, markdown, github })

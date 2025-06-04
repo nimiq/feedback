@@ -21,12 +21,12 @@ const shareDebugInfo = ref(false)
   <AttachmentUploader />
 
   <label flex="~ col">
-    <h2 mb-8 text="12 neutral-800" nq-label>{{ t('bugForm.emailLabel') }}</h2>
-    <input id="email" type="email" nq-input-box name="email" :placeholder="t('bugForm.emailPlaceholder')">
+    <h3 mb-8 text="12 neutral-800" nq-label>{{ t('bugForm.emailLabel') }}</h3>
+    <input id="email" w-auto type="email" nq-input-box name="email" :placeholder="t('bugForm.emailPlaceholder')">
   </label>
 
-  <label flex="~ items-center gap-8" f-text-sm>
-    <input v-model="shareDebugInfo" type="checkbox" name="shareDebugInfo" nq-switch>
+  <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
+    <input v-model="shareDebugInfo" type="checkbox" name="shareDebugInfo" shrink-0 nq-switch border-transparent="!">
     <span text-neutral-800 select-none>
       {{ t('bugForm.shareDebugInfoLabel') }}
     </span>

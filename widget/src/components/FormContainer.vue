@@ -9,10 +9,11 @@ export interface FormContainerEmits {
   formError: [{ error: string, details?: any }]
 }
 
-const { type, app, feedbackEndpoint } = defineProps<{
+const { type, app, feedbackEndpoint, dev } = defineProps<{
   type: FormType
   app: string
   feedbackEndpoint: string
+  dev: boolean
 }>()
 const emit = defineEmits<FormContainerEmits>()
 
@@ -89,7 +90,7 @@ async function submitFeedback(event: SubmitEvent) {
 
 <template>
   <div flex="~ col" h-full>
-    <h2 flex="~ items-center gap-8" text-14 mb-16 size-full text-balance nq-label>
+    <h2 flex="~ items-center gap-8" text-14 mb-16 h-max w-full text-balance nq-label>
       <div
         :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
         style="box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.07), 0px 1.5px 3px 0px rgba(0, 0, 0, 0.05), 0px 0.337px 2px 0px rgba(0, 0, 0, 0.03);"
@@ -106,11 +107,12 @@ async function submitFeedback(event: SubmitEvent) {
     <form v-else flex="~ col gap-16" px-1.5 h-full @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
       <input type="text" name="app" :value="app" sr-only>
+      <input type="text" name="dev" :value="dev" sr-only>
 
       <slot />
 
       <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
-        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" required nq-switch>
+        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" border-transparent="!" required shrink-0 nq-switch>
         <span text-neutral-800 select-none>
           <a href="https://nimiq.com" target="_blank" un-text-current>
             {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}

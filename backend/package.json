@@ -8,11 +8,11 @@
     "dev": "nuxt dev --remote --open",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "prepare": "COMMAND=nuxt-prepare nuxt prepare",
+    "prepare": "nuxt prepare",
     "postinstall": "nr prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "COMMAND=nuxt-typecheck nuxt typecheck",
+    "typecheck": "nuxt typecheck",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "@octokit/rest": "catalog:server",
     "drizzle-orm": "catalog:server",
     "nuxt": "catalog:nuxt",
+    "nuxt-safe-runtime-config": "catalog:",
     "reka-ui": "catalog:frontend",
     "valibot": "catalog:server"
   },

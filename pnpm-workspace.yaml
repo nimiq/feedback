@@ -5,6 +5,7 @@ packages:
 catalog:
   eslint-plugin-pnpm-catalog: ^0.0.1
   nimiq-icons: 1.0.0-beta.53
+  nuxt-safe-runtime-config: ^0.0.2
 catalogs:
   bundle:
     '@rollup/plugin-replace': ^6.0.2

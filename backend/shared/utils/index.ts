@@ -1,6 +1,4 @@
-import type { App } from '../types'
-
-export const apps: App[] = ['playground', 'nimiq-pay', 'nimiq-wallet']
+export const apps: string[] = ['playground', 'nimiq-pay', 'nimiq-wallet']
 
 export const imageMimeTypes = [
   'image/jpeg',

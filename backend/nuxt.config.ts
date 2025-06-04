@@ -1,9 +1,19 @@
 import process from 'node:process'
 import { defineNuxtConfig } from 'nuxt/config'
-import { validateEnv } from './lib/env'
+import { object, optional, string } from 'valibot'
 
-// Verify environment variables. Throw an error if any are missing.
-validateEnv()
+// Define runtime config schema for validation
+const runtimeConfigSchema = object({
+  github: object({
+    owner: string(),
+    repo: string(),
+    token: string(),
+  }),
+  slack: object({
+    webhookUrl: optional(string()),
+  }),
+  productionUrl: string(),
+})
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -18,6 +28,7 @@ export default defineNuxtConfig({
     'reka-ui/nuxt',
     '@unocss/nuxt',
     '@nuxt/scripts',
+    'nuxt-safe-runtime-config',
   ],
   future: { compatibilityVersion: 4 },
 
@@ -47,6 +58,10 @@ export default defineNuxtConfig({
       webhookUrl: process.env.NUXT_SLACK_WEBHOOK_URL,
     },
     productionUrl: process.env.NUXT_PRODUCTION_URL,
+  },
+
+  safeRuntimeConfig: {
+    $schema: runtimeConfigSchema,
   },
 
   typescript: {

@@ -8,7 +8,7 @@ export interface CreateSlackMessageOptions {
   github: GitHubIssue
 }
 
-export async function createSlackMessage({ markdown, form: { app, type, rating }, github: { issueUrl } }: CreateSlackMessageOptions): Result<undefined> {
+export async function createSlackMessage({ markdown, form: { app, type, rating, dev }, github: { issueUrl } }: CreateSlackMessageOptions): Result<undefined> {
   const { webhookUrl } = useRuntimeConfig().slack
 
   if (!webhookUrl) {
@@ -23,6 +23,9 @@ export async function createSlackMessage({ markdown, form: { app, type, rating }
     { type: 'section', text: { type: 'mrkdwn', text: `<${issueUrl}|View GitHub Issue>` } },
     { type: 'section', text: { type: 'mrkdwn', text: markdown } },
   ]
+
+  if (dev)
+    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: '*🔧 Development Environment*' } })
 
   if (type === 'feedback' && rating)
     blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `*Rating:* ${ratingToEmoji(rating)}` } })

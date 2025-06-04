@@ -9,7 +9,8 @@ import FeedbackForm from './FeedbackForm.vue'
 import FormContainer from './FormContainer.vue'
 import IdeaForm from './IdeaForm.vue'
 
-defineProps<{ app: string, feedbackEndpoint?: string }>()
+const props = defineProps<{ app: string, feedbackEndpoint?: string, dev?: boolean }>()
+const { app, feedbackEndpoint, dev } = props
 
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
@@ -70,10 +71,10 @@ defineExpose({
     mode="out-in"
   >
     <!-- Form selection grid -->
-    <div v-if="!activeForm" size-full flex="~ col">
-      <h2 text="24 center neutral lh-24" lh-none font-bold mb-12>
+    <div v-if="!activeForm" w-full flex="~ col">
+      <h3 text="24 center neutral lh-24" lh-none font-bold mb-12>
         {{ t('feedbackWidget.title') }}
-      </h2>
+      </h3>
 
       <div grid="~ rows-2 cols-2 gap-16" class="grid-container" h-full f-mt-lg f-mb-md>
         <button col-span-2 nq-hoverable-red @click="selectForm('bug')">
@@ -94,7 +95,7 @@ defineExpose({
     </div>
 
     <FormContainer
-      v-else :type="activeForm!" :app :feedback-endpoint
+      v-else :type="activeForm!" :app :feedback-endpoint :dev="dev || false"
       @form-success="handleFormSuccess" @form-error="handleFormError"
     >
       <component :is="cmp" />

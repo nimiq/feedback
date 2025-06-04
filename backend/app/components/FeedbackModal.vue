@@ -24,7 +24,7 @@ function mountWidget() {
   if ((currentView.value === 'grid' || currentView.value === 'form')) {
     nextTick().then(() => { // Use nextTick to ensure DOM is updated
       console.log(`Mounting widget for app: playground, lang: ${lang}, feedbackEndpoint: ${feedbackEndpoint}`)
-      widgetInstance.value = window.mountFeedbackWidget(`#${feedbackWidgetId}`, { app: 'playground', lang, feedbackEndpoint })
+      widgetInstance.value = window.mountFeedbackWidget(`#${feedbackWidgetId}`, { app: 'playground', lang, feedbackEndpoint, dev: true })
       setupCommunicationListeners()
     })
   }

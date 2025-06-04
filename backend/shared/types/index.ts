@@ -1,6 +1,4 @@
-export type App = 'nimiq-wallet' | 'nimiq-pay' | 'playground'
 export type FormType = 'bug' | 'idea' | 'feedback'
-// export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
 
 export interface GitHubIssue { issueUrl: string }
 
@@ -10,7 +8,7 @@ export interface FeedbackResponse {
   slack: boolean
   submission: {
     type: FormType
-    app: App
+    app: string
     description: string
     email: string | null
     rating: number | null
@@ -53,7 +51,7 @@ export interface WidgetEvents {
   'form-submitted': { success: true, data: any }
   'formError': { success: false, error: string, details?: any }
   'form-error': { success: false, error: string, details?: any }
-  'before-submit': { formData: FormData, type: FormType, app: App }
+  'before-submit': { formData: FormData, type: FormType, app: string }
 }
 
 export interface WidgetProps2 {
@@ -65,9 +63,10 @@ export interface WidgetProps2 {
 }
 
 export interface WidgetProps {
-  app: App
+  app: string
   lang?: string
   feedbackEndpoint?: string
+  dev?: boolean
 }
 
 export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance

@@ -3,7 +3,8 @@ import { imageMimeTypes } from '~~/shared/utils'
 
 export const FormSchema = object({
   type: picklist(['feedback', 'bug', 'idea'], 'Invalid submission type'),
-  app: picklist(apps as App[], `Invalid app name. Use one of the following: ${apps.join(', ')}`),
+  app: string('App must be a string'),
+  dev: pipe(string(), transform(value => value === 'true'), boolean('Dev must be a boolean')),
   acceptTerms: pipe(string(), transform(value => value === 'true' || value === 'on'), boolean('You need to accept the legal terms')),
   description: string('Description must be a string'),
   email: optional(string('Email must be a string')),
@@ -23,6 +24,5 @@ export const FormSchema = object({
     minLength(0),
     maxLength(5),
   ), []),
-  shareDebugInfo: optional(pipe(string(), transform(value => value === 'true' || value === 'on'), boolean('Share debug info must be a boolean')), false),
   logs: optional(string('Logs must be a string')),
 })

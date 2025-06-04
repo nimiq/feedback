@@ -1,4 +1,4 @@
-import type { App, FormType } from '~~/shared/types'
+import type { FormType } from '~~/shared/types'
 import { sql } from 'drizzle-orm'
 import { check, index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
@@ -10,8 +10,9 @@ export const submissions = sqliteTable('submissions', {
   id: text('id').primaryKey(),
   // status: text('status').$type<SubmissionStatus>().notNull().default('pending'),
 
-  app: text('app').$type<App>().notNull(),
+  app: text('app').notNull(),
   type: text('type').$type<FormType>().notNull(),
+  dev: integer('dev', { mode: 'boolean' }).notNull().default(false),
 
   description: text('description').notNull(),
   email: text('email'),

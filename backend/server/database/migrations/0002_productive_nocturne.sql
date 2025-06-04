@@ -1,0 +1,1 @@
+ALTER TABLE `submissions` ADD `dev` integer DEFAULT false NOT NULL;

@@ -12,13 +12,15 @@ type Issue = RestEndpointMethodTypes['issues']['create']['parameters']
 
 type CreateGitHubResult = Result<GitHubIssue>
 
-export async function createGitHubIssue({ markdown: body, form: { app, type, rating } }: CreateGitHubIssueOptions): CreateGitHubResult {
+export async function createGitHubIssue({ markdown: body, form: { app, type, rating, dev } }: CreateGitHubIssueOptions): CreateGitHubResult {
   const { token, owner, repo } = useRuntimeConfig().github
 
   const title = `[${app}] - ${{ feedback: 'Feedback', bug: 'Bug report', idea: 'Idea' }[type]}`
   const labels = [`app/${app}`, `kind/${type}`]
   if (type === 'feedback')
     labels.push(ratingToEmoji(rating))
+  if (dev)
+    labels.push('dev')
   const issueParams: Issue = { title, body, owner, repo, labels }
 
   const octokit = new Octokit({ auth: token })

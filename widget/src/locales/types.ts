@@ -2,6 +2,7 @@ import type { InjectionKey } from 'vue'
 
 export interface LocaleMessages {
   attachmentUploader: {
+    title: string
     previewAlt: string
     deleteImageLabel: string
     uploadHere: string

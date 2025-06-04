@@ -9,13 +9,13 @@ A customizable feedback widget for Vue 3 applications that allows users to submi
 Add the widget script to your HTML:
 
 ```html
-<script src="http://localhost:3000/widget.js" defer></script>
+<script src="https://nq-feedback.maximogarciamtnez.workers.dev/widget.js" defer></script>
 ```
 
 Add the widget styles to your HTML:
 
 ```html
-<link rel="stylesheet" href="http://localhost:3000/widget.css" />
+<link rel="stylesheet" href="https://nq-feedback.maximogarciamtnez.workers.dev/widget.css" />
 ```
 
 ### 2. Deferred Loading (Recommended)
@@ -26,14 +26,14 @@ For better performance, load both CSS and JS with deferred loading:
 <!-- Preload for better performance -->
 <link
   rel="preload"
-  href="http://localhost:3000/widget.css"
+  href="https://nq-feedback.maximogarciamtnez.workers.dev/widget.css"
   as="style"
   onload="this.onload=null;this.rel='stylesheet'"
 />
-<noscript><link rel="stylesheet" href="http://localhost:3000/widget.css" /></noscript>
+<noscript><link rel="stylesheet" href="https://nq-feedback.maximogarciamtnez.workers.dev/widget.css" /></noscript>
 
 <!-- Load JavaScript deferred -->
-<script src="http://localhost:3000/widget.js" defer></script>
+<script src="https://nq-feedback.maximogarciamtnez.workers.dev/widget.js" defer></script>
 ```
 
 ### 3. Mount the Widget
@@ -48,7 +48,8 @@ Mount the widget to any DOM element:
     const widget = window.mountFeedbackWidget('#feedback-widget', {
       app: 'nimiq-wallet', // 'nimiq-wallet' | 'nimiq-pay' | 'playground'
       lang: 'en', // 'en' | 'es' (optional, defaults to 'en')
-      feedbackEndpoint: 'http://localhost:3000/api/feedback',
+      feedbackEndpoint: 'https://nq-feedback.maximogarciamtnez.workers.dev/api/feedback',
+      dev: true, // boolean (optional, defaults to false) - marks submissions as development
     })
 
     // Use widget methods
@@ -68,13 +69,13 @@ Add these type declarations to your Vue 3 project (e.g., in `env.d.ts` or `types
 ```typescript
 // widget.types.d.ts
 
-export type App = 'nimiq-wallet' | 'nimiq-pay' | 'playground'
 export type FormType = 'bug' | 'idea' | 'feedback'
 
 export interface WidgetProps {
-  app: App
+  app: string
   lang?: string
   feedbackEndpoint?: string
+  dev?: boolean
 }
 
 export interface WidgetEvents {
@@ -82,6 +83,7 @@ export interface WidgetEvents {
   'go-back': void
   'form-submitted': { success: true, data: any }
   'form-error': { success: false, error: string, details?: any }
+  'before-submit': { formData: FormData, type: FormType, app: string }
 }
 
 export interface WidgetInstance {
@@ -132,6 +134,12 @@ widget.communication?.on('form-submitted', (data) => {
 
 widget.communication?.on('form-error', (error) => {
   console.error('Form submission error:', error)
+})
+
+widget.communication?.on('before-submit', ({ formData, type, app }) => {
+  console.log('Before form submission:', { type, app })
+  // You can modify formData here to add additional data like debug logs
+  formData.append('debugInfo', JSON.stringify({ userAgent: navigator.userAgent }))
 })
 ```
 
