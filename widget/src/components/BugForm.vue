@@ -6,6 +6,7 @@ import AttachmentUploader from './AttachmentUploader.vue'
 const { t } = useI18n()
 
 const shareDebugInfo = ref(false)
+const description = ref('')
 
 // placeholder constant removed
 </script>
@@ -13,7 +14,7 @@ const shareDebugInfo = ref(false)
 <template>
   <label flex>
     <textarea
-      id="description" name="description" :placeholder="t('bugForm.descriptionPlaceholder')" :value="t('bugForm.descriptionDefaultValue')" rows="4" required
+      id="description" v-model="description" name="description" :placeholder="t('bugForm.descriptionPlaceholder')" rows="4" required
       nq-input-box focus-visible:outline-blue
     />
   </label>

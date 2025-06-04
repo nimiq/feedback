@@ -119,6 +119,11 @@ async function submitFeedback(event: SubmitEvent) {
         </span>
       </label>
 
+      <p text-neutral-700 f-text-sm>
+        <a href="https://nimiq.com/privacy-policy/" target="_blank" un-text-current underline>
+          {{ t('formContainer.learnMore') }}</a> {{ t('formContainer.privacyPolicyText') }}
+      </p>
+
       <div v-if="status === 'error'" role="alert" text="f-xs red-1100" font-semibold>
         <p>
           <strong>{{ t('formContainer.errorPrefix') }}</strong> {{ error?.message }}

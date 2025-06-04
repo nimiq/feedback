@@ -78,7 +78,7 @@ function removeFile(index: number) {
       >
         <div text="24 neutral-700 group-hocus:neutral-800" transition-colors i-nimiq:mountain-frame />
         <span font-semibold mt-6>{{ t('attachmentUploader.uploadHere') }}</span>
-        <span text="f-xs neutral-800" mt-2>{{ t('attachmentUploader.anyImageFormat') }}</span>
+        <span text="f-xs neutral-800 center" mt-2 px-2>{{ t('attachmentUploader.anyImageFormat') }}</span>
       </div>
     </div>
 

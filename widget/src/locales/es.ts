@@ -35,6 +35,8 @@ export default {
     errorDetailsSummary: 'Detalles',
     sendingButton: 'Enviando...',
     submitButtonDefault: 'Enviar comentarios',
+    learnMore: 'Más información',
+    privacyPolicyText: 'sobre cómo manejamos tus datos.',
   },
   ideaForm: {
     descriptionPlaceholder: 'Por favor, cuéntanos cómo podemos mejorar tu experiencia con Nimiq*',

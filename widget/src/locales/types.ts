@@ -35,6 +35,8 @@ export interface LocaleMessages {
     errorDetailsSummary: string
     sendingButton: string
     submitButtonDefault: string
+    learnMore: string
+    privacyPolicyText: string
   }
   ideaForm: {
     descriptionPlaceholder: string
