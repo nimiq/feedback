@@ -11,6 +11,7 @@ node_modules
 
 # Logs
 logs
+!backend/server/routes/logs/[...pathname].get.ts
 *.log
 
 # Misc
@@ -29,3 +30,4 @@ dist-ssr
 *.local
 
 *.tsbuildinfo
+
