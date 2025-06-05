@@ -8,5 +8,7 @@ export default withNuxt(
     unocss: true,
     pnpm: true,
     ignores: ['./public/widget.*'],
+  // }, {
+  // ...eslintCatalogPlugin.configs?.['recommended'],
   }),
 )
