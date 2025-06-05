@@ -21,14 +21,14 @@ export default {
   feedbackWidget: {
     title: 'Envie seu feedback',
     bugReportButton: 'Relatar bug',
-    ideaButton: 'Tem uma ideia?',
+    ideaButton: 'Compartilhe sua ideia',
     feedbackButton: 'Feedback',
     termsAndConditionsLink: 'Termos e condições',
     termsApplySuffix: ' se aplicam',
   },
   formContainer: {
     titleBug: 'Relatar um bug',
-    titleIdea: 'Tem uma ideia?',
+    titleIdea: 'Compartilhe sua ideia',
     titleFeedback: 'Dar feedback',
     successMessage: 'Envio bem-sucedido! Por favor, aguarde...',
     errorPrefix: 'Erro:',
