@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 import { useI18n } from '../composables/useI18n'
 import { FilesInjectionKey } from '../types'
 
@@ -11,6 +11,16 @@ const imageAspectRatios = ref<number[]>([])
 
 const { t } = useI18n()
 const fileInput = ref<HTMLInputElement>()
+
+// Watch for external changes to files (like when going back) and clean up previews
+watch(files, (newFiles) => {
+  if (newFiles.length === 0) {
+    // Clean up all preview URLs when files are cleared
+    previews.value.forEach(url => URL.revokeObjectURL(url))
+    previews.value = []
+    imageAspectRatios.value = []
+  }
+}, { deep: true })
 
 function handleFileSelect() {
   if (!fileInput.value)

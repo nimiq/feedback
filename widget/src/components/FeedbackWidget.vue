@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormType } from '#backend/types'
-import { computed, provide, ref } from 'vue'
+import { computed, inject, provide, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
-import { CommunicationInjectionKey } from '../types'
+import { CommunicationInjectionKey, FilesInjectionKey } from '../types'
 import { createWidgetCommunication } from '../utils/communication'
 import BugForm from './BugForm.vue'
 import FeedbackForm from './FeedbackForm.vue'
@@ -15,6 +15,8 @@ const { app, feedbackEndpoint, dev } = props
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
 const { t } = useI18n()
+
+const { updateFiles } = inject(FilesInjectionKey)
 
 // Provide communication to child components
 provide(CommunicationInjectionKey, communication)
@@ -49,15 +51,21 @@ function handleFormError({ error, details }: { error: string, details?: any }) {
 defineExpose({
   showFormGrid() {
     activeForm.value = undefined
+    // Clear files when returning to form grid
+    updateFiles([])
   },
   showForm(type: FormType) {
     activeForm.value = type
   },
   closeWidget() {
     activeForm.value = undefined
+    // Clear files when closing widget
+    updateFiles([])
   },
   goBack() {
     activeForm.value = undefined
+    // Clear files when going back to prevent them from persisting
+    updateFiles([])
     communication.emit('go-back', undefined)
   },
   communication,
