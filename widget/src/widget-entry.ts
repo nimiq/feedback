@@ -20,7 +20,7 @@ interface FeedbackWidgetInstance extends ComponentPublicInstance {
   communication: SimpleWidgetCommunication
 }
 
-window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndpoint, dev = false }: WidgetProps): WidgetInstance => {
+window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndpoint, dev = false, initialForm }: WidgetProps): WidgetInstance => {
   const el = document.querySelector(selector)
   if (!el)
     throw new Error(`Mount target ${selector} not found`)
@@ -37,7 +37,7 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
     }
 
     const files = ref<File[]>([])
-    const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint, dev })
+    const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint, dev, initialForm })
       .provide(I18nInjectionKey, i18nContext)
       .provide(FilesInjectionKey, { files, updateFiles: (newFiles: File[]) => files.value = newFiles })
     const instance = vueApp.mount(el) as FeedbackWidgetInstance

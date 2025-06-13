@@ -50,6 +50,7 @@ Mount the widget to any DOM element:
       lang: 'en', // 'en' | 'es' (optional, defaults to 'en')
       feedbackEndpoint: 'https://nq-feedback.maximogarciamtnez.workers.dev/api/feedback',
       dev: true, // boolean (optional, defaults to false) - marks submissions as development
+      initialForm: 'bug', // optional - directly show a specific form: 'bug' | 'idea' | 'feedback'
     })
 
     // Use widget methods
@@ -76,6 +77,7 @@ export interface WidgetProps {
   lang?: string
   feedbackEndpoint?: string
   dev?: boolean
+  initialForm?: FormType
 }
 
 export interface WidgetEvents {
@@ -161,3 +163,19 @@ widget.goBack()
 // Clean up when done
 widget.destroy()
 ```
+
+### Theming
+
+The widget automatically adapts to the user's preferred color scheme (light/dark mode). In dark mode, the widget will use lighter colors for text and darker colors for input elements. This behavior is controlled by the `color-scheme` CSS property.
+
+You can override the color scheme for a specific instance of the widget by setting the `color-scheme` CSS property on the widget's container:
+
+```css
+#feedback-widget {
+  color-scheme: light; /* Force light mode */
+  /* or */
+  color-scheme: dark; /* Force dark mode */
+}
+```
+
+By default, the widget will respect the user's system preferences and switch automatically between light and dark mode.

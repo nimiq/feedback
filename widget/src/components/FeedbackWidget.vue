@@ -9,7 +9,7 @@ import FeedbackForm from './FeedbackForm.vue'
 import FormContainer from './FormContainer.vue'
 import IdeaForm from './IdeaForm.vue'
 
-const props = defineProps<{ app: string, feedbackEndpoint?: string, dev?: boolean }>()
+const props = defineProps<{ app: string, feedbackEndpoint?: string, dev?: boolean, initialForm?: FormType }>()
 const { app, feedbackEndpoint, dev } = props
 
 const activeForm = ref<FormType>()
@@ -17,6 +17,10 @@ const communication = createWidgetCommunication()
 const { t } = useI18n()
 
 const { updateFiles } = inject(FilesInjectionKey)
+
+// Show initial form if provided
+if (props.initialForm)
+  activeForm.value = props.initialForm
 
 // Provide communication to child components
 provide(CommunicationInjectionKey, communication)
