@@ -119,7 +119,7 @@ async function submitFeedback(event: SubmitEvent) {
         </span>
       </label>
 
-      <p text-neutral-700 f-text-sm>
+      <p text-neutral-700 f-text-sm f-mt-md>
         <a href="https://nimiq.com/privacy-policy/" target="_blank" un-text-current underline>
           {{ t('formContainer.learnMore') }}</a> {{ t('formContainer.privacyPolicyText') }}
       </p>
