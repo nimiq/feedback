@@ -71,7 +71,7 @@ function removeFile(index: number) {
       >
         <img
           :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })"
-          rounded-4 bg-neutral-100 h-full="!" object-contain
+          h-full="!" rounded-4 bg-neutral-100 max-h-128 object-contain
         >
         <button
           type="button" :aria-label="t('attachmentUploader.deleteImageLabel')" outline="1.5 offset--1.5 white/8"
