@@ -64,14 +64,14 @@ function removeFile(index: number) {
     <div grid="~ gap-16 cols-[repeat(auto-fit,128px)]" w-full>
       <div
         v-for="(preview, index) in previews" :key="preview"
-        class="stack outline-1.5 outline-neutral-200 rounded-4 size-128" :class="[
+        class="stack outline-1.5 outline-neutral-200 rounded-4 size-128!" :class="[
           imageAspectRatios[index] < 1 ? '' : 'aspect-square',
         ]"
         :style="imageAspectRatios[index] < 1 ? { aspectRatio: imageAspectRatios[index] } : {}"
       >
         <img
           :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })"
-          rounded-4 bg-neutral-100 h-full object-contain
+          rounded-4 bg-neutral-100 h-full="!" object-contain
         >
         <button
           type="button" :aria-label="t('attachmentUploader.deleteImageLabel')" outline="1.5 offset--1.5 white/8"
