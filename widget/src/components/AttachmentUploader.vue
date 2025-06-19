@@ -76,7 +76,7 @@ function removeFile(index: number) {
         <button
           type="button" :aria-label="t('attachmentUploader.deleteImageLabel')" outline="1.5 offset--1.5 white/8"
           stack rounded-full bg-white size-24 shadow self-start right--12 top--12 justify-self-end
-          @click.stop="removeFile(index)"
+          @click.stop.capture="removeFile(index)"
         >
           <div i-nimiq:cross text="neutral 10" />
         </button>
