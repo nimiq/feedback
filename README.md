@@ -1,6 +1,11 @@
-# Nimiq Feedback Widget
-
-A customizable feedback widget for Vue 3 applications that allows users to submit bug reports, ideas, and general feedback.
+<h1 align="center">
+  <img alt="Nimiq Feedback logo" loading="lazy" width="108" height="96" decoding="async" data-nimg="1" style="color:transparent" src="https://raw.githubusercontent.com/onmax/nimiq-feedback/refs/heads/main/.github/logo.svg" />
+  </br>
+  Nimiq Feedback</h1>
+<p align="center">
+A customizable feedback widget for web apps that allows users to submit bug reports, ideas, and general feedback.
+</p>
+<br/>
 
 ## Quick Start
 
