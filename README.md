@@ -9,13 +9,13 @@ A customizable feedback widget for Vue 3 applications that allows users to submi
 Add the widget script to your HTML:
 
 ```html
-<script src="https://nq-feedback.maximogarciamtnez.workers.dev/widget.js" defer></script>
+<script src="https://nimiq-feedback.je-cf9.workers.dev/widget.js" defer></script>
 ```
 
 Add the widget styles to your HTML:
 
 ```html
-<link rel="stylesheet" href="https://nq-feedback.maximogarciamtnez.workers.dev/widget.css" />
+<link rel="stylesheet" href="https://nimiq-feedback.je-cf9.workers.dev/widget.css" />
 ```
 
 ### 2. Deferred Loading (Recommended)
@@ -26,14 +26,14 @@ For better performance, load both CSS and JS with deferred loading:
 <!-- Preload for better performance -->
 <link
   rel="preload"
-  href="https://nq-feedback.maximogarciamtnez.workers.dev/widget.css"
+  href="https://nimiq-feedback.je-cf9.workers.dev/widget.css"
   as="style"
   onload="this.onload=null;this.rel='stylesheet'"
 />
-<noscript><link rel="stylesheet" href="https://nq-feedback.maximogarciamtnez.workers.dev/widget.css" /></noscript>
+<noscript><link rel="stylesheet" href="https://nimiq-feedback.je-cf9.workers.dev/widget.css" /></noscript>
 
 <!-- Load JavaScript deferred -->
-<script src="https://nq-feedback.maximogarciamtnez.workers.dev/widget.js" defer></script>
+<script src="https://nimiq-feedback.je-cf9.workers.dev/widget.js" defer></script>
 ```
 
 ### 3. Mount the Widget
@@ -48,7 +48,7 @@ Mount the widget to any DOM element:
     const widget = window.mountFeedbackWidget('#feedback-widget', {
       app: 'nimiq-wallet', // 'nimiq-wallet' | 'nimiq-pay' | 'playground'
       lang: 'en', // 'en' | 'es' (optional, defaults to 'en')
-      feedbackEndpoint: 'https://nq-feedback.maximogarciamtnez.workers.dev/api/feedback',
+      feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback',
       dev: true, // boolean (optional, defaults to false) - marks submissions as development
       initialForm: 'bug', // optional - directly show a specific form: 'bug' | 'idea' | 'feedback'
     })
