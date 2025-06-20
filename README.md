@@ -56,7 +56,7 @@ Mount the widget to any DOM element:
       feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback',
       dev: true, // boolean (optional, defaults to false) - marks submissions as development
       initialForm: 'bug', // optional - directly show a specific form: 'bug' | 'idea' | 'feedback'
-      dark: false, // boolean (optional, defaults to false) - enables dark color scheme
+      dark: false, // boolean (optional, defaults to false) - enables dark theme
     })
 
     // Use widget methods
