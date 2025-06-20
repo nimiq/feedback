@@ -2,13 +2,32 @@ import type { InferOutput } from 'valibot'
 
 export async function uploadFiles(id: string, { app, type, attachments }: InferOutput<typeof FormSchema>): Result<string[]> {
   const { productionUrl } = useRuntimeConfig()
-  const imagesUrl = new URL('/images/', productionUrl)
+  let imagesUrl: URL
+  try {
+    imagesUrl = new URL('/images/', productionUrl)
+  }
+  catch (error) {
+    console.error(`Error uploading files: ${JSON.stringify(error)}. To ${productionUrl} - images/`)
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Error uploading files: ${JSON.stringify(error)}. To ${productionUrl} - images/`,
+    })
+  }
 
   const filesUrls: string[] = []
   const promises = attachments.map(async (file) => {
     const name = encodeURI(`${app}/${type}/${id}__${file.name}`)
     const hubFile = await hubBlob().put(name, file)
-    filesUrls.push(new URL(`./${hubFile.pathname}`, imagesUrl).toString())
+    try {
+      filesUrls.push(new URL(`./${hubFile.pathname}`, imagesUrl).toString())
+    }
+    catch (error) {
+      console.error(`Error uploading file: ${name} to ${hubFile.pathname} - ${imagesUrl}: ${JSON.stringify(error)}`)
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Error uploading file: ${name} to ${hubFile.pathname} - ${imagesUrl}: ${JSON.stringify(error)}`,
+      })
+    }
   })
 
   const results = await Promise.allSettled(promises)
@@ -24,13 +43,36 @@ export async function uploadLogs(id: string, { app, logs }: InferOutput<typeof F
     return [true, undefined, undefined] as const
 
   const { productionUrl } = useRuntimeConfig()
-  const logsUrl = new URL('/logs/', productionUrl)
+
+  let logsUrl: URL
+  try {
+    logsUrl = new URL('/logs/', productionUrl)
+  }
+  catch (error) {
+    console.error(`Error uploading logs: ${JSON.stringify(error)}. To ${productionUrl} - logs/`)
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Error uploading logs: ${JSON.stringify(error)}. To ${productionUrl} - logs/`,
+    })
+  }
 
   try {
     const name = encodeURI(`${app}/logs/${id}.txt`)
     const logBlob = new Blob([logs], { type: 'text/plain' })
     const hubFile = await hubBlob().put(name, logBlob)
-    const logUrl = new URL(`./${hubFile.pathname}`, logsUrl).toString()
+
+    let logUrl
+    try {
+      logUrl = new URL(`./${hubFile.pathname}`, logsUrl).toString()
+    }
+    catch (error) {
+      console.error(`Error uploading log: ${name} to ${hubFile.pathname} - ${logsUrl}: ${JSON.stringify(error)}`)
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Error uploading log: ${name} to ${hubFile.pathname} - ${logsUrl}: ${JSON.stringify(error)}`,
+      })
+    }
+
     return [true, undefined, logUrl] as const
   }
   catch (error) {
