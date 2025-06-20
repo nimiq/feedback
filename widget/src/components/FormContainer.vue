@@ -89,7 +89,7 @@ async function submitFeedback(event: SubmitEvent) {
 </script>
 
 <template>
-  <div flex="~ col" h-full overflow-y-auto>
+  <div flex="~ col" h-full>
     <h2 flex="~ items-center gap-8" text-14 mb-16 h-max w-full text-balance nq-label>
       <div
         :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
