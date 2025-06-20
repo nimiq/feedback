@@ -68,6 +68,7 @@ export interface WidgetProps {
   feedbackEndpoint?: string
   dev?: boolean
   initialForm?: FormType
+  dark?: boolean
 }
 
 export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance

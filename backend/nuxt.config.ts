@@ -88,7 +88,11 @@ export default defineNuxtConfig({
       static: true,
     },
     '/api/feedback': {
-      cors: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': '*',
+      },
     },
   },
   // nitro: {
