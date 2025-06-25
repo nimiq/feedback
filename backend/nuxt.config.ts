@@ -46,6 +46,7 @@ export default defineNuxtConfig({
   hub: {
     database: true,
     blob: true,
+    kv: true,
   },
 
   runtimeConfig: {
@@ -74,39 +75,23 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/widget.js': {
+      cache: { maxAge: 3600 },
       headers: {
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept',
         'Content-Type': 'application/javascript',
       },
-      static: true,
     },
     '/widget.css': {
+      cache: { maxAge: 3600 },
       headers: {
         'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept',
         'Content-Type': 'text/css',
       },
-      static: true,
     },
-    '/api/feedback': {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': '*',
-      },
-    },
+    '/api/feedback': { swr: 0 },
   },
-  // nitro: {
-  //   devHandlers: [{
-  //     route: '/',
-  //     handler: (event) => {
-  //       // https://github.com/nitrojs/nitro/issues/539
-
-  //       setHeader(event, 'Access-Control-Allow-Origin', '*')
-  //       setHeader(event, 'Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-  //       setHeader(event, 'Access-Control-Allow-Headers', '*')
-  //       if (event.method === 'OPTIONS')
-  //         return ''
-  //     },
-  //   }],
-  // },
 })
