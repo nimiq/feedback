@@ -47,6 +47,7 @@ export default defineNuxtConfig({
     database: true,
     blob: true,
     kv: true,
+    cache: true,
   },
 
   runtimeConfig: {
@@ -76,21 +77,9 @@ export default defineNuxtConfig({
   routeRules: {
     '/widget.js': {
       cache: { maxAge: 3600 },
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept',
-        'Content-Type': 'application/javascript',
-      },
     },
     '/widget.css': {
       cache: { maxAge: 3600 },
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept',
-        'Content-Type': 'text/css',
-      },
     },
     '/api/feedback': { swr: 0 },
   },
