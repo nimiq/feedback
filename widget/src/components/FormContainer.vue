@@ -138,7 +138,7 @@ async function submitFeedback(event: SubmitEvent) {
       </div>
 
       <div mt-auto flex>
-        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60>
+        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue="!" disabled:op-60>
           <div v-if="status === 'pending'" i-nimiq:spinner />
           {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
         </button>
