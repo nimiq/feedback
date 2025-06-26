@@ -26,10 +26,16 @@ const description = ref('')
     <input id="email" w-auto type="email" nq-input-box name="email" :placeholder="t('bugForm.emailPlaceholder')">
   </label>
 
-  <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
+  <label flex="~ items-center gap-8" data-input="share-debug-info" hidden f-text-sm f-mt-sm>
     <input v-model="shareDebugInfo" type="checkbox" name="shareDebugInfo" shrink-0 nq-switch border-transparent="!">
     <span text-neutral-800 select-none>
       {{ t('bugForm.shareDebugInfoLabel') }}
     </span>
   </label>
 </template>
+
+<style>
+[data-app='nimiq-pay'] [data-input='share-debug-info'] {
+  display: inherit !important;
+}
+</style>

@@ -104,7 +104,7 @@ async function submitFeedback(event: SubmitEvent) {
       <p>{{ t('formContainer.successMessage') }}</p>
     </div>
 
-    <form v-else flex="~ col gap-16" px-1.5 h-full @submit.prevent="submitFeedback">
+    <form v-else flex="~ col gap-16" px-1.5 h-full :data-app="app" @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
       <input type="text" name="app" :value="app" sr-only>
       <input type="text" name="dev" :value="dev" sr-only>
@@ -138,7 +138,7 @@ async function submitFeedback(event: SubmitEvent) {
       </div>
 
       <div mt-auto flex>
-        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue="!" disabled:op-60>
+        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60 style="background-image: radial-gradient(at 100% 100% in oklab, var(--nq-gradient-from) 0%, var(--nq-gradient-to) 100%) !important;">
           <div v-if="status === 'pending'" i-nimiq:spinner />
           {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
         </button>

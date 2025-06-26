@@ -1,5 +1,3 @@
-export const apps: string[] = ['playground', 'nimiq-pay', 'nimiq-wallet']
-
 export const imageMimeTypes = [
   'image/jpeg',
   'image/png',
