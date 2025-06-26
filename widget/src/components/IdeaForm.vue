@@ -15,8 +15,8 @@ const { t } = useI18n()
 
   <AttachmentUploader />
 
-  <div text="neutral-700 f-sm" mt--8>
-    <div op-90 i-nimiq:info />
+  <div text="neutral-700 f-sm" mt--8 flex="~ items-center gap-8">
+    <div op-90 shrink-0 i-nimiq:info />
     <p>
       {{ t('ideaForm.exampleHint') }}
     </p>
