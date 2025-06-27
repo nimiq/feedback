@@ -48,6 +48,8 @@ const iconGradient: Record<FormType, string> = {
 }
 
 async function submitFeedback(event: SubmitEvent) {
+  // eslint-disable-next-line no-console
+  console.log('[Nimiq Feedback Widget] 📤 Starting form submission...')
   status.value = 'pending'
 
   const formEl = event.target as HTMLFormElement
@@ -76,6 +78,7 @@ async function submitFeedback(event: SubmitEvent) {
     })
 
   if (!res.ok) {
+    console.log(`[Nimiq Feedback Widget] ❌ Form submission failed: ${res.status} ${res.statusText}`)
     status.value = 'error'
     error.value = await res.json() as FeedbackResponseError
     emit('formError', { error: error.value.message, details: error.value })
@@ -84,6 +87,8 @@ async function submitFeedback(event: SubmitEvent) {
 
   response.value = await res.json() as FeedbackResponse
   status.value = 'success'
+
+  console.log('[Nimiq Feedback Widget] ✅ Form submitted successfully')
   emit('formSuccess', response.value)
 }
 </script>
