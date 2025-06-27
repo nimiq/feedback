@@ -81,6 +81,6 @@ export default defineNuxtConfig({
     '/widget.css': {
       cache: { maxAge: 3600 },
     },
-    '/api/feedback': { swr: 0 },
+    '/api/feedback': { swr: 0, cors: true },
   },
 })
