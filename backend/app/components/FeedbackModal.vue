@@ -5,7 +5,7 @@ import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, Di
 
 import { nextTick, ref, watch } from 'vue'
 
-const { lang = 'en', feedbackEndpoint = '/api/feedback' } = defineProps<{ lang?: string, feedbackEndpoint?: string }>()
+const { lang = 'en', feedbackEndpoint = '/api/feedback', tags = [] } = defineProps<{ lang?: string, feedbackEndpoint?: string, tags?: string[] }>()
 
 useHead({ link: [{ rel: 'stylesheet', href: '/widget.css' }] })
 useScript('/widget.js')
@@ -23,8 +23,8 @@ function mountWidget() {
   // Ensure #widget-container is in the DOM before mounting, especially if currentView changes could affect its presence.
   if ((currentView.value === 'grid' || currentView.value === 'form')) {
     nextTick().then(() => { // Use nextTick to ensure DOM is updated
-      console.log(`Mounting widget for app: playground, lang: ${lang}, feedbackEndpoint: ${feedbackEndpoint}`)
-      widgetInstance.value = window.mountFeedbackWidget(`#${feedbackWidgetId}`, { app: 'playground', lang, feedbackEndpoint, dev: true })
+      console.log(`Mounting widget for app: playground, lang: ${lang}, feedbackEndpoint: ${feedbackEndpoint}, tags: ${tags}`)
+      widgetInstance.value = window.mountFeedbackWidget(`#${feedbackWidgetId}`, { app: 'playground', lang, feedbackEndpoint, tags })
       setupCommunicationListeners()
     })
   }

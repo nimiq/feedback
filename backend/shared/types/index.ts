@@ -66,7 +66,7 @@ export interface WidgetProps {
   app: string
   lang?: string
   feedbackEndpoint?: string
-  dev?: boolean
+  tags?: string[]
   initialForm?: FormType
   dark?: boolean
 }

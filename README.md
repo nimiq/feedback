@@ -54,7 +54,7 @@ Mount the widget to any DOM element:
       app: 'nimiq-wallet', // 'nimiq-wallet' | 'nimiq-pay' | 'playground'
       lang: 'en', // 'en' | 'es' (optional, defaults to 'en')
       feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback',
-      dev: true, // boolean (optional, defaults to false) - marks submissions as development
+      tags: ['beta', 'mobile'], // string[] (optional, defaults to []) - custom tags for submissions
       initialForm: 'bug', // optional - directly show a specific form: 'bug' | 'idea' | 'feedback'
       dark: false, // boolean (optional, defaults to false) - enables dark theme
     })
@@ -82,7 +82,7 @@ export interface WidgetProps {
   app: string
   lang?: string
   feedbackEndpoint?: string
-  dev?: boolean
+  tags?: string[]
   initialForm?: FormType
   dark?: boolean
 }
@@ -180,7 +180,7 @@ For development and testing purposes, you can use the test query parameter to te
 const widget = window.mountFeedbackWidget('#feedback-widget', {
   app: 'nimiq-wallet',
   feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback?test=true', // Add ?test=true
-  dev: true
+  tags: ['testing', 'dev']
 })
 
 // All form submissions will now return mock data and trigger listeners

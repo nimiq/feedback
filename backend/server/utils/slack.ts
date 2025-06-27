@@ -4,33 +4,33 @@ import { ratingToEmoji } from './rating-to-emoji'
 
 export interface CreateSlackMessageOptions {
   form: InferOutput<typeof FormSchema>
-  markdown: string
   github: GitHubIssue
 }
 
-export async function createSlackMessage({ markdown, form: { app, type, rating, dev }, github: { issueUrl } }: CreateSlackMessageOptions): Result<undefined> {
+export async function createSlackMessage({ form: { app, type, rating, tags }, github: { issueUrl } }: CreateSlackMessageOptions): Result<undefined> {
   const { webhookUrl } = useRuntimeConfig().slack
 
   if (!webhookUrl) {
     return [false, 'Slack webhook URL not configured', undefined]
   }
 
-  const title = `[${app}] - ${{ feedback: 'Feedback', bug: 'Bug report', idea: 'Idea' }[type]}`
+  const typeEmoji = { feedback: '💬', bug: '🐛', idea: '💡' }[type]
+  const title = `${typeEmoji} [${app}] ${type.charAt(0).toUpperCase() + type.slice(1)}`
 
-  // Create Slack blocks for rich formatting
-  const blocks = [
-    { type: 'header', text: { type: 'plain_text', text: title } },
-    { type: 'section', text: { type: 'mrkdwn', text: `<${issueUrl}|View GitHub Issue>` } },
-    { type: 'section', text: { type: 'mrkdwn', text: markdown } },
-  ]
+  // Create compact message
+  let text = `${title}\n`
 
-  if (dev)
-    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: '*🔧 Development Environment*' } })
+  if (type === 'feedback' && rating) {
+    text += `Rating: ${ratingToEmoji(rating)}\n`
+  }
 
-  if (type === 'feedback' && rating)
-    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `*Rating:* ${ratingToEmoji(rating)}` } })
+  if (tags && tags.length > 0) {
+    text += `Tags: ${tags.join(', ')}\n`
+  }
 
-  const payload = { blocks, text: title }
+  text += `GitHub: ${issueUrl}`
+
+  const payload = { text }
   try {
     await $fetch(webhookUrl, { method: 'POST', body: payload })
   }

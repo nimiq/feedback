@@ -20,13 +20,13 @@ interface FeedbackWidgetInstance extends ComponentPublicInstance {
   communication: SimpleWidgetCommunication
 }
 
-window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndpoint, dev = false, initialForm, dark = false }: WidgetProps): WidgetInstance => {
+window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndpoint, tags = [], initialForm, dark = false }: WidgetProps): WidgetInstance => {
   const el = document.querySelector(selector)
   if (!el)
     throw new Error(`Mount target ${selector} not found`)
 
   // eslint-disable-next-line no-console
-  console.log(`Mounting feedback widget for app: ${app}, lang: ${lang}, dev: ${dev}`, selector)
+  console.log(`Mounting feedback widget for app: ${app}, lang: ${lang}, tags: ${tags}`, selector)
 
   try {
     const currentMessages = localeMessages[lang]
@@ -37,7 +37,7 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
     }
 
     const files = ref<File[]>([])
-    const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint, dev, initialForm, dark })
+    const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint, tags, initialForm, dark })
       .provide(I18nInjectionKey, i18nContext)
       .provide(FilesInjectionKey, { files, updateFiles: (newFiles: File[]) => files.value = newFiles })
     const instance = vueApp.mount(el) as FeedbackWidgetInstance

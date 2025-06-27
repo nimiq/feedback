@@ -92,7 +92,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const [slack, slackMessageError] = await createSlackMessage({ form, markdown, github })
+  const [slack, slackMessageError] = await createSlackMessage({ form, github })
   if (!slack)
     consola.warn('Slack message error:', slackMessageError)
 

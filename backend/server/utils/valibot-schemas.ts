@@ -4,7 +4,12 @@ import { imageMimeTypes } from '~~/shared/utils'
 export const FormSchema = object({
   type: picklist(['feedback', 'bug', 'idea'], 'Invalid submission type'),
   app: string('App must be a string'),
-  dev: pipe(string(), transform(value => value === 'true'), boolean('Dev must be a boolean')),
+  tags: fallback(optional(pipe(
+    string(),
+    transform(value => value ? value.split(',').map(tag => tag.trim()).filter(Boolean) : []),
+    array(string(), 'Tags must be an array of strings'),
+    maxLength(10, 'Maximum 10 tags allowed'),
+  )), []),
   acceptTerms: pipe(string(), transform(value => value === 'true' || value === 'on'), boolean('You need to accept the legal terms')),
   description: string('Description must be a string'),
   email: optional(string('Email must be a string')),

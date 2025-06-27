@@ -9,11 +9,11 @@ export interface FormContainerEmits {
   formError: [{ error: string, details?: any }]
 }
 
-const { type, app, feedbackEndpoint, dev } = defineProps<{
+const { type, app, feedbackEndpoint, tags = [] } = defineProps<{
   type: FormType
   app: string
   feedbackEndpoint: string
-  dev: boolean
+  tags?: string[]
 }>()
 const emit = defineEmits<FormContainerEmits>()
 
@@ -112,7 +112,7 @@ async function submitFeedback(event: SubmitEvent) {
     <form v-else flex="~ col gap-16" px-1.5 h-full :data-app="app" @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
       <input type="text" name="app" :value="app" sr-only>
-      <input type="text" name="dev" :value="dev" sr-only>
+      <input type="text" name="tags" :value="tags.join(',')" sr-only>
 
       <slot />
 
@@ -155,7 +155,7 @@ async function submitFeedback(event: SubmitEvent) {
 <style>
 /* Styles remain the same */
 [nq-input-box] {
-  max-height: calc(6lh + 2 * var(--padding));
+  max-height: calc(20lh + 2 * var(--padding));
   border-radius: 6px;
   padding: 10px 12px;
   border: none;

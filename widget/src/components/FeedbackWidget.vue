@@ -9,8 +9,8 @@ import FeedbackForm from './FeedbackForm.vue'
 import FormContainer from './FormContainer.vue'
 import IdeaForm from './IdeaForm.vue'
 
-const props = defineProps<{ app: string, feedbackEndpoint?: string, dev?: boolean, initialForm?: FormType, dark?: boolean }>()
-const { app, feedbackEndpoint, dev, dark = false } = props
+const props = defineProps<{ app: string, feedbackEndpoint?: string, tags?: string[], initialForm?: FormType, dark?: boolean }>()
+const { app, feedbackEndpoint, tags = [], dark = false } = props
 
 const activeForm = ref<FormType>()
 const communication = createWidgetCommunication()
@@ -112,7 +112,7 @@ defineExpose({
       </div>
 
       <FormContainer
-        v-else :type="activeForm!" :app :feedback-endpoint :dev="dev || false"
+        v-else :type="activeForm!" :app :feedback-endpoint :tags
         @form-success="handleFormSuccess" @form-error="handleFormError"
       >
         <component :is="cmp" />
