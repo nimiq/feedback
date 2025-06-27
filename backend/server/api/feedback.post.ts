@@ -5,6 +5,14 @@ import { safeParse } from 'valibot'
 // In the backend we don't distinguish between the different types of forms,
 // instead we treat them as a single form with different types.
 export default defineEventHandler(async (event) => {
+  // Validate query parameters for test mode
+  const { output: query, issues: queryIssues, success: querySuccess } = await getValidatedQuery(event, body => safeParse(QuerySchema, body))
+  if (!querySuccess || !query) {
+    return createError({ message: 'Invalid query parameters', status: 400, cause: JSON.stringify(queryIssues) })
+  }
+
+  const isTestMode = query.test
+
   const formData = await readFormData(event)
   const formAttachments = formData.getAll('attachments')
   const submission = Object.fromEntries(formData.entries()) as Record<string, any>
@@ -22,9 +30,37 @@ export default defineEventHandler(async (event) => {
   }
 
   const id = randomUUID()
-  consola.info(`Creating submission with ID ${id} - [${form.type}] ${form.app}`)
+  consola.info(`${isTestMode ? '[TEST MODE] ' : ''}Creating submission with ID ${id} - [${form.type}] ${form.app}`)
   consola.info(form)
 
+  if (isTestMode) {
+    // In test mode, return mock data without creating actual entries
+    consola.info('[TEST MODE] Skipping actual data creation - returning mock response')
+
+    const mockResponse = {
+      success: true as const,
+      github: {
+        issueUrl: `https://github.com/test/repo/issues/123`,
+      },
+      slack: true,
+      submission: {
+        type: form.type,
+        app: form.app,
+        description: form.description,
+        id,
+        email: form.email || null,
+        rating: form.rating || null,
+        githubIssue: `https://github.com/test/repo/issues/123`,
+        attachments: form.attachments?.map((_, index) => `https://test.example.com/images/test-${index}.jpg`) || null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    } satisfies FeedbackResponse
+
+    return mockResponse
+  }
+
+  // Normal mode - proceed with actual data creation
   const [fileUploadOk, errorUpload, filesUrls] = await uploadFiles(id, form)
   if (!fileUploadOk) {
     consola.error('File upload error:', errorUpload)

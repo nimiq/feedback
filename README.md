@@ -171,6 +171,34 @@ widget.goBack()
 widget.destroy()
 ```
 
+### Testing Mode
+
+For development and testing purposes, you can use the test query parameter to test listeners and UI flow without creating actual database entries, GitHub issues, or Slack messages:
+
+```javascript
+// Configure widget with test mode
+const widget = window.mountFeedbackWidget('#feedback-widget', {
+  app: 'nimiq-wallet',
+  feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback?test=true', // Add ?test=true
+  dev: true
+})
+
+// All form submissions will now return mock data and trigger listeners
+// without creating actual entries in the database or external services
+```
+
+When `test=true` is added to the feedback endpoint URL:
+
+- ✅ Form validation still runs normally
+- ✅ All widget events are triggered (`form-submitted`, `before-submit`, etc.)
+- ✅ Mock response data is returned that matches the expected structure
+- ❌ No database entries are created
+- ❌ No GitHub issues are created
+- ❌ No Slack messages are sent
+- ❌ No file uploads occur
+
+This is perfect for testing your integration, event listeners, and UI flows during development.
+
 ### Theming
 
 The widget automatically adapts to the user's preferred color scheme (light/dark mode). In dark mode, the widget will use lighter colors for text and darker colors for input elements. This behavior is controlled by the `color-scheme` CSS property.
