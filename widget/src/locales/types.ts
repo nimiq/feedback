@@ -23,8 +23,7 @@ export interface LocaleMessages {
     bugReportButton: string
     ideaButton: string
     feedbackButton: string
-    termsAndConditionsLink: string
-    termsApplySuffix: string
+    termsAndConditionsApply: string
   }
   formContainer: {
     titleBug: string

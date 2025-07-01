@@ -119,8 +119,7 @@ async function submitFeedback(event: SubmitEvent) {
       <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
         <input v-model="acceptTerms" type="checkbox" name="acceptTerms" border-transparent="!" required shrink-0 nq-switch>
         <span text-neutral-800 select-none>
-          <a href="https://nimiq.com" target="_blank" un-text-current>
-            {{ t('feedbackWidget.termsAndConditionsLink') }}</a>{{ t('feedbackWidget.termsApplySuffix') }}
+          {{ t('feedbackWidget.termsAndConditionsApply') }}
         </span>
       </label>
 

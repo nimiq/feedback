@@ -23,8 +23,7 @@ export default {
     bugReportButton: 'Fehlerbericht senden',
     ideaButton: 'Ideen vorschlagen',
     feedbackButton: 'Feedback senden',
-    termsAndConditionsLink: 'Allgemeine Geschäftsbedingungen',
-    termsApplySuffix: ' akzeptieren',
+    termsAndConditionsApply: 'Allgemeine Geschäftsbedingungen akzeptieren',
   },
   formContainer: {
     titleBug: 'Einen Fehler melden',

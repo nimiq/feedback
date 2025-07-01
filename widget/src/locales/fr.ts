@@ -23,8 +23,7 @@ export default {
     bugReportButton: 'Signaler un bug',
     ideaButton: 'Partagez votre idée',
     feedbackButton: 'Commentaires',
-    termsAndConditionsLink: 'Conditions générales',
-    termsApplySuffix: ' s\'appliquent',
+    termsAndConditionsApply: 'Les conditions générales s\'appliquent',
   },
   formContainer: {
     titleBug: 'Signaler un bug',
