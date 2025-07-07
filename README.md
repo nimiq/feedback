@@ -215,7 +215,6 @@ You can override the color scheme for a specific instance of the widget by setti
 
 By default, the widget will respect the user's system preferences and switch automatically between light and dark mode.
 
-
 ## Other resources
 
 - https://www.featurebase.app/
