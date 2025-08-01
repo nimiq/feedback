@@ -34,6 +34,8 @@ export interface LocaleMessages {
     errorDetailsSummary: string
     sendingButton: string
     submitButtonDefault: string
+    consentTermsAndFeedback: string
+    readFullTerms: string
     learnMore: string
     privacyPolicyText: string
   }

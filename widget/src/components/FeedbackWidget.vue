@@ -18,11 +18,8 @@ const { t } = useI18n()
 
 const { updateFiles } = inject(FilesInjectionKey)
 
-// Show initial form if provided
 if (props.initialForm)
   activeForm.value = props.initialForm
-
-// Provide communication to child components
 provide(CommunicationInjectionKey, communication)
 
 const cmp = computed(() => {
@@ -55,11 +52,10 @@ function handleFormError({ error, details }: { error: string, details?: any }) {
   communication.emit('form-error', { success: false, error, details })
 }
 
-// Expose widget control methods
 defineExpose({
   showFormGrid() {
     activeForm.value = undefined
-    // Clear files when returning to form grid
+    // Prevent files from persisting when navigating away
     updateFiles([])
   },
   showForm(type: FormType) {
@@ -67,12 +63,12 @@ defineExpose({
   },
   closeWidget() {
     activeForm.value = undefined
-    // Clear files when closing widget
+    // Prevent files from persisting when navigating away
     updateFiles([])
   },
   goBack() {
     activeForm.value = undefined
-    // Clear files when going back to prevent them from persisting
+    // Prevent files from persisting when navigating away
     updateFiles([])
     communication.emit('go-back', undefined)
   },
@@ -94,18 +90,18 @@ defineExpose({
         </h3>
 
         <div grid="~ rows-2 cols-2 gap-16" class="grid-container" h-full f-mt-lg f-mb-md>
-          <button col-span-2 nq-hoverable-red @click="selectForm('bug')">
-            <div i-nimiq:exclamation />
+          <button text-white col-span-2 nq-hoverable-red flex="~ col justify-center items-center gap-12" @click="selectForm('bug')">
+            <div f-text-2xl i-nimiq:exclamation />
             <span>{{ t('feedbackWidget.bugReportButton') }}</span>
           </button>
 
-          <button nq-hoverable-green @click="selectForm('idea')">
-            <div i-nimiq:leaf-2-filled />
+          <button text-white nq-hoverable-green flex="~ col justify-center items-center gap-12" @click="selectForm('idea')">
+            <div f-text-2xl i-nimiq:leaf-2-filled />
             <span>{{ t('feedbackWidget.ideaButton') }}</span>
           </button>
 
-          <button nq-hoverable-gold @click="selectForm('feedback')">
-            <div i-nimiq:star />
+          <button text-white nq-hoverable-gold flex="~ col justify-center items-center gap-12" @click="selectForm('feedback')">
+            <div f-text-2xl i-nimiq:star />
             <span>{{ t('feedbackWidget.feedbackButton') }}</span>
           </button>
         </div>

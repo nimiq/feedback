@@ -17,7 +17,7 @@ export default defineConfig({
     }),
     presetNimiq({
       utilities: true,
-      // preflight: false,
+      preflight: false, // Disable global resets and base styles
       fonts: false,
       attributifyUtilities: true,
     }),

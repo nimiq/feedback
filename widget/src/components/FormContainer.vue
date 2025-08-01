@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
-import { inject, ref } from 'vue'
+import { computed, inject, provide, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
-import { CommunicationInjectionKey, FilesInjectionKey } from '../types'
+import { CommunicationInjectionKey, FilesInjectionKey, FormValidationKey } from '../types'
 
 export interface FormContainerEmits {
   formSuccess: [data: FeedbackResponse]
@@ -21,8 +21,19 @@ const { files } = inject(FilesInjectionKey)
 const communication = inject(CommunicationInjectionKey)
 
 const acceptTerms = ref(false)
+const description = ref('')
+const rating = ref(0)
+
+provide(FormValidationKey, { description, rating })
 
 const { t } = useI18n()
+const isFormValid = computed(() => {
+  const hasDescription = description.value.trim().length > 0
+  const hasRating = type === 'feedback' ? rating.value > 0 : true
+  const hasAcceptedTerms = acceptTerms.value
+
+  return hasDescription && hasRating && hasAcceptedTerms
+})
 
 const error = ref<FeedbackResponseError>()
 const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
@@ -116,14 +127,19 @@ async function submitFeedback(event: SubmitEvent) {
 
       <slot />
 
-      <label flex="~ items-center gap-8" f-text-sm f-mt-sm>
-        <input v-model="acceptTerms" type="checkbox" name="acceptTerms" border-transparent="!" required shrink-0 nq-switch>
+      <label flex="~ items-start gap-8" f-text-sm f-mt-sm>
+        <span mt-1 shrink-0 h-1lh>
+          <input v-model="acceptTerms" type="checkbox" name="acceptTerms" border-transparent="!" required nq-switch>
+        </span>
         <span text-neutral-800 select-none>
-          {{ t('feedbackWidget.termsAndConditionsApply') }}
+          {{ t('formContainer.consentTermsAndFeedback') }} <span text-orange>*</span>
         </span>
       </label>
 
       <p text-neutral-700 f-text-sm f-mt-md>
+        <a href="https://nimiq.com/terms/" target="_blank" un-text-current underline>
+          {{ t('formContainer.readFullTerms') }}</a>
+        <span mx-8>·</span>
         <a href="https://nimiq.com/privacy-policy/" target="_blank" un-text-current underline>
           {{ t('formContainer.learnMore') }}</a> {{ t('formContainer.privacyPolicyText') }}
       </p>
@@ -142,7 +158,7 @@ async function submitFeedback(event: SubmitEvent) {
       </div>
 
       <div mt-auto flex>
-        <button type="submit" :disabled="!acceptTerms || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60 style="background-image: radial-gradient(at 100% 100% in oklab, var(--nq-gradient-from) 0%, var(--nq-gradient-to) 100%) !important;">
+        <button type="submit" :disabled="!isFormValid || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60 style="background-image: radial-gradient(at 100% 100% in oklab, var(--nq-gradient-from) 0%, var(--nq-gradient-to) 100%) !important;">
           <div v-if="status === 'pending'" i-nimiq:spinner />
           {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
         </button>
@@ -152,7 +168,6 @@ async function submitFeedback(event: SubmitEvent) {
 </template>
 
 <style>
-/* Styles remain the same */
 [nq-input-box] {
   max-height: calc(20lh + 2 * var(--padding));
   border-radius: 6px;

@@ -15,7 +15,6 @@ const fileInput = ref<HTMLInputElement>()
 // Watch for external changes to files (like when going back) and clean up previews
 watch(files, (newFiles) => {
   if (newFiles.length === 0) {
-    // Clean up all preview URLs when files are cleared
     previews.value.forEach(url => URL.revokeObjectURL(url))
     previews.value = []
     imageAspectRatios.value = []
@@ -29,7 +28,6 @@ function handleFileSelect() {
   updateFiles(newFiles)
   previews.value.forEach(url => URL.revokeObjectURL(url))
 
-  // Create previews and calculate aspect ratios
   previews.value = []
   imageAspectRatios.value = []
 
@@ -37,7 +35,6 @@ function handleFileSelect() {
     const url = URL.createObjectURL(file)
     previews.value.push(url)
 
-    // Load image to get dimensions
     const img = new Image()
     img.onload = () => {
       const aspectRatio = img.width / img.height

@@ -12,7 +12,7 @@ export default {
     descriptionPlaceholder: 'Veuillez nous dire comment nous pouvons améliorer votre expérience Nimiq*',
     descriptionDefaultValue: '',
     emailLabel: 'E-mail',
-    emailPlaceholder: 'Si nous avons besoin de plus d\'informations*',
+    emailPlaceholder: 'Si nous avons besoin de plus d\'informations',
     shareDebugInfoLabel: 'Inclure les détails techniques pour nous aider à résoudre ce problème plus rapidement',
   },
   feedbackForm: {
@@ -34,6 +34,8 @@ export default {
     errorDetailsSummary: 'Détails',
     sendingButton: 'Envoi en cours...',
     submitButtonDefault: 'Envoyer les commentaires',
+    consentTermsAndFeedback: 'J\'accepte les Conditions de Service et l\'utilisation de mes commentaires pour améliorer les produits Nimiq',
+    readFullTerms: 'Lire les Conditions complètes',
     learnMore: 'En savoir plus',
     privacyPolicyText: 'sur la façon dont nous traitons vos données.',
   },

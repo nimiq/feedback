@@ -11,7 +11,6 @@ import { FilesInjectionKey } from './types'
 import { createTranslationFunction } from './utils/i18n'
 import 'virtual:uno.css'
 
-// Define type for the component instance
 interface FeedbackWidgetInstance extends ComponentPublicInstance {
   showFormGrid: () => void
   showForm: (type: FormType) => void
@@ -42,7 +41,6 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
       .provide(FilesInjectionKey, { files, updateFiles: (newFiles: File[]) => files.value = newFiles })
     const instance = vueApp.mount(el) as FeedbackWidgetInstance
 
-    // Return the widget instance that the host can control
     return {
       showFormGrid() {
         instance.showFormGrid()

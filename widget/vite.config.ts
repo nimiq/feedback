@@ -14,6 +14,46 @@ const outputFolder = join(root, 'backend/public')
 
 export default defineConfig({
   publicDir: false,
+  css: {
+    postcss: {
+      plugins: [
+        {
+          postcssPlugin: 'scope-widget-css',
+          Rule(rule) {
+            // Skip rules that are already scoped or are keyframes
+            if (rule.selector.includes('#feedback-widget')
+              || rule.selector.includes('@keyframes')
+              || rule.selector.includes('@media')
+              || rule.selector.startsWith('@')) {
+              return
+            }
+
+            // Replace :root with #feedback-widget
+            if (rule.selector === ':root') {
+              rule.selector = '#feedback-widget'
+              return
+            }
+
+            // Scope all other selectors
+            const selectors = rule.selector.split(',').map(s => s.trim())
+            rule.selector = selectors.map((selector) => {
+              // Skip if already scoped
+              if (selector.includes('#feedback-widget'))
+                return selector
+
+              // Handle pseudo-selectors like :host
+              if (selector.startsWith(':host')) {
+                return selector.replace(':host', '#feedback-widget')
+              }
+
+              // Scope regular selectors
+              return `#feedback-widget ${selector}`
+            }).join(', ')
+          },
+        },
+      ],
+    },
+  },
   plugins: [
     vue({
       template: {

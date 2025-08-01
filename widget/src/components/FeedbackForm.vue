@@ -1,8 +1,22 @@
 <script setup lang="ts">
+import { inject, ref, watch } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { FormValidationKey } from '../types'
 
 const rating = defineModel<number>({ default: 0 })
+const description = ref('')
 const { t } = useI18n()
+
+const formValidation = inject(FormValidationKey)
+if (formValidation) {
+  watch(rating, (newValue) => {
+    formValidation.rating.value = newValue
+  }, { immediate: true })
+
+  watch(description, (newValue) => {
+    formValidation.description.value = newValue
+  }, { immediate: true })
+}
 </script>
 
 <template>
@@ -23,7 +37,7 @@ const { t } = useI18n()
 
   <label flex f-mt-sm>
     <textarea
-      id="description" name="description" :placeholder="t('feedbackForm.descriptionPlaceholder')" rows="4"
+      id="description" v-model="description" name="description" :placeholder="t('feedbackForm.descriptionPlaceholder')" rows="4"
       required nq-input-box
     />
   </label>

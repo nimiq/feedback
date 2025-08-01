@@ -7,3 +7,8 @@ export const FilesInjectionKey: InjectionKey<{
 }> = Symbol('files')
 
 export const CommunicationInjectionKey: InjectionKey<SimpleWidgetCommunication> = Symbol('communication')
+
+export const FormValidationKey: InjectionKey<{
+  description: Ref<string>
+  rating: Ref<number>
+}> = Symbol('form-validation')
