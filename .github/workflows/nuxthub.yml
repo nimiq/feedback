@@ -3,11 +3,12 @@ on: push
 
 jobs:
   deploy:
-    name: Deploy to NuxtHub
+    name: "Deploy to NuxtHub"
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,17 +19,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build widget
-        run: pnpm run build
-        working-directory: widget
+      - name: Ensure NuxtHub module is installed
+        run: pnpx nuxthub@latest ensure
 
       - name: Build & Deploy to NuxtHub
         uses: nuxt-hub/action@v2
         with:
           project-key: nimiq-feedback-yntv
-          directory: backend
