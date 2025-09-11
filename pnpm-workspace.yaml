@@ -2,11 +2,13 @@ packages:
   - ./
   - ./backend
   - ./widget
+
 catalog:
   eslint-plugin-pnpm: ^1.1.1
   eslint-plugin-pnpm-catalog: ^0.0.1
   nimiq-icons: 1.0.0-beta.76
   nuxt-safe-runtime-config: ^0.0.3
+
 catalogs:
   bundle:
     '@rollup/plugin-replace': ^6.0.2
@@ -18,7 +20,7 @@ catalogs:
   dev:
     '@nuxt/scripts': ^0.11.13
   frontend:
-    reka-ui: ^2.5.0
+    reka-ui: 2.3.1
     vue: ^3.5.21
   lint:
     '@antfu/eslint-config': ^5.3.0
@@ -33,7 +35,6 @@ catalogs:
     '@nuxt/fonts': ^0.11.4
     '@nuxt/image': ^1.11.0
     '@vueuse/nuxt': ^13.9.0
-    # TODO: do not use 4.1.1. Wait for this to be resolved https://github.com/nuxt/ui/issues/4900
     nuxt: 4.1.0
   server:
     '@nuxthub/core': ^0.9.0
@@ -55,13 +56,15 @@ catalogs:
   unocss:
     '@iconify/utils': ^3.0.1
     '@unocss/eslint-plugin': ^66.5.1
-    nimiq-css: ^1.0.0-beta.76
+    nimiq-css: 1.0.0-beta.76
     unocss: ^66.5.1
-    unocss-preset-onmax: ^1.0.0-beta.37
+    unocss-preset-onmax: 1.0.0-beta.37
   utils:
     '@vueuse/core': ^13.9.0
+
 ignoredBuiltDependencies:
   - pncat
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - better-sqlite3
