@@ -33,7 +33,8 @@ catalogs:
     '@nuxt/fonts': ^0.11.4
     '@nuxt/image': ^1.11.0
     '@vueuse/nuxt': ^13.9.0
-    nuxt: ^4.1.1
+    # TODO: do not use 4.1.1. Wait for this to be resolved https://github.com/nuxt/ui/issues/4900
+    nuxt: 4.1.0
   server:
     '@nuxthub/core': ^0.9.0
     '@octokit/rest': ^22.0.0
