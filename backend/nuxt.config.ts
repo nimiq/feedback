@@ -17,7 +17,7 @@ const runtimeConfigSchema = object({
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-05-05',
+  compatibilityDate: '2025-09-09',
   devtools: { enabled: true },
   modules: [
     '@nuxt/eslint',

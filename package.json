@@ -2,7 +2,7 @@
   "name": "nimiq-feedback",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.12.1",
+  "packageManager": "pnpm@10.15.1",
   "scripts": {
     "build": "nr -r build",
     "play": "pnpm -C widget build && nr -r dev",
