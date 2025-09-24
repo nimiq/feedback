@@ -173,9 +173,11 @@ function goBack() {
           </div>
 
           <div v-else-if="currentView === 'error'" class="error-view f-p-md">
-            <DialogTitle text="24 center neutral lh-24" lh-none font-bold mb-12 px-24 lg:px-40 as="h2">
-              <div i-nimiq:exclamation />
-              Something went wrong
+            <DialogTitle text="24 center neutral lh-24" flex="~ gap-8 items-center justify-center" lh-none font-bold mb-12 px-24 lg:px-40 as="h2">
+              <div size-16 i-nimiq:exclamation />
+              <span text-left flex-1 f-text-md>
+                Something went wrong
+              </span>
             </DialogTitle>
             <div class="error-content text-center">
               <p class="mb-16">
