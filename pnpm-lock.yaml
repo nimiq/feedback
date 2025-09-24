@@ -271,6 +271,9 @@ importers:
       unocss:
         specifier: catalog:unocss
         version: 66.5.2(@unocss/webpack@66.5.2(webpack@5.99.8(esbuild@0.25.5)))(postcss@8.5.6)(vite@7.1.7(@types/node@24.5.2)(jiti@2.6.0)(terser@5.44.0)(yaml@2.8.1))
+      vue-tsc:
+        specifier: catalog:types
+        version: 3.0.8(typescript@5.9.2)
       wrangler:
         specifier: catalog:server
         version: 4.39.0

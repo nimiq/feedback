@@ -42,6 +42,7 @@
     "lint-staged": "catalog:lint",
     "typescript": "catalog:types",
     "unocss": "catalog:unocss",
+    "vue-tsc": "catalog:types",
     "wrangler": "catalog:server"
   },
   "simple-git-hooks": {
