@@ -84,15 +84,10 @@ export default defineEventHandler(async (event) => {
   const markdown = submissionToMarkdown(id, form, filesUrls, logsUrl)
   const [githubIssueOk, githubIssueError, github] = await createGitHubIssue({ form, markdown })
   if (!githubIssueOk) {
-    consola.error('GitHub issue error:', githubIssueError)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'GitHub issue error',
-      data: { success: false, message: 'There was an error creating the GitHub issue', details: githubIssueError },
-    })
+    consola.warn('GitHub issue error:', githubIssueError)
   }
 
-  const [slack, slackMessageError] = await createSlackMessage({ form, github })
+  const [slack, slackMessageError] = await createSlackMessage({ form, github: githubIssueOk ? github : undefined })
   if (!slack)
     consola.warn('Slack message error:', slackMessageError)
 
@@ -101,12 +96,12 @@ export default defineEventHandler(async (event) => {
     id,
     email: form.email || null,
     rating: form.rating || null,
-    githubIssue: github.issueUrl,
+    githubIssue: github?.issueUrl || null,
     attachments: filesUrls,
     logs: form.logs || null,
   }).returning().get()
 
   consola.success('Submission created:', fullSubmission)
 
-  return { success: true, github, slack, submission: fullSubmission } satisfies FeedbackResponse
+  return { success: true, github: github || null, slack, submission: fullSubmission } satisfies FeedbackResponse
 })

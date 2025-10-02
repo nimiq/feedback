@@ -4,10 +4,10 @@ import { ratingToEmoji } from './rating-to-emoji'
 
 export interface CreateSlackMessageOptions {
   form: InferOutput<typeof FormSchema>
-  github: GitHubIssue
+  github?: GitHubIssue
 }
 
-export async function createSlackMessage({ form: { app, type, rating, tags }, github: { issueUrl } }: CreateSlackMessageOptions): Result<undefined> {
+export async function createSlackMessage({ form: { app, type, rating, tags }, github }: CreateSlackMessageOptions): Result<undefined> {
   const { webhookUrl } = useRuntimeConfig().slack
 
   if (!webhookUrl) {
@@ -28,7 +28,12 @@ export async function createSlackMessage({ form: { app, type, rating, tags }, gi
     text += `Tags: ${tags.join(', ')}\n`
   }
 
-  text += `GitHub: ${issueUrl}`
+  if (github) {
+    text += `GitHub: ${github.issueUrl}`
+  }
+  else {
+    text += `⚠️ GitHub issue could not be created`
+  }
 
   const payload = { text }
   try {

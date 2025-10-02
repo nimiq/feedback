@@ -4,7 +4,7 @@ export interface GitHubIssue { issueUrl: string }
 
 export interface FeedbackResponse {
   success: true
-  github: GitHubIssue
+  github: GitHubIssue | null
   slack: boolean
   submission: {
     type: FormType
