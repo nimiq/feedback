@@ -25,9 +25,14 @@ export async function createGitHubIssue({ markdown: body, form: { app, type, rat
   const issueParams: Issue = { title, body, owner, repo, labels }
 
   const octokit = new Octokit({ auth: token })
-  const response = await octokit.issues.create(issueParams)
-  if (response.status !== 201)
-    return [false, 'Error creating issue on GitHub', undefined]
+  try {
+    const response = await octokit.issues.create(issueParams)
+    if (response.status !== 201)
+      return [false, 'Error creating issue on GitHub', undefined]
 
-  return [true, undefined, { issueUrl: response.data.html_url }]
+    return [true, undefined, { issueUrl: response.data.html_url }]
+  }
+  catch (error: any) {
+    return [false, `GitHub API error: ${error.message}`, undefined]
+  }
 }
