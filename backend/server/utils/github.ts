@@ -28,11 +28,11 @@ export async function createGitHubIssue({ markdown: body, form: { app, type, rat
   try {
     const response = await octokit.issues.create(issueParams)
     if (response.status !== 201)
-      return [false, 'Error creating issue on GitHub', undefined]
+      return [false, `Error creating issue on GitHub. Issue body:\n${body}`, undefined]
 
     return [true, undefined, { issueUrl: response.data.html_url }]
   }
   catch (error: any) {
-    return [false, `GitHub API error: ${error.message}`, undefined]
+    return [false, `GitHub API error: ${error.message}. Issue body:\n${body}`, undefined]
   }
 }
