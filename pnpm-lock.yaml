@@ -110,6 +110,12 @@ catalogs:
       specifier: ^26.0.1
       version: 26.0.1
   types:
+    '@nuxt/test-utils':
+      specifier: ^3.19.2
+      version: 3.19.2
+    '@playwright/test':
+      specifier: ^1.55.1
+      version: 1.55.1
     '@tsconfig/node22':
       specifier: ^22.0.2
       version: 22.0.2
@@ -119,6 +125,9 @@ catalogs:
     '@vue/tsconfig':
       specifier: ^0.8.1
       version: 0.8.1
+    playwright-core:
+      specifier: ^1.55.1
+      version: 1.55.1
     typescript:
       specifier: ^5.9.2
       version: 5.9.2
@@ -236,13 +245,13 @@ importers:
         specifier: catalog:dev
         version: 0.11.13(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(better-sqlite3@11.10.0)(drizzle-orm@0.44.5(better-sqlite3@11.10.0)))(ioredis@5.8.0)(magicast@0.3.5)(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))
       '@nuxt/test-utils':
-        specifier: ^3.19.2
+        specifier: catalog:types
         version: 3.19.2(@playwright/test@1.55.1)(magicast@0.3.5)(playwright-core@1.55.1)(typescript@5.9.2)
       '@nuxthub/core':
         specifier: catalog:server
         version: 0.9.0(db0@0.3.2(better-sqlite3@11.10.0)(drizzle-orm@0.44.5(better-sqlite3@11.10.0)))(ioredis@5.8.0)(magicast@0.3.5)(vite@7.1.7(@types/node@24.5.2)(jiti@2.6.0)(terser@5.44.0)(yaml@2.8.1))
       '@playwright/test':
-        specifier: ^1.55.1
+        specifier: catalog:types
         version: 1.55.1
       '@unocss/nuxt':
         specifier: catalog:style
@@ -272,7 +281,7 @@ importers:
         specifier: catalog:lint
         version: 16.2.0
       playwright-core:
-        specifier: ^1.55.1
+        specifier: catalog:types
         version: 1.55.1
       typescript:
         specifier: catalog:types
