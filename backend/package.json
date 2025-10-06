@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.11.1",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --remote --open",
+    "dev": "nuxt dev --remote",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "prepare": "nuxt prepare",
@@ -13,7 +13,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "nuxt typecheck",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
   },
   "dependencies": {
     "@nuxt/fonts": "catalog:nuxt",
@@ -30,7 +32,9 @@
     "@antfu/ni": "catalog:tools",
     "@nuxt/eslint": "catalog:lint",
     "@nuxt/scripts": "catalog:dev",
+    "@nuxt/test-utils": "catalog:types",
     "@nuxthub/core": "catalog:server",
+    "@playwright/test": "catalog:types",
     "@unocss/nuxt": "catalog:style",
     "@vue/tsconfig": "catalog:types",
     "@vueuse/core": "catalog:utils",
@@ -40,6 +44,7 @@
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
     "lint-staged": "catalog:lint",
+    "playwright-core": "catalog:types",
     "typescript": "catalog:types",
     "unocss": "catalog:unocss",
     "vue-tsc": "catalog:types",

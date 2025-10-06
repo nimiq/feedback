@@ -3,7 +3,7 @@ import type { FormSchema } from './valibot-schemas'
 import { ratingToEmoji } from './rating-to-emoji'
 
 export function submissionToMarkdown(id: string, form: InferOutput<typeof FormSchema>, filesUrl: string[] = [], logsUrl?: string | undefined): string {
-  const { app, description, type, email, rating, logs, tags } = form
+  const { app, description, type, email, rating, logs, tags, meta } = form
 
   let markdown = `# ${app} - ${type}\n\n> ID: ${id}\n\n`
   if (tags && tags.length > 0)
@@ -21,6 +21,9 @@ export function submissionToMarkdown(id: string, form: InferOutput<typeof FormSc
   }
   if (logs && logsUrl) {
     markdown += `## Debug Logs\n\n[Download Debug Logs](${logsUrl})\n\n`
+  }
+  if (meta) {
+    markdown += `## Metadata\n\n\`\`\`json\n${JSON.stringify(meta, null, 2)}\n\`\`\`\n\n`
   }
 
   return markdown
