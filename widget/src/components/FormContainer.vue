@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
-import { computed, inject, onMounted, provide, ref } from 'vue'
+import { computed, inject, provide, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
 import { CommunicationInjectionKey, FilesInjectionKey, FormValidationKey } from '../types'
 
@@ -24,29 +24,7 @@ const acceptTerms = ref(false)
 const description = ref('')
 const rating = ref(0)
 
-// Metadata fields
-const metadata = ref({
-  screenSize: '',
-  viewportSize: '',
-  url: '',
-  userAgent: '',
-  timezone: '',
-  locale: '',
-})
-
 provide(FormValidationKey, { description, rating })
-
-// Capture metadata on mount
-onMounted(() => {
-  metadata.value = {
-    screenSize: `${window.screen.width}x${window.screen.height}`,
-    viewportSize: `${window.innerWidth}x${window.innerHeight}`,
-    url: window.location.href,
-    userAgent: navigator.userAgent,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    locale: navigator.language,
-  }
-})
 
 const { t } = useI18n()
 const isFormValid = computed(() => {
@@ -146,14 +124,6 @@ async function submitFeedback(event: SubmitEvent) {
       <input type="text" name="type" :value="type" sr-only>
       <input type="text" name="app" :value="app" sr-only>
       <input type="text" name="tags" :value="tags.join(',')" sr-only>
-
-      <!-- Metadata fields -->
-      <input type="text" name="meta[screenSize]" :value="metadata.screenSize" sr-only>
-      <input type="text" name="meta[viewportSize]" :value="metadata.viewportSize" sr-only>
-      <input type="text" name="meta[url]" :value="metadata.url" sr-only>
-      <input type="text" name="meta[userAgent]" :value="metadata.userAgent" sr-only>
-      <input type="text" name="meta[timezone]" :value="metadata.timezone" sr-only>
-      <input type="text" name="meta[locale]" :value="metadata.locale" sr-only>
 
       <slot />
 
