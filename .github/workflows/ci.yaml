@@ -36,6 +36,7 @@ jobs:
         run: pnpm -C backend run test
         env:
           NUXT_HUB_PROJECT_URL: http://localhost:3000
+          NUXT_HUB_PROJECT_SECRET_KEY: test
           NUXT_GITHUB_OWNER: test
           NUXT_GITHUB_REPO: test
           NUXT_GITHUB_TOKEN: test
