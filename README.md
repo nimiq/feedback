@@ -152,6 +152,19 @@ widget.communication?.on('before-submit', ({ formData, type, app }) => {
 })
 ```
 
+### Custom Metadata
+
+Attach custom JSON metadata to submissions via the `meta` field. Metadata is stored in the database and included in GitHub issues.
+
+```typescript
+widget.communication?.on('before-submit', ({ formData }) => {
+  formData.append('meta', JSON.stringify({
+    path: window.location.href,
+    screenSize: { width: window.innerWidth, height: window.innerHeight },
+  }))
+})
+```
+
 ### Programmatic Control
 
 ```typescript

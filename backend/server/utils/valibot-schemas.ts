@@ -1,4 +1,4 @@
-import { array, boolean, fallback, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, string, transform } from 'valibot'
+import { any, array, boolean, fallback, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, record, string, transform } from 'valibot'
 import { imageMimeTypes } from '~~/shared/utils'
 
 export const FormSchema = object({
@@ -30,6 +30,11 @@ export const FormSchema = object({
     maxLength(5),
   ), []),
   logs: optional(string('Logs must be a string')),
+  meta: optional(pipe(
+    string(),
+    transform(value => JSON.parse(value)),
+    record(string(), any(), 'Meta must be a valid JSON object'),
+  )),
 })
 
 export const QuerySchema = object({

@@ -13,6 +13,7 @@ export interface FeedbackResponse {
     email: string | null
     rating: number | null
     attachments: string[] | null
+    meta: Record<string, any> | null
     id: string
     createdAt: string
     updatedAt: string

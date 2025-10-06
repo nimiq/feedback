@@ -52,6 +52,7 @@ export default defineEventHandler(async (event) => {
         rating: form.rating || null,
         githubIssue: `https://github.com/test/repo/issues/123`,
         attachments: form.attachments?.map((_, index) => `https://test.example.com/images/test-${index}.jpg`) || null,
+        meta: form.meta || null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -99,6 +100,7 @@ export default defineEventHandler(async (event) => {
     githubIssue: github?.issueUrl || null,
     attachments: filesUrls,
     logs: form.logs || null,
+    meta: form.meta || null,
   }).returning().get()
 
   consola.success('Submission created:', fullSubmission)
