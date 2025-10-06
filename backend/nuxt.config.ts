@@ -48,6 +48,7 @@ export default defineNuxtConfig({
     blob: true,
     kv: true,
     cache: true,
+    remote: process.env.CI ? false : undefined,
   },
 
   runtimeConfig: {
