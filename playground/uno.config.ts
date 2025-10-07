@@ -1,12 +1,26 @@
-import { defineConfig, presetUno } from 'unocss'
+import { createExternalPackageIconLoader } from '@iconify/utils/lib/loader/external-pkg'
+
+import { presetNimiq } from 'nimiq-css'
+import { defineConfig, presetIcons } from 'unocss'
 import { presetOnmax } from 'unocss-preset-onmax'
 
 export default defineConfig({
+  content: {
+    filesystem: ['../widget/src/**/*.{js,ts,vue}'],
+  },
   presets: [
-    presetUno(),
-    presetOnmax({
-      fontSize: 16,
-      baseFontSize: 8,
+    presetOnmax(),
+    presetNimiq({
+      utilities: true,
+      fonts: false,
+      attributifyUtilities: true,
+      typography: true,
+    }),
+
+    presetIcons({
+      collections: {
+        ...createExternalPackageIconLoader('nimiq-icons'),
+      },
     }),
   ],
 })

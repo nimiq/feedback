@@ -106,9 +106,9 @@ async function submitFeedback(event: SubmitEvent) {
 
 <template>
   <div flex="~ col" h-full>
-    <h2 flex="~ items-center gap-8" text-14 mb-16 h-max w-full text-balance nq-label>
+    <h2 flex="~ items-center" h-max w-full text-balance f-text-xs f-mb-sm f-gap-2xs nq-label>
       <div
-        :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
+        :class="iconGradient[type]" f-rounded-2xs stack shrink-0 f-size-2xs
         style="box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.07), 0px 1.5px 3px 0px rgba(0, 0, 0, 0.05), 0px 0.337px 2px 0px rgba(0, 0, 0, 0.03);"
       >
         <div :class="icon[type]" text-white />
@@ -120,15 +120,15 @@ async function submitFeedback(event: SubmitEvent) {
       <p>{{ t('formContainer.successMessage') }}</p>
     </div>
 
-    <form v-else flex="~ col gap-16" px-1.5 h-full :data-app="app" @submit.prevent="submitFeedback">
+    <form v-else flex="~ col" h-full f-px-2xs f-gap-sm :data-app="app" @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
       <input type="text" name="app" :value="app" sr-only>
       <input type="text" name="tags" :value="tags.join(',')" sr-only>
 
       <slot />
 
-      <label flex="~ items-start gap-8" f-text-sm f-mt-sm>
-        <span mt-1 shrink-0 h-1lh>
+      <label flex="~ items-start" f-text-sm f-mt-sm f-gap-2xs>
+        <span f-mt-3xs shrink-0 h-1lh>
           <input v-model="acceptTerms" type="checkbox" name="acceptTerms" border-transparent="!" required nq-switch>
         </span>
         <span text-neutral-800 select-none>
@@ -139,7 +139,7 @@ async function submitFeedback(event: SubmitEvent) {
       <p text-neutral-700 f-text-sm f-mt-md>
         <a href="https://nimiq.com/terms/" target="_blank" un-text-current underline>
           {{ t('formContainer.readFullTerms') }}</a>
-        <span mx-8>·</span>
+        <span f-mx-2xs>·</span>
         <a href="https://nimiq.com/privacy-policy/" target="_blank" un-text-current underline>
           {{ t('formContainer.learnMore') }}</a> {{ t('formContainer.privacyPolicyText') }}
       </p>
@@ -153,12 +153,12 @@ async function submitFeedback(event: SubmitEvent) {
         </ul>
         <details>
           <summary>{{ t('formContainer.errorDetailsSummary') }}</summary>
-          <pre outline="1.5 red-500" font-mono font-normal rounded-6 bg-red-400 f-p-2xs>{{ error }}</pre>
+          <pre outline="1.5 red-500" f-rounded-2xs font-mono font-normal bg-red-400 f-p-2xs>{{ error }}</pre>
         </details>
       </div>
 
       <div mt-auto flex>
-        <button type="submit" :disabled="!isFormValid || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60 style="background-image: radial-gradient(at 100% 100% in oklab, var(--nq-gradient-from) 0%, var(--nq-gradient-to) 100%) !important;">
+        <button type="submit" :disabled="!isFormValid || status === 'pending'" m-0 w-full nq-pill-xl nq-pill-blue disabled:op-60 style="background-image: radial-gradient(at 100% 100% in oklab, var(--nq-gradient-from) 0%, var(--nq-gradient-to) 100%) !important;">
           <div v-if="status === 'pending'" i-nimiq:spinner />
           {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
         </button>

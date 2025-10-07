@@ -85,22 +85,22 @@ defineExpose({
     >
       <!-- Form selection grid -->
       <div v-if="!activeForm" w-full flex="~ col">
-        <h3 text="24 center neutral lh-24" lh-none font-bold mb-12>
+        <h3 text="center neutral" lh-none font-bold f-text-lg f-mb-xs>
           {{ t('feedbackWidget.title') }}
         </h3>
 
-        <div grid="~ rows-2 cols-2 gap-16" class="grid-container" h-full f-mt-lg f-mb-md>
-          <button text-white col-span-2 nq-hoverable-red flex="~ col justify-center items-center gap-12" @click="selectForm('bug')">
+        <div grid="~ rows-2 cols-2" class="grid-container" h-full f-mt-lg f-mb-md f-gap-sm>
+          <button flex="~ col justify-center items-center" text-white col-span-2 f-gap-xs nq-hoverable-red @click="selectForm('bug')">
             <div f-text-2xl i-nimiq:exclamation />
             <span>{{ t('feedbackWidget.bugReportButton') }}</span>
           </button>
 
-          <button text-white nq-hoverable-green flex="~ col justify-center items-center gap-12" @click="selectForm('idea')">
+          <button flex="~ col justify-center items-center" text-white f-gap-xs nq-hoverable-green @click="selectForm('idea')">
             <div f-text-2xl i-nimiq:leaf-2-filled />
             <span>{{ t('feedbackWidget.ideaButton') }}</span>
           </button>
 
-          <button text-white nq-hoverable-gold flex="~ col justify-center items-center gap-12" @click="selectForm('feedback')">
+          <button flex="~ col justify-center items-center" text-white f-gap-xs nq-hoverable-gold @click="selectForm('feedback')">
             <div f-text-2xl i-nimiq:star />
             <span>{{ t('feedbackWidget.feedbackButton') }}</span>
           </button>
@@ -120,7 +120,7 @@ defineExpose({
 <style scoped>
 .grid-container {
   button {
-    --uno: 'flex flex-col gap-8 items-center border-none justify-center text-white f-text-sm f-p-md f-rounded-md cursor-pointer';
+    --uno: 'flex flex-col items-center border-none justify-center text-white f-text-sm f-p-md f-rounded-md f-gap-2xs cursor-pointer';
 
     > div:first-child {
       --uno: 'f-size-md';

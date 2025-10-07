@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { FormType } from '#backend/types'
+import type { I18nContext } from '../locales/types'
 import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTrigger } from 'reka-ui'
-import { computed, nextTick, ref, watch } from 'vue'
-import { useI18n } from '../composables/useI18n'
+import { computed, nextTick, provide, ref, watch } from 'vue'
+import { localeMessages } from '../locales'
+import { I18nInjectionKey } from '../locales/types'
 import { FilesInjectionKey } from '../types'
-import { createWidgetCommunication } from '../utils/communication'
+import { createTranslationFunction } from '../utils/i18n'
 import FeedbackWidget from './FeedbackWidget.vue'
 
 interface FeedbackModalProps {
@@ -15,6 +17,7 @@ interface FeedbackModalProps {
   initialForm?: FormType
   dark?: boolean
   open?: boolean
+  test?: boolean
 }
 
 const props = withDefaults(defineProps<FeedbackModalProps>(), {
@@ -24,6 +27,7 @@ const props = withDefaults(defineProps<FeedbackModalProps>(), {
   initialForm: undefined,
   dark: false,
   open: false,
+  test: false,
 })
 
 const emit = defineEmits<{
@@ -34,16 +38,53 @@ const widgetInstance = ref<any>()
 const currentView = ref<'grid' | 'form' | 'success' | 'error'>('grid')
 const successData = ref<any>()
 const errorData = ref<any>()
+const internalOpen = ref(false)
+
+// Use internal state when not controlled externally
 const isModalOpen = computed({
-  get: () => props.open,
-  set: (value) => emit('update:open', value),
+  get: () => internalOpen.value,
+  set: (value) => {
+    internalOpen.value = value
+    emit('update:open', value)
+  },
 })
 
+// Sync with external prop when controlled
+watch(() => props.open, (newVal) => {
+  internalOpen.value = newVal
+})
+
+const computedFeedbackEndpoint = computed(() => {
+  if (!props.feedbackEndpoint)
+    return undefined
+  const url = new URL(props.feedbackEndpoint)
+  if (props.test) {
+    url.searchParams.set('test', 'true')
+  }
+  return url.toString()
+})
+
+// Provide i18n context
+const currentMessages = localeMessages[props.lang] || localeMessages.en
+const i18nContext: I18nContext = {
+  locale: props.lang,
+  messages: currentMessages,
+  t: createTranslationFunction(currentMessages),
+}
+provide(I18nInjectionKey, i18nContext)
+
+// Provide files context
 const files = ref<File[]>([])
+provide(FilesInjectionKey, {
+  files,
+  updateFiles: (newFiles: File[]) => {
+    files.value = newFiles
+  },
+})
 
 function setupCommunicationListeners() {
   if (widgetInstance.value?.communication) {
-    widgetInstance.value.communication.on('form-selected', (type: FormType) => {
+    widgetInstance.value.communication.on('form-selected', (_type: FormType) => {
       currentView.value = 'form'
     })
     widgetInstance.value.communication.on('go-back', () => {
@@ -117,17 +158,19 @@ watch(() => props.open, async (open) => {
 </script>
 
 <template>
-  <DialogRoot :open="isModalOpen" @update:open="handleOpenChange">
+  <DialogRoot v-model:open="isModalOpen" @update:open="handleOpenChange">
     <DialogTrigger as-child>
       <slot>
         <button
+          type="button"
           aria-label="Open Feedback"
           flex="~ items-center justify-center"
-          text="neutral-0 hocus:neutral-100 20"
-          bg="blue hocus:blue-darkened"
-          rounded-full size-48 transition-colors shadow-md
+          text="neutral-0 hocus:neutral-100"
+
+          shadow-md rounded-full bg-neutral transition-colors f-text-md f-size-lg
+          @click="() => { console.log('Button clicked!'); isModalOpen = true }"
         >
-          <div i-nimiq:thumbs-up />
+          <div f-text-lg i-nimiq:thumb-up-thumb-down />
         </button>
       </slot>
     </DialogTrigger>
@@ -140,19 +183,20 @@ watch(() => props.open, async (open) => {
       <Transition name="modal">
         <DialogContent
           xl="top-1/2 left-1/2 translate--1/2"
-          rounded="t-8 xl:8"
-          outline-none h-max max-h-85dvh w-full shadow-lg transform bottom-0 fixed z-200 of-hidden xl:max-w-500
+
+          f-rounded-t-md outline-none h-max max-h-85dvh max-w-560 w-full shadow-lg transform bottom-0 fixed z-200 of-hidden xl:f-rounded-md
           @open-auto-focus.prevent
         >
-          <div ring="1.5 neutral/3" rounded="t-8 xl:8" flex="~ col" bg-neutral-0 h-full max-h-85dvh relative of-hidden>
+          <div ring="1.5 neutral/3" flex="~ col" f-rounded-t-md bg-neutral-0 h-full max-h-85dvh relative of-hidden xl:f-rounded-md>
             <!-- Close button -->
             <DialogClose
               aria-label="Close"
               flex="~ items-center justify-center"
-              text="neutral-700 hocus:neutral-800 12"
+              text="neutral-700 hocus:neutral-800"
+
               outline="1.5 ~ offset--1.5 neutral/3"
               bg="neutral-100 hocus:neutral-200"
-              rounded-full size-32 transition-colors right-16 top-16 absolute z-10
+              f-inset-t-sm f-inset-r-sm rounded-full transition-colors absolute z-10 f-text-xs f-size-sm
             >
               <div i-nimiq:cross />
             </DialogClose>
@@ -161,8 +205,9 @@ watch(() => props.open, async (open) => {
             <button
               v-if="currentView !== 'grid'"
               aria-label="Go back"
-              text="neutral-500 hocus:neutral-600 32"
-              bg-transparent size-48 transition-colors left-12 top-4 absolute
+              text="neutral-500 hocus:neutral-600"
+
+              f-inset-l-xs f-inset-t-2xs bg-transparent transition-colors absolute f-text-xl f-size-lg
               @click="goBack"
             >
               <div i-nimiq:arrow-left />
@@ -173,12 +218,12 @@ watch(() => props.open, async (open) => {
               <div f-px-md>
                 <!-- Success view -->
                 <div v-if="currentView === 'success'" f-p-md>
-                  <h2 text="24 center neutral lh-24" flex="~ gap-8 items-center justify-center" lh-none font-bold mb-12>
+                  <h2 text="center neutral" flex="~ items-center justify-center" lh-none font-bold f-text-lg f-mb-xs f-gap-xs>
                     <div i-nimiq:check />
                     <span>Thank you for your feedback!</span>
                   </h2>
                   <div text-center>
-                    <p mb-16>
+                    <p f-mb-sm>
                       Your feedback has been submitted successfully.
                     </p>
                     <a
@@ -195,14 +240,14 @@ watch(() => props.open, async (open) => {
 
                 <!-- Error view -->
                 <div v-else-if="currentView === 'error'" f-p-md>
-                  <h2 text="24 center neutral lh-24" flex="~ gap-8 items-center justify-center" lh-none font-bold mb-12>
-                    <div size-16 i-nimiq:exclamation />
+                  <h2 text="center neutral" flex="~ items-center justify-center" lh-none font-bold f-text-lg f-mb-xs f-gap-xs>
+                    <div f-size-sm i-nimiq:exclamation />
                     <span text-left flex-1 f-text-md>
                       Something went wrong
                     </span>
                   </h2>
                   <div text-center>
-                    <p mb-16>
+                    <p f-mb-sm>
                       {{ errorData?.error || 'An error occurred while submitting your feedback.' }}
                     </p>
                     <button
@@ -215,15 +260,7 @@ watch(() => props.open, async (open) => {
                 </div>
 
                 <!-- Widget -->
-                <FeedbackWidget
-                  v-else
-                  ref="widgetInstance"
-                  :app
-                  :feedback-endpoint
-                  :tags
-                  :initial-form
-                  :dark
-                />
+                <FeedbackWidget v-else ref="widgetInstance" v-bind="{ app, tags, initialForm, dark, feedbackEndpoint: computedFeedbackEndpoint }" />
               </div>
             </div>
           </div>
@@ -235,11 +272,11 @@ watch(() => props.open, async (open) => {
 
 <style scoped>
 .backdrop-enter-active {
-  transition: opacity 650ms cubic-bezier(.3, 1, .2, 1);
+  transition: opacity 650ms cubic-bezier(0.3, 1, 0.2, 1);
 }
 
 .backdrop-leave-active {
-  transition: opacity 650ms cubic-bezier(.3, 0, 0, 1);
+  transition: opacity 650ms cubic-bezier(0.3, 0, 0, 1);
 }
 
 .backdrop-enter-from,
@@ -263,7 +300,7 @@ watch(() => props.open, async (open) => {
   .modal-enter-active,
   .modal-leave-active {
     transition:
-      opacity 250ms cubic-bezier(.4, 0, .2, 1),
+      opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
       transform 100ms var(--nq-ease);
   }
 

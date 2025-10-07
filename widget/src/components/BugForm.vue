@@ -28,11 +28,11 @@ if (formValidation) {
   <AttachmentUploader />
 
   <label flex="~ col">
-    <h3 mb-8 text="12 neutral-800" nq-label>{{ t('bugForm.emailLabel') }}</h3>
+    <h3 text-neutral-800 f-text-xs f-mb-2xs nq-label>{{ t('bugForm.emailLabel') }}</h3>
     <input id="email" w-auto type="email" nq-input-box name="email" :placeholder="t('bugForm.emailPlaceholder')">
   </label>
 
-  <label flex="~ gap-8" data-input="share-debug-info" hidden f-text-sm f-mt-sm>
+  <label flex="~" data-input="share-debug-info" hidden f-text-sm f-mt-sm f-gap-2xs>
     <span shrink-0 h-1lh>
       <input v-model="shareDebugInfo" type="checkbox" name="shareDebugInfo" nq-switch border-transparent="!">
     </span>

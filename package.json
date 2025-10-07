@@ -5,7 +5,7 @@
   "packageManager": "pnpm@10.17.1",
   "scripts": {
     "build": "nr -r build",
-    "play": "pnpm -C widget build && nr -r dev",
+    "play": "nr -r dev",
     "prepare": "pnpm -C backend prepare",
     "postinstall": "nr prepare",
     "dev": "nr -r dev",

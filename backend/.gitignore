@@ -37,3 +37,7 @@ dist-ssr
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Build artifacts
+public/*.js
+public/*.css

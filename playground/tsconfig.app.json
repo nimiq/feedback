@@ -1,6 +1,11 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "nimiq-feedback-widget": ["../widget/src/index.ts"],
+      "#backend/*": ["../backend/shared/*"]
+    },
     "types": ["vite/client"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]

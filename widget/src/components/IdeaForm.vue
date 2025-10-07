@@ -26,7 +26,7 @@ if (formValidation) {
 
   <AttachmentUploader />
 
-  <div text="neutral-700 f-sm" mt--8 flex="~ items-center gap-8">
+  <div text="neutral-700 f-sm" f-mt--2xs flex="~ items-center" f-gap-2xs>
     <span shrink-0 h-1lh>
       <div op-90 i-nimiq:info />
     </span>

@@ -1,7 +1,7 @@
 {
   "name": "nimiq-feedback-widget",
   "type": "module",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.1-beta.4",
   "description": "Customizable feedback widget for web apps",
   "author": "Nimiq",
   "license": "MIT",
@@ -18,9 +18,6 @@
     "nimiq",
     "component"
   ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -29,9 +26,12 @@
     },
     "./style.css": "./dist/nimiq-feedback-widget.css"
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "LICENSE"
+    "LICENSE",
+    "dist"
   ],
   "scripts": {
     "build": "pnpm build:umd",
@@ -55,7 +55,7 @@
     "@types/node": "catalog:types",
     "@vitejs/plugin-vue": "catalog:bundle",
     "@vue/tsconfig": "catalog:types",
-    "bumpp": "^10.3.1",
+    "bumpp": "catalog:bundle",
     "nimiq-css": "catalog:unocss",
     "nimiq-icons": "catalog:",
     "reka-ui": "catalog:frontend",
@@ -63,7 +63,7 @@
     "unocss": "catalog:unocss",
     "unocss-preset-onmax": "catalog:unocss",
     "vite": "catalog:bundle",
-    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-dts": "catalog:bundle",
     "vite-plugin-vue-devtools": "catalog:bundle",
     "vue": "catalog:frontend",
     "vue-tsc": "catalog:types"
