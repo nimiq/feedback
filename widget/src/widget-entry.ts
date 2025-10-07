@@ -4,6 +4,15 @@ import type { I18nContext } from './locales/types'
 import type { SimpleWidgetCommunication } from './utils/communication'
 
 import { createApp, ref } from 'vue'
+
+declare global {
+  interface Window {
+    mountFeedbackWidget: (selector: string, props: WidgetProps) => WidgetInstance
+  }
+}
+
+export {}
+
 import FeedbackWidget from './components/FeedbackWidget.vue'
 import { localeMessages } from './locales'
 import { I18nInjectionKey } from './locales/types'

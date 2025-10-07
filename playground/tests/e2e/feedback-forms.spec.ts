@@ -2,13 +2,13 @@ import { expect, test } from '@playwright/test'
 
 test.describe('Feedback Forms', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/test')
+    await page.goto('/')
     // Wait for page to load
     await page.waitForLoadState('networkidle')
-    // Open the feedback modal - click the first button (floating feedback button)
-    await page.locator('button').first().click()
-    // Wait for widget to mount
-    await page.waitForSelector('#feedback-widget', { state: 'visible', timeout: 10000 })
+    // Open the feedback modal - click the default trigger button
+    await page.click('button[aria-label="Open Feedback"]')
+    // Wait for modal and widget to be visible
+    await page.waitForSelector('[data-state="open"]', { state: 'visible', timeout: 10000 })
   })
 
   test('submit bug report form', async ({ page }) => {

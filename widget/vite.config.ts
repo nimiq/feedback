@@ -5,14 +5,66 @@ import replace from '@rollup/plugin-replace'
 import vue from '@vitejs/plugin-vue'
 import Uno from 'unocss/vite'
 import { defineConfig } from 'vite'
+import dts from 'vite-plugin-dts'
 
 const root = resolve(join(fileURLToPath(import.meta.url), '../..'))
 const sharedBackendDir = join(root, 'backend/shared')
 const widgetFolder = join(root, 'widget')
-const entry = join(widgetFolder, 'src/widget-entry.ts')
-const outputFolder = join(root, 'backend/public')
+const isLibMode = process.env.LIB_MODE === 'true'
 
-export default defineConfig({
+// Library build configuration
+const libConfig = defineConfig({
+  publicDir: false,
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          scopeId: 'v-nq-feedback',
+        },
+      },
+    }),
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+      'preventAssignment': true,
+    }),
+    Uno({ configFile: '../uno.config.ts' }),
+    dts({
+      include: ['src/**/*.ts', 'src/**/*.vue'],
+      outDir: join(widgetFolder, 'dist'),
+      rollupTypes: true,
+      insertTypesEntry: true,
+      copyDtsFiles: false,
+      entryRoot: join(widgetFolder, 'src'),
+    }),
+  ],
+  root: __dirname,
+  build: {
+    lib: {
+      entry: join(widgetFolder, 'src/index.ts'),
+      name: 'NimiqFeedbackWidget',
+      formats: ['es', 'cjs'],
+      fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
+    },
+    outDir: join(widgetFolder, 'dist'),
+    rollupOptions: {
+      external: ['vue', 'reka-ui'],
+      output: {
+        globals: {
+          vue: 'Vue',
+          'reka-ui': 'RekaUI',
+        },
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      '#backend': sharedBackendDir,
+    },
+  },
+})
+
+// UMD build configuration (existing widget.js)
+const umdConfig = defineConfig({
   publicDir: false,
   css: {
     postcss: {
@@ -69,20 +121,19 @@ export default defineConfig({
     }),
     Uno({ configFile: '../uno.config.ts' }),
   ],
-  root: __dirname, // Directs Vite to use the 'widget' folder as the project root
+  root: __dirname,
   optimizeDeps: {
     entries: ['src/widget-entry.ts'],
   },
   build: {
     emptyOutDir: false,
     lib: {
-      entry,
+      entry: join(widgetFolder, 'src/widget-entry.ts'),
       name: 'FeedbackWidget',
       formats: ['umd'],
       fileName: () => 'widget.js',
     },
-
-    outDir: outputFolder,
+    outDir: join(root, 'backend/public'),
   },
   resolve: {
     alias: {
@@ -90,3 +141,5 @@ export default defineConfig({
     },
   },
 })
+
+export default isLibMode ? libConfig : umdConfig

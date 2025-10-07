@@ -2,6 +2,7 @@ packages:
   - ./
   - ./backend
   - ./widget
+  - ./playground
 
 catalog:
   eslint-plugin-pnpm: ^1.1.2

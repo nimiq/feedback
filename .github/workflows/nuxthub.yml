@@ -26,6 +26,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+        working-directory: .
+
+      - name: Build Widget Library
+        run: pnpm build:lib
+        working-directory: widget
 
       - name: Ensure NuxtHub module is installed
         run: pnpx nuxthub@latest ensure

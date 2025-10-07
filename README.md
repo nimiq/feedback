@@ -1,233 +1,88 @@
 <h1 align="center">
-  <img alt="Nimiq Feedback logo" loading="lazy" width="108" height="96" decoding="async" data-nimg="1" style="color:transparent" src="https://raw.githubusercontent.com/onmax/nimiq-feedback/refs/heads/main/.github/logo.svg" />
-  </br>
-  Nimiq Feedback</h1>
-<p align="center">
-A customizable feedback widget for web apps that allows users to submit bug reports, ideas, and general feedback.
-</p>
+  <img alt="Nimiq Feedback logo" loading="lazy" width="108" height="96" decoding="async" src="https://raw.githubusercontent.com/onmax/nimiq-feedback/refs/heads/main/.github/logo.svg" />
+  <br/>
+  Nimiq Feedback
+</h1>
+
+<p align="center">A customizable feedback widget for web apps that allows users to submit bug reports, ideas, and general feedback.</p>
+
 <br/>
+
+## Features
+
+- 🎨 **Multiple Integration Options**: Vue 3 component library or vanilla JavaScript
+- 📝 **Three Feedback Types**: Bug reports, ideas, and general feedback
+- 🌍 **Internationalization**: Support for EN, ES, DE, FR, PT
+- 🎯 **Customizable**: Tags, themes, and event hooks
+- 📱 **Responsive**: Works on mobile and desktop
+- 🌙 **Dark Mode**: Automatic or forced theme support
 
 ## Quick Start
 
-### 1. Import the JavaScript and CSS (not recommended for production)
+### Vue 3
 
-Add the widget script to your HTML:
+```bash
+pnpm add @nimiq/feedback-widget
+```
+
+```vue
+<script setup>
+import { FeedbackModal } from '@nimiq/feedback-widget'
+import '@nimiq/feedback-widget/style.css'
+import { ref } from 'vue'
+
+const open = ref(false)
+</script>
+
+<template>
+  <button @click="open = true">Give Feedback</button>
+  <FeedbackModal v-model:open="open" app="my-app" />
+</template>
+```
+
+### Vanilla JavaScript
 
 ```html
 <script src="https://nimiq-feedback.je-cf9.workers.dev/widget.js" defer></script>
-```
-
-Add the widget styles to your HTML:
-
-```html
 <link rel="stylesheet" href="https://nimiq-feedback.je-cf9.workers.dev/widget.css" />
-```
 
-### 2. Deferred Loading (Recommended)
-
-For better performance, load both CSS and JS with deferred loading:
-
-```html
-<!-- Preload for better performance -->
-<link
-  rel="preload"
-  href="https://nimiq-feedback.je-cf9.workers.dev/widget.css"
-  as="style"
-  onload="this.onload=null;this.rel='stylesheet'"
-/>
-<noscript><link rel="stylesheet" href="https://nimiq-feedback.je-cf9.workers.dev/widget.css" /></noscript>
-
-<!-- Load JavaScript deferred -->
-<script src="https://nimiq-feedback.je-cf9.workers.dev/widget.js" defer></script>
-```
-
-### 3. Mount the Widget
-
-Mount the widget to any DOM element:
-
-```html
 <div id="feedback-widget"></div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const widget = window.mountFeedbackWidget('#feedback-widget', {
-      app: 'nimiq-wallet', // 'nimiq-wallet' | 'nimiq-pay' | 'playground'
-      lang: 'en', // 'en' | 'es' (optional, defaults to 'en')
-      feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback',
-      tags: ['beta', 'mobile'], // string[] (optional, defaults to []) - custom tags for submissions
-      initialForm: 'bug', // optional - directly show a specific form: 'bug' | 'idea' | 'feedback'
-      dark: false, // boolean (optional, defaults to false) - enables dark theme
-    })
-
-    // Use widget methods
-    widget.showFormGrid() // Show the form selection grid
-    // widget.showForm('bug'); // Show specific form: 'bug' | 'idea' | 'feedback'
-    // widget.closeWidget(); // Close the widget
-    // widget.goBack(); // Go back to form grid
-    // widget.destroy(); // Cleanup and unmount
+  window.mountFeedbackWidget('#feedback-widget', {
+    app: 'my-app'
   })
 </script>
 ```
 
-### 4. TypeScript Support
+## Documentation
 
-Add these type declarations to your Vue 3 project (e.g., in `env.d.ts` or `types.d.ts`):
+- 📚 [Getting Started](./docs/getting-started.md)
+- 🎯 [Vue Integration](./docs/vue-integration.md)
+- 🔧 [Vanilla JS Integration](./docs/vanilla-js-integration.md)
+- 📖 [API Reference](./docs/api-reference.md)
+- 🎪 [Event Handling](./docs/events.md)
+- 🎨 [Theming](./docs/theming.md)
 
-```typescript
-// widget.types.d.ts
+## Development
 
-export type FormType = 'bug' | 'idea' | 'feedback'
+```bash
+# Install dependencies
+pnpm install
 
-export interface WidgetProps {
-  app: string
-  lang?: string
-  feedbackEndpoint?: string
-  tags?: string[]
-  initialForm?: FormType
-  dark?: boolean
-}
+# Build widget library
+pnpm -C widget build:lib
 
-export interface WidgetEvents {
-  'form-selected': FormType
-  'go-back': void
-  'form-submitted': { success: true, data: any }
-  'form-error': { success: false, error: string, details?: any }
-  'before-submit': { formData: FormData, type: FormType, app: string }
-}
+# Build UMD bundle
+pnpm -C widget build:umd
 
-export interface WidgetInstance {
-  showFormGrid: () => void
-  showForm: (type: FormType) => void
-  closeWidget: () => void
-  goBack: () => void
-  destroy: () => void
-  communication?: {
-    on: <K extends keyof WidgetEvents>(event: K, callback: (data: WidgetEvents[K]) => void) => void
-    off: <K extends keyof WidgetEvents>(event: K, callback?: (data: WidgetEvents[K]) => void) => void
-    emit: <K extends keyof WidgetEvents>(event: K, data: WidgetEvents[K]) => void
-  }
-}
+# Run playground
+pnpm -C playground dev
 
-declare global {
-  interface Window {
-    mountFeedbackWidget: MountFeedbackWidgetFn
-  }
-}
-
-export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance
-
-export {}
+# Run tests
+pnpm -C playground test:e2e
 ```
 
-> Make sure to include the type declarations in your TypeScript configuration so they are recognized globally.
+## License
 
-## Advanced Usage
-
-### Event Handling
-
-Listen to widget events using the communication API:
-
-```typescript
-const widget = window.mountFeedbackWidget('#feedback-widget', {
-  app: 'nimiq-wallet'
-})
-
-// Listen to events
-widget.communication?.on('form-selected', (formType) => {
-  console.log('Form selected:', formType)
-})
-
-widget.communication?.on('form-submitted', (data) => {
-  console.log('Form submitted successfully:', data)
-})
-
-widget.communication?.on('form-error', (error) => {
-  console.error('Form submission error:', error)
-})
-
-widget.communication?.on('before-submit', ({ formData, type, app }) => {
-  console.log('Before form submission:', { type, app })
-  // You can modify formData here to add additional data like debug logs
-  formData.append('debugInfo', JSON.stringify({ userAgent: navigator.userAgent }))
-})
-```
-
-### Custom Metadata
-
-Attach custom JSON metadata to submissions via the `meta` field. Metadata is stored in the database and included in GitHub issues.
-
-```typescript
-widget.communication?.on('before-submit', ({ formData }) => {
-  formData.append('meta', JSON.stringify({
-    path: window.location.href,
-    screenSize: { width: window.innerWidth, height: window.innerHeight },
-  }))
-})
-```
-
-### Programmatic Control
-
-```typescript
-// Show specific form directly
-widget.showForm('bug')
-
-// Show form selection grid
-widget.showFormGrid()
-
-// Close the widget
-widget.closeWidget()
-
-// Navigate back to form grid
-widget.goBack()
-
-// Clean up when done
-widget.destroy()
-```
-
-### Testing Mode
-
-For development and testing purposes, you can use the test query parameter to test listeners and UI flow without creating actual database entries, GitHub issues, or Slack messages:
-
-```javascript
-// Configure widget with test mode
-const widget = window.mountFeedbackWidget('#feedback-widget', {
-  app: 'nimiq-wallet',
-  feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback?test=true', // Add ?test=true
-  tags: ['testing', 'dev']
-})
-
-// All form submissions will now return mock data and trigger listeners
-// without creating actual entries in the database or external services
-```
-
-When `test=true` is added to the feedback endpoint URL:
-
-- ✅ Form validation still runs normally
-- ✅ All widget events are triggered (`form-submitted`, `before-submit`, etc.)
-- ✅ Mock response data is returned that matches the expected structure
-- ❌ No database entries are created
-- ❌ No GitHub issues are created
-- ❌ No Slack messages are sent
-- ❌ No file uploads occur
-
-This is perfect for testing your integration, event listeners, and UI flows during development.
-
-### Theming
-
-The widget automatically adapts to the user's preferred color scheme (light/dark mode). In dark mode, the widget will use lighter colors for text and darker colors for input elements. This behavior is controlled by the `color-scheme` CSS property.
-
-You can override the color scheme for a specific instance of the widget by setting the `color-scheme` CSS property on the widget's container:
-
-```css
-#feedback-widget {
-  color-scheme: light; /* Force light mode */
-  /* or */
-  color-scheme: dark; /* Force dark mode */
-}
-```
-
-By default, the widget will respect the user's system preferences and switch automatically between light and dark mode.
-
-## Other resources
-
-- https://www.featurebase.app/
+MIT

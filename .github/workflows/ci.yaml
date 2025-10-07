@@ -24,7 +24,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright Browsers
-        run: pnpm -C backend exec playwright install chromium
+        run: pnpm -C playground exec playwright install chromium --with-deps
 
       - name: Lint
         run: pnpm run lint
@@ -32,12 +32,8 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
+      - name: Build Widget Library
+        run: pnpm -C widget build:lib
+
       - name: Run E2E Tests
-        run: pnpm -C backend run test
-        env:
-          NUXT_HUB_PROJECT_URL: http://localhost:3000
-          NUXT_HUB_PROJECT_SECRET_KEY: test
-          NUXT_GITHUB_OWNER: test
-          NUXT_GITHUB_REPO: test
-          NUXT_GITHUB_TOKEN: test
-          NUXT_PRODUCTION_URL: http://localhost:3000
+        run: pnpm -C playground run test:e2e

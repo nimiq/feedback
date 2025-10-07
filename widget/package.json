@@ -1,19 +1,52 @@
 {
-  "name": "widget",
+  "name": "nimiq-feedback-widget",
   "type": "module",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.0.1-beta.1",
+  "description": "Customizable feedback widget for web apps",
+  "author": "Nimiq",
+  "license": "MIT",
+  "homepage": "https://github.com/nimiq/feedback#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nimiq/feedback.git",
+    "directory": "widget"
+  },
+  "keywords": [
+    "feedback",
+    "widget",
+    "vue",
+    "nimiq",
+    "component"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/nimiq-feedback-widget.css"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
   "scripts": {
-    "build": "vite build",
+    "build": "pnpm build:umd",
+    "build:lib": "LIB_MODE=true vite build && (test -f dist/index.d.mts && cp dist/index.d.mts dist/index.d.ts || true)",
+    "build:umd": "vite build",
     "preview": "vite preview",
-    "build-only": "vite build",
     "typecheck": "vue-tsc --build --noEmit",
     "dev": "vite build --watch",
-    "dev:widget": "vite dev"
+    "dev:widget": "vite dev",
+    "prepublishOnly": "pnpm build:lib",
+    "release": "bumpp --commit --push --tag"
   },
-  "dependencies": {
-    "reka-ui": "catalog:frontend",
-    "vue": "catalog:frontend"
+  "peerDependencies": {
+    "reka-ui": "^2.0.0",
+    "vue": "^3.3.0"
   },
   "devDependencies": {
     "@iconify/utils": "catalog:unocss",
@@ -22,13 +55,17 @@
     "@types/node": "catalog:types",
     "@vitejs/plugin-vue": "catalog:bundle",
     "@vue/tsconfig": "catalog:types",
+    "bumpp": "^10.3.1",
     "nimiq-css": "catalog:unocss",
     "nimiq-icons": "catalog:",
+    "reka-ui": "catalog:frontend",
     "typescript": "catalog:types",
     "unocss": "catalog:unocss",
     "unocss-preset-onmax": "catalog:unocss",
     "vite": "catalog:bundle",
+    "vite-plugin-dts": "^4.5.4",
     "vite-plugin-vue-devtools": "catalog:bundle",
+    "vue": "catalog:frontend",
     "vue-tsc": "catalog:types"
   }
 }
