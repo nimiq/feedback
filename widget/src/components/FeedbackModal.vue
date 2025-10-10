@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormType } from '#backend/types'
 import type { I18nContext } from '../locales/types'
-import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTrigger } from 'reka-ui'
+import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger, VisuallyHidden } from 'reka-ui'
 import { computed, nextTick, provide, ref, watch } from 'vue'
 import { localeMessages } from '../locales'
 import { I18nInjectionKey } from '../locales/types'
@@ -184,19 +184,22 @@ watch(() => props.open, async (open) => {
         <DialogContent
           xl="top-1/2 left-1/2 translate--1/2"
 
-          f-rounded-t-md outline-none h-max max-h-85dvh max-w-560 w-full shadow-lg transform bottom-0 fixed z-200 of-hidden xl:f-rounded-md
+          f-rounded-t-md outline-none h-max max-h-85dvh max-w-140 w-full shadow-lg transform bottom-0 fixed z-200 of-hidden xl:f-rounded-md
           @open-auto-focus.prevent
         >
+          <VisuallyHidden>
+            <DialogTitle>Feedback</DialogTitle>
+            <DialogDescription>Share your feedback with us</DialogDescription>
+          </VisuallyHidden>
           <div ring="1.5 neutral/3" flex="~ col" f-rounded-t-md bg-neutral-0 h-full max-h-85dvh relative of-hidden xl:f-rounded-md>
             <!-- Close button -->
             <DialogClose
               aria-label="Close"
               flex="~ items-center justify-center"
-              text="neutral-700 hocus:neutral-800"
-
+              text="neutral-800 hocus:neutral-900"
               outline="1.5 ~ offset--1.5 neutral/3"
-              bg="neutral-100 hocus:neutral-200"
-              f-inset-t-sm f-inset-r-sm rounded-full transition-colors absolute z-10 f-text-xs f-size-sm
+              bg="neutral-200 hocus:neutral-300"
+              f-inset-r-xs f-inset-t-xs rounded-full cursor-pointer transition-colors absolute z-10 f-text-sm f-size-sm
             >
               <div i-nimiq:cross />
             </DialogClose>
@@ -272,11 +275,11 @@ watch(() => props.open, async (open) => {
 
 <style scoped>
 .backdrop-enter-active {
-  transition: opacity 650ms cubic-bezier(0.3, 1, 0.2, 1);
+  transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .backdrop-leave-active {
-  transition: opacity 650ms cubic-bezier(0.3, 0, 0, 1);
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .backdrop-enter-from,
@@ -285,9 +288,12 @@ watch(() => props.open, async (open) => {
 }
 
 @media (max-width: 1280px) {
-  .modal-enter-active,
+  .modal-enter-active {
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   .modal-leave-active {
-    transition: transform 200ms ease-out;
+    transition: transform 250ms cubic-bezier(0.4, 0, 1, 1);
   }
 
   .modal-enter-from,
@@ -297,11 +303,16 @@ watch(() => props.open, async (open) => {
 }
 
 @media (min-width: 1280px) {
-  .modal-enter-active,
+  .modal-enter-active {
+    transition:
+      opacity 200ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   .modal-leave-active {
     transition:
-      opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
-      transform 100ms var(--nq-ease);
+      opacity 150ms cubic-bezier(0.4, 0, 1, 1),
+      transform 200ms cubic-bezier(0.4, 0, 1, 1);
   }
 
   .modal-enter-from,
