@@ -3,13 +3,16 @@ import type { ComponentPublicInstance } from 'vue'
 import type { I18nContext } from './locales/types'
 import type { SimpleWidgetCommunication } from './utils/communication'
 
-import { createApp, ref } from 'vue'
+import { createApp } from 'vue'
 import FeedbackWidget from './components/FeedbackWidget.vue'
+import { useFilesState } from './composables/useFilesState'
 import { localeMessages } from './locales'
 import { I18nInjectionKey } from './locales/types'
 import { FilesInjectionKey } from './types'
 import { createTranslationFunction } from './utils/i18n'
-import 'virtual:uno.css'
+import './styles/widget.css'
+
+const DEFAULT_FEEDBACK_ENDPOINT = '/api/feedback'
 
 interface FeedbackWidgetInstance extends ComponentPublicInstance {
   showFormGrid: () => void
@@ -19,7 +22,36 @@ interface FeedbackWidgetInstance extends ComponentPublicInstance {
   communication: SimpleWidgetCommunication
 }
 
-window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndpoint, tags = [], initialForm, dark = false }: WidgetProps): WidgetInstance => {
+function createNoopWidgetInstance(): WidgetInstance {
+  return {
+    showFormGrid() { },
+    showForm() { },
+    closeWidget() { },
+    goBack() { },
+    communication: {
+      on() { },
+      off() { },
+      emit() { },
+    },
+    destroy() { },
+  }
+}
+
+window.mountFeedbackWidget = (selector: string, props?: WidgetProps): WidgetInstance => {
+  const {
+    app,
+    lang = 'en',
+    feedbackEndpoint = DEFAULT_FEEDBACK_ENDPOINT,
+    tags = [],
+    initialForm,
+    dark = false,
+  } = props ?? {}
+
+  if (!app) {
+    console.error('Error mounting feedback widget: missing required "app" option')
+    return createNoopWidgetInstance()
+  }
+
   const el = document.querySelector(selector)
   if (!el)
     throw new Error(`Mount target ${selector} not found`)
@@ -28,17 +60,18 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
   console.log(`Mounting feedback widget for app: ${app}, lang: ${lang}, tags: ${tags}`, selector)
 
   try {
-    const currentMessages = localeMessages[lang]
+    const localeKey = lang in localeMessages ? lang as keyof typeof localeMessages : 'en'
+    const currentMessages = localeMessages[localeKey]
     const i18nContext: I18nContext = {
-      locale: lang,
+      locale: localeKey,
       messages: currentMessages,
       t: createTranslationFunction(currentMessages),
     }
 
-    const files = ref<File[]>([])
+    const filesState = useFilesState()
     const vueApp = createApp(FeedbackWidget, { app, feedbackEndpoint, tags, initialForm, dark })
       .provide(I18nInjectionKey, i18nContext)
-      .provide(FilesInjectionKey, { files, updateFiles: (newFiles: File[]) => files.value = newFiles })
+      .provide(FilesInjectionKey, filesState)
     const instance = vueApp.mount(el) as FeedbackWidgetInstance
 
     return {
@@ -67,18 +100,6 @@ window.mountFeedbackWidget = (selector: string, { app, lang = 'en', feedbackEndp
   }
   catch (error) {
     console.error('Error mounting feedback widget:', error)
-    // Return a no-op instance to prevent errors if the host tries to call methods
-    return {
-      showFormGrid() { },
-      showForm() { },
-      closeWidget() { },
-      goBack() { },
-      communication: {
-        on() { },
-        off() { },
-        emit() { },
-      },
-      destroy() { },
-    }
+    return createNoopWidgetInstance()
   }
 }

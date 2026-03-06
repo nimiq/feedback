@@ -1,35 +1,42 @@
 <script setup lang="ts">
-import { inject, ref, watch } from 'vue'
+import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { useRequiredInjection } from '../composables/useRequiredInjection'
 import { FilesInjectionKey } from '../types'
+import WidgetIcon from './WidgetIcon.vue'
 
 const { maxFiles = 5 } = defineProps<{ maxFiles?: number }>()
-const { files, updateFiles } = inject(FilesInjectionKey)
+const { files, removeFile, setFiles } = useRequiredInjection(FilesInjectionKey, 'FilesInjectionKey')
 
 const previews = ref<string[]>([])
 const imageAspectRatios = ref<number[]>([])
 
 const { t } = useI18n()
-const fileInput = ref<HTMLInputElement>()
+const fileInput = useTemplateRef<HTMLInputElement>('file-input')
+
+function resetPreviews() {
+  previews.value.forEach(url => URL.revokeObjectURL(url))
+  previews.value = []
+  imageAspectRatios.value = []
+}
 
 // Watch for external changes to files (like when going back) and clean up previews
 watch(files, (newFiles) => {
-  if (newFiles.length === 0) {
-    previews.value.forEach(url => URL.revokeObjectURL(url))
-    previews.value = []
-    imageAspectRatios.value = []
-  }
+  if (newFiles.length === 0)
+    resetPreviews()
 }, { deep: true })
+
+onBeforeUnmount(() => {
+  resetPreviews()
+})
 
 function handleFileSelect() {
   if (!fileInput.value)
     return
-  const newFiles = [...files.value, ...(Array.from(fileInput.value.files))].slice(0, maxFiles)
-  updateFiles(newFiles)
-  previews.value.forEach(url => URL.revokeObjectURL(url))
-
-  previews.value = []
-  imageAspectRatios.value = []
+  const selectedFiles = Array.from(fileInput.value.files ?? [], file => file)
+  const newFiles = [...files.value, ...selectedFiles].slice(0, maxFiles)
+  setFiles(newFiles)
+  resetPreviews()
 
   files.value.forEach((file, index) => {
     const url = URL.createObjectURL(file)
@@ -43,54 +50,54 @@ function handleFileSelect() {
     img.src = url
   })
 
-  fileInput.value.value = undefined
+  fileInput.value.value = ''
 }
 
-function removeFile(index: number) {
+function handleRemoveFile(index: number) {
   URL.revokeObjectURL(previews.value[index])
-  files.value.splice(index, 1)
+  removeFile(index)
   previews.value.splice(index, 1)
   imageAspectRatios.value.splice(index, 1)
 }
 </script>
 
 <template>
-  <label for="attachments" :class="{ 'cursor-pointer': files.length === 0 }" group w-full>
-    <h3 mb-8 text="12 neutral-800" nq-label>{{ t('attachmentUploader.title') }}</h3>
+  <label for="attachments" :class="{ 'cursor-pointer': files.length === 0 }" class="group w-full">
+    <h3 class="feedback-label mb-2 text-[var(--colors-neutral-800)]">{{ t('attachmentUploader.title') }}</h3>
 
-    <div grid="~ gap-16 cols-[repeat(auto-fit,128px)]" w-full>
+    <div class="grid w-full gap-4" style="grid-template-columns: repeat(auto-fit, 8rem);">
       <div
         v-for="(preview, index) in previews" :key="preview"
-        class="stack outline-1.5 outline-neutral-200 rounded-4 size-128!" :class="[
+        class="feedback-stack !h-32 !w-32 rounded-[4px] outline-[1.5px] outline-[var(--colors-neutral-200)]" :class="[
           imageAspectRatios[index] < 1 ? '' : 'aspect-square',
         ]"
         :style="imageAspectRatios[index] < 1 ? { aspectRatio: imageAspectRatios[index] } : {}"
       >
         <img
           :src="preview" :alt="t('attachmentUploader.previewAlt', { number: index + 1 })"
-          h-full="!" rounded-4 bg-neutral-100 max-h-128 object-contain
+          class="max-h-32 h-full rounded-[4px] bg-[var(--colors-neutral-100)] object-contain"
         >
         <button
-          type="button" :aria-label="t('attachmentUploader.deleteImageLabel')" outline="1.5 offset--1.5 white/8"
-          stack rounded-full bg-white size-24 shadow self-start right--12 top--12 justify-self-end
-          @click.stop.capture="removeFile(index)"
+          type="button" :aria-label="t('attachmentUploader.deleteImageLabel')"
+          class="feedback-stack relative right-[-0.75rem] top-[-0.75rem] justify-self-end self-start rounded-full bg-[var(--colors-white)] shadow-[var(--nq-shadow)] outline-[1.5px] outline-[color-mix(in_oklch,var(--colors-white)_8%,transparent)] h-6 w-6"
+          @click.stop.capture="handleRemoveFile(index)"
         >
-          <div i-nimiq:cross text="neutral 10" />
+          <WidgetIcon name="cross" class="h-2.5 w-2.5 text-[var(--colors-neutral)]" />
         </button>
       </div>
 
       <div
         v-if="files.length < maxFiles"
-        flex="~ col justify-center items-center" rounded-4 size-128 aspect-square outline="1.5 neutral/15"
+        class="flex aspect-square h-32 w-32 flex-col items-center justify-center rounded-[4px] outline-[1.5px] outline-[color-mix(in_oklch,var(--colors-neutral)_15%,transparent)]"
       >
-        <div text="24 neutral-700 group-hocus:neutral-800" transition-colors i-nimiq:mountain-frame />
-        <span font-semibold mt-6>{{ t('attachmentUploader.uploadHere') }}</span>
-        <span text="f-xs neutral-800 center" mt-2 px-2>{{ t('attachmentUploader.anyImageFormat') }}</span>
+        <WidgetIcon name="mountain-frame" class="h-6 w-6 text-[var(--colors-neutral-700)] transition-colors group-hover:text-[var(--colors-neutral-800)]" />
+        <span class="mt-6 font-semibold">{{ t('attachmentUploader.uploadHere') }}</span>
+        <span class="mt-2 px-2 text-center text-xs text-[var(--colors-neutral-800)] sm:text-sm">{{ t('attachmentUploader.anyImageFormat') }}</span>
       </div>
     </div>
 
     <input
-      id="attachments" ref="fileInput" type="file" name="attachments" accept="image/*" multiple sr-only
+      id="attachments" ref="file-input" type="file" name="attachments" accept="image/*" multiple sr-only
       @change="handleFileSelect"
     >
   </label>

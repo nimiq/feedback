@@ -31,3 +31,6 @@ dist-ssr
 
 *.tsbuildinfo
 
+
+backend/.data
+backend/.wrangler

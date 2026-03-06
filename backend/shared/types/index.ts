@@ -1,10 +1,15 @@
 export type FormType = 'bug' | 'idea' | 'feedback'
 
 export interface GitHubIssue { issueUrl: string }
+export interface LinearIssue {
+  identifier: string
+  issueUrl: string
+}
 
 export interface FeedbackResponse {
   success: true
   github: GitHubIssue | null
+  linear: LinearIssue | null
   slack: boolean
   submission: {
     type: FormType
@@ -18,6 +23,7 @@ export interface FeedbackResponse {
     createdAt: string
     updatedAt: string
     githubIssue: string | null
+    linearIssue: string | null
   }
 }
 
@@ -50,7 +56,6 @@ export interface WidgetEvents {
   'form-selected': FormType
   'go-back': void
   'form-submitted': { success: true, data: any }
-  'formError': { success: false, error: string, details?: any }
   'form-error': { success: false, error: string, details?: any }
   'before-submit': { formData: FormData, type: FormType, app: string }
 }
@@ -72,4 +77,4 @@ export interface WidgetProps {
   dark?: boolean
 }
 
-export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance
+export type MountFeedbackWidgetFn = (selector: string, props: WidgetProps) => WidgetInstance

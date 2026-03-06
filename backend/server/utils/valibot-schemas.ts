@@ -1,4 +1,4 @@
-import { any, array, boolean, fallback, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, record, string, transform } from 'valibot'
+import { any, array, boolean, check, fallback, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, record, string, transform } from 'valibot'
 import { imageMimeTypes } from '~~/shared/utils'
 
 export const FormSchema = object({
@@ -10,7 +10,12 @@ export const FormSchema = object({
     array(string(), 'Tags must be an array of strings'),
     maxLength(10, 'Maximum 10 tags allowed'),
   )), []),
-  acceptTerms: pipe(string(), transform(value => value === 'true' || value === 'on'), boolean('You need to accept the legal terms')),
+  acceptTerms: pipe(
+    string(),
+    transform(value => value === 'true' || value === 'on'),
+    boolean('You need to accept the legal terms'),
+    check(value => value, 'You need to accept the legal terms'),
+  ),
   description: string('Description must be a string'),
   email: optional(string('Email must be a string')),
   rating: optional(pipe(
@@ -38,5 +43,23 @@ export const FormSchema = object({
 })
 
 export const QuerySchema = object({
-  test: fallback(optional(pipe(string(), transform(value => value === 'true'), boolean('Test must be a boolean'))), false),
+  linearAssignee: optional(string('Linear assignee must be a string')),
+  linearLabels: fallback(optional(pipe(
+    string(),
+    transform(value => value ? value.split(',').map(label => label.trim()).filter(Boolean) : []),
+    array(string(), 'Linear labels must be an array of strings'),
+    maxLength(20, 'Maximum 20 Linear labels allowed'),
+  )), []),
+  linearPriority: optional(pipe(
+    string(),
+    transform(Number),
+    integer('Linear priority must be an integer'),
+    minValue(0, 'Linear priority must be at least 0'),
+    maxValue(4, 'Linear priority cannot exceed 4'),
+  )),
+  linearProject: optional(string('Linear project must be a string')),
+  linearState: optional(string('Linear state must be a string')),
+  linearTeam: optional(string('Linear team must be a string')),
+  linearTitle: optional(string('Linear title must be a string')),
+  linearWorkspace: optional(string('Linear workspace must be a string')),
 })

@@ -1,13 +1,14 @@
 import type { I18nContext } from './locales/types'
 
-import { createApp, ref } from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
+import { useFilesState } from './composables/useFilesState'
 import { localeMessages } from './locales'
 import { I18nInjectionKey } from './locales/types'
 import { FilesInjectionKey } from './types'
 
 import { createTranslationFunction } from './utils/i18n'
-import 'virtual:uno.css'
+import './styles/widget.css'
 
 const defaultLocale = 'en'
 
@@ -17,9 +18,9 @@ const i18nContext: I18nContext = {
   messages: currentMessages,
   t: createTranslationFunction(currentMessages),
 }
-const files = ref<File[]>([])
+const filesState = useFilesState()
 
 createApp(App)
   .provide(I18nInjectionKey, i18nContext)
-  .provide(FilesInjectionKey, { files, updateFiles: (newFiles: File[]) => files.value = newFiles })
+  .provide(FilesInjectionKey, filesState)
   .mount('#app')

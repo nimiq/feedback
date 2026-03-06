@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
     "build": "vite build",
     "preview": "vite preview",
@@ -16,17 +17,13 @@
     "vue": "catalog:frontend"
   },
   "devDependencies": {
-    "@iconify/utils": "catalog:unocss",
-    "@rollup/plugin-replace": "catalog:bundle",
+    "@tailwindcss/vite": "catalog:style",
     "@tsconfig/node22": "catalog:types",
     "@types/node": "catalog:types",
     "@vitejs/plugin-vue": "catalog:bundle",
     "@vue/tsconfig": "catalog:types",
-    "nimiq-css": "catalog:unocss",
-    "nimiq-icons": "catalog:",
+    "tailwindcss": "catalog:style",
     "typescript": "catalog:types",
-    "unocss": "catalog:unocss",
-    "unocss-preset-onmax": "catalog:unocss",
     "vite": "catalog:bundle",
     "vite-plugin-vue-devtools": "catalog:bundle",
     "vue-tsc": "catalog:types"

@@ -1,18 +1,45 @@
+import { resolve } from 'node:path'
 import process from 'node:process'
+import tailwindcss from '@tailwindcss/vite'
 import { defineNuxtConfig } from 'nuxt/config'
-import { object, optional, string } from 'valibot'
+import { z } from 'zod'
+
+function parseJsonEnv<T>(value: string | undefined, fallback: T, envName: string): T {
+  if (!value)
+    return fallback
+
+  try {
+    return JSON.parse(value) as T
+  }
+  catch (error) {
+    throw new Error(`Invalid JSON in ${envName}: ${error instanceof Error ? error.message : String(error)}`)
+  }
+}
+
+const linearWorkspaceSchema = z.object({
+  apiKey: z.string(),
+  assignee: z.string().optional(),
+  labels: z.array(z.string()).optional(),
+  project: z.string().optional(),
+  state: z.string().optional(),
+  team: z.string().optional(),
+})
 
 // Define runtime config schema for validation
-const runtimeConfigSchema = object({
-  github: object({
-    owner: string(),
-    repo: string(),
-    token: string(),
+const runtimeConfigSchema = z.object({
+  github: z.object({
+    owner: z.string(),
+    repo: z.string(),
+    token: z.string(),
   }),
-  slack: object({
-    webhookUrl: optional(string()),
+  slack: z.object({
+    webhookUrl: z.string().optional(),
   }),
-  productionUrl: string(),
+  linear: z.object({
+    defaultWorkspace: z.string().optional(),
+    workspaces: z.record(z.string(), linearWorkspaceSchema),
+  }),
+  productionUrl: z.string(),
 })
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -22,19 +49,14 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
-    '@nuxt/image',
+    '@nuxt/icon',
     '@vueuse/nuxt',
     '@nuxthub/core',
     'reka-ui/nuxt',
-    '@unocss/nuxt',
-    '@nuxt/scripts',
     'nuxt-safe-runtime-config',
   ],
   future: { compatibilityVersion: 4 },
-
-  unocss: {
-    configFile: './uno.config.ts',
-  },
+  css: ['~/assets/css/main.css'],
 
   eslint: {
     config: {
@@ -43,13 +65,34 @@ export default defineNuxtConfig({
     },
   },
 
-  hub: {
-    database: true,
-    blob: true,
-    kv: true,
-    cache: true,
-    remote: process.env.CI ? false : undefined,
+  vite: {
+    plugins: [tailwindcss() as any],
   },
+
+  icon: {
+    customCollections: [
+      {
+        prefix: 'nimiq',
+        dir: '../shared/icons/nimiq',
+      },
+    ],
+  },
+
+  hub: {
+    blob: true,
+    cache: true,
+    db: 'sqlite',
+    kv: true,
+  },
+
+  hooks: {
+    'hub:db:migrations:dirs': (dirs: string[]) => {
+      dirs.push(resolve('./server/database/migrations'))
+    },
+    'hub:db:schema:extend': ({ paths }: { paths: string[] }) => {
+      paths.push(resolve('./server/database/schema.ts'))
+    },
+  } as Record<string, (...args: any[]) => void>,
 
   runtimeConfig: {
     github: {
@@ -59,6 +102,10 @@ export default defineNuxtConfig({
     },
     slack: {
       webhookUrl: process.env.NUXT_SLACK_WEBHOOK_URL,
+    },
+    linear: {
+      defaultWorkspace: process.env.NUXT_LINEAR_DEFAULT_WORKSPACE,
+      workspaces: parseJsonEnv(process.env.NUXT_LINEAR_WORKSPACES, {}, 'NUXT_LINEAR_WORKSPACES'),
     },
     productionUrl: process.env.NUXT_PRODUCTION_URL,
   },

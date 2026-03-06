@@ -1,16 +1,17 @@
 <script setup lang="ts">
 /* eslint-disable no-console */
 
-import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTrigger } from 'reka-ui'
+import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
 
 import { nextTick, ref, watch } from 'vue'
 
 const { lang = 'en', feedbackEndpoint = '/api/feedback', tags = [] } = defineProps<{ lang?: string, feedbackEndpoint?: string, tags?: string[] }>()
 
-useHead({ link: [{ rel: 'stylesheet', href: '/widget.css' }] })
-useScript('/widget.js')
+useHead({
+  link: [{ rel: 'stylesheet', href: '/widget.css' }],
+  script: [{ src: '/widget.js', defer: true }],
+})
 
-const widgetContainer = ref<HTMLElement>()
 const widgetInstance = ref<WidgetInstance | undefined>()
 const currentView = ref<'grid' | 'form' | 'success' | 'error'>('grid')
 const successData = ref<any>()
@@ -20,6 +21,11 @@ const isModalOpen = ref(false)
 const feedbackWidgetId = 'feedback-widget'
 
 function mountWidget() {
+  if (!window.mountFeedbackWidget) {
+    console.warn('Feedback widget script is not loaded yet')
+    return
+  }
+
   // Ensure #widget-container is in the DOM before mounting, especially if currentView changes could affect its presence.
   if ((currentView.value === 'grid' || currentView.value === 'form')) {
     nextTick().then(() => { // Use nextTick to ensure DOM is updated
@@ -119,63 +125,74 @@ function goBack() {
 <template>
   <DialogRoot @update:open="handleOpenChange">
     <DialogTrigger
-      text="22/24 neutral-0" outline="1.5 offset--1.5 white/8" f-size="36/40" stack text-neutral-0
-      rounded-full bg-neutral shadow-lg fixed f-bottom-md f-right-md
+      class="feedback-stack fixed bottom-6 right-6 z-[200] h-9 w-9 rounded-full bg-[var(--colors-neutral)] text-[var(--colors-neutral-0)] shadow-lg outline-[1.5px] outline-[color-mix(in_oklch,var(--colors-white)_8%,transparent)] transition-transform lg:bottom-8 lg:right-8 lg:h-10 lg:w-10"
     >
-      <div i-nimiq:thumb-up-thumb-down />
+      <Icon name="nimiq:thumb-up-thumb-down" class="h-[22px] w-[22px] lg:h-6 lg:w-6" />
     </DialogTrigger>
 
     <DialogPortal>
-      <Transition name="backdrop">
-        <DialogOverlay bg-darkblue op-60 inset-0 fixed z-200 />
+      <Transition name="feedback-backdrop">
+        <DialogOverlay class="fixed inset-0 z-[200] bg-[color-mix(in_oklch,var(--colors-darkblue)_60%,transparent)]" />
       </Transition>
 
-      <Transition name="modal">
+      <Transition name="feedback-modal">
         <DialogContent
-          lg="f-bottom-md f-right-md" rounded="t-8 lg:8" outline="1.5 offset--1.5 neutral/7" f-px="24/40"
-          data-modal bg-neutral-0 h-max max-h-85dvh w-full shadow-lg transform bottom-32 right-32 fixed z-200 of-y-auto
-          f-pt-xl f-pb-sm lg:max-w-500
+          class="fixed bottom-8 right-8 z-[200] h-max max-h-[85dvh] w-[calc(100%-2rem)] max-w-[31.25rem] overflow-y-auto rounded-t-[8px] rounded-b-[8px] bg-[var(--colors-neutral-0)] px-6 pt-8 pb-4 shadow-lg outline-[1.5px] outline-[color-mix(in_oklch,var(--colors-neutral)_7%,transparent)] lg:px-10"
         >
-          <DialogClose aria-label="Close" bg-transparent size-48 right-4 top-4 absolute>
-            <div bg="neutral-400 hocus:neutral-500" stack mx-auto rounded-full size-24 transition-colors>
-              <div text-white size-12 i-nimiq:cross />
+          <DialogClose aria-label="Close" class="absolute right-1 top-1 flex h-12 w-12 items-center justify-center bg-transparent">
+            <div class="feedback-stack mx-auto h-6 w-6 rounded-full bg-[var(--colors-neutral-400)] text-white transition-colors hover:bg-[var(--colors-neutral-500)]">
+              <Icon name="nimiq:cross" class="h-3 w-3" />
             </div>
           </DialogClose>
 
           <button
-            v-if="currentView !== 'grid'" aria-label="Go back" text="neutral-500 hocus:neutral-600" text-32
-            bg-transparent size-48 transition-colors left-12 top-4 absolute nq-arrow-back before:left-8
+            v-if="currentView !== 'grid'" aria-label="Go back"
+            class="absolute left-3 top-1 flex h-12 w-12 items-center justify-center bg-transparent text-[var(--colors-neutral-500)] transition-colors hover:text-[var(--colors-neutral-600)]"
             @click="goBack"
-          />
+          >
+            <Icon name="nimiq:arrow-left" class="h-8 w-8" />
+          </button>
 
-          <div v-if="currentView === 'success'" class="success-view f-p-md">
-            <DialogTitle text="24 center neutral lh-24" lh-none font-bold mb-12 px-24 lg:px-40 as="h2">
-              <div i-nimiq:check />
+          <div v-if="currentView === 'success'" class="px-6 py-6 lg:px-8 lg:py-8">
+            <DialogTitle as="h2" class="mb-3 flex items-center justify-center gap-2 px-6 text-center text-2xl font-bold leading-6 text-[var(--colors-neutral)] lg:px-10">
+              <Icon name="nimiq:check" class="h-4 w-4" />
               Thank you for your feedback!
             </DialogTitle>
             <div class="success-content text-center">
               <p class="mb-16">
                 Your feedback has been submitted successfully.
               </p>
-              <a
-                v-if="successData?.data?.github?.issueUrl" :href="successData.data.github.issueUrl" target="_blank"
-                nq-pill-arrow nq-pill-blue
+              <div
+                v-if="successData?.data?.github?.issueUrl || successData?.data?.linear?.issueUrl"
+                class="flex flex-wrap items-center justify-center gap-3"
               >
-                <div i-nimiq:logos-github />
-                View on GitHub
-              </a>
+                <NuxtLink
+                  v-if="successData?.data?.github?.issueUrl" :to="successData.data.github.issueUrl" target="_blank" external
+                  class="feedback-pill feedback-pill--blue inline-flex px-4 py-2 text-sm font-bold"
+                >
+                  <Icon name="nimiq:logos-github" class="h-[18px] w-[18px]" />
+                  View on GitHub
+                </NuxtLink>
+                <NuxtLink
+                  v-if="successData?.data?.linear?.issueUrl" :to="successData.data.linear.issueUrl" target="_blank" external
+                  class="feedback-pill feedback-pill--blue inline-flex px-4 py-2 text-sm font-bold"
+                >
+                  <Icon name="nimiq:arrow-up-right" class="h-[18px] w-[18px]" />
+                  View on Linear
+                </NuxtLink>
+              </div>
               <DialogClose
-                class="bg-gray-600 hover:bg-gray-700 text-white mx-auto mt-4 px-4 py-2 rounded-md block transition-colors"
+                class="mx-auto mt-4 block rounded-md bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700"
               >
                 Close
               </DialogClose>
             </div>
           </div>
 
-          <div v-else-if="currentView === 'error'" class="error-view f-p-md">
-            <DialogTitle text="24 center neutral lh-24" flex="~ gap-8 items-center justify-center" lh-none font-bold mb-12 px-24 lg:px-40 as="h2">
-              <div size-16 i-nimiq:exclamation />
-              <span text-left flex-1 f-text-md>
+          <div v-else-if="currentView === 'error'" class="px-6 py-6 lg:px-8 lg:py-8">
+            <DialogTitle as="h2" class="mb-3 flex items-center justify-center gap-2 px-6 text-center text-2xl font-bold leading-6 text-[var(--colors-neutral)] lg:px-10">
+              <Icon name="nimiq:exclamation" class="h-4 w-4" />
+              <span class="flex-1 text-left text-base lg:text-lg">
                 Something went wrong
               </span>
             </DialogTitle>
@@ -191,7 +208,7 @@ function goBack() {
               </button>
             </div>
           </div>
-          <div v-else id="feedback-widget" ref="widgetContainer" />
+          <div v-else id="feedback-widget" />
         </DialogContent>
       </Transition>
     </DialogPortal>

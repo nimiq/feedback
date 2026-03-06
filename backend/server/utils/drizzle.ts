@@ -1,13 +1,10 @@
-import { drizzle } from 'drizzle-orm/d1'
-
-import * as schema from '../database/schema'
+import { db, schema as tables } from 'hub:db'
 
 export { and, eq, or, sql } from 'drizzle-orm'
-
-export const tables = schema
+export { tables }
 
 export function useDrizzle() {
-  return drizzle(hubDatabase(), { schema })
+  return db
 }
 
-export type Submission = typeof schema.submissions.$inferSelect
+export type Submission = typeof tables.submissions.$inferSelect

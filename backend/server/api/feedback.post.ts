@@ -1,17 +1,15 @@
 import { randomUUID } from 'node:crypto'
 import consola from 'consola'
 import { safeParse } from 'valibot'
+import { tables } from '../utils/drizzle'
 
 // In the backend we don't distinguish between the different types of forms,
 // instead we treat them as a single form with different types.
 export default defineEventHandler(async (event) => {
-  // Validate query parameters for test mode
   const { output: query, issues: queryIssues, success: querySuccess } = await getValidatedQuery(event, body => safeParse(QuerySchema, body))
   if (!querySuccess || !query) {
     return createError({ message: 'Invalid query parameters', status: 400, cause: JSON.stringify(queryIssues) })
   }
-
-  const isTestMode = query.test
 
   const formData = await readFormData(event)
   const formAttachments = formData.getAll('attachments')
@@ -30,38 +28,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const id = randomUUID()
-  consola.info(`${isTestMode ? '[TEST MODE] ' : ''}Creating submission with ID ${id} - [${form.type}] ${form.app}`)
+  consola.info(`Creating submission with ID ${id} - [${form.type}] ${form.app}`)
   consola.info(form)
-
-  if (isTestMode) {
-    // In test mode, return mock data without creating actual entries
-    consola.info('[TEST MODE] Skipping actual data creation - returning mock response')
-
-    const mockResponse = {
-      success: true as const,
-      github: {
-        issueUrl: `https://github.com/test/repo/issues/123`,
-      },
-      slack: true,
-      submission: {
-        type: form.type,
-        app: form.app,
-        description: form.description,
-        id,
-        email: form.email || null,
-        rating: form.rating || null,
-        githubIssue: `https://github.com/test/repo/issues/123`,
-        attachments: form.attachments?.map((_, index) => `https://test.example.com/images/test-${index}.jpg`) || null,
-        meta: form.meta || null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    } satisfies FeedbackResponse
-
-    return mockResponse
-  }
-
-  // Normal mode - proceed with actual data creation
   const [fileUploadOk, errorUpload, filesUrls] = await uploadFiles(id, form)
   if (!fileUploadOk) {
     consola.error('File upload error:', errorUpload)
@@ -88,7 +56,16 @@ export default defineEventHandler(async (event) => {
     consola.warn('GitHub issue error:', githubIssueError)
   }
 
-  const [slack, slackMessageError] = await createSlackMessage({ form, github: githubIssueOk ? github : undefined })
+  const [linearIssueOk, linearIssueError, linear] = await createLinearIssue({ form, markdown, query })
+  if (!linearIssueOk) {
+    consola.warn('Linear issue error:', linearIssueError)
+  }
+
+  const [slack, slackMessageError] = await createSlackMessage({
+    form,
+    github: githubIssueOk ? github : undefined,
+    linear: linearIssueOk ? linear : undefined,
+  })
   if (!slack)
     consola.warn('Slack message error:', slackMessageError)
 
@@ -98,6 +75,7 @@ export default defineEventHandler(async (event) => {
     email: form.email || null,
     rating: form.rating || null,
     githubIssue: github?.issueUrl || null,
+    linearIssue: linear?.issueUrl || null,
     attachments: filesUrls,
     logs: form.logs || null,
     meta: form.meta || null,
@@ -105,5 +83,5 @@ export default defineEventHandler(async (event) => {
 
   consola.success('Submission created:', fullSubmission)
 
-  return { success: true, github: github || null, slack, submission: fullSubmission } satisfies FeedbackResponse
+  return { success: true, github: github || null, linear: linear || null, slack, submission: fullSubmission } satisfies FeedbackResponse
 })

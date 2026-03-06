@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { FeedbackResponse, FeedbackResponseError, FormType } from '#backend/types'
-import { computed, inject, provide, ref } from 'vue'
+import { computed, provide, ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { useRequiredInjection } from '../composables/useRequiredInjection'
 import { CommunicationInjectionKey, FilesInjectionKey, FormValidationKey } from '../types'
+import WidgetIcon from './WidgetIcon.vue'
 
 export interface FormContainerEmits {
   formSuccess: [data: FeedbackResponse]
@@ -12,13 +14,13 @@ export interface FormContainerEmits {
 const { type, app, feedbackEndpoint, tags = [] } = defineProps<{
   type: FormType
   app: string
-  feedbackEndpoint: string
+  feedbackEndpoint?: string
   tags?: string[]
 }>()
 const emit = defineEmits<FormContainerEmits>()
 
-const { files } = inject(FilesInjectionKey)
-const communication = inject(CommunicationInjectionKey)
+const { files } = useRequiredInjection(FilesInjectionKey, 'FilesInjectionKey')
+const communication = useRequiredInjection(CommunicationInjectionKey, 'CommunicationInjectionKey')
 
 const acceptTerms = ref(false)
 const description = ref('')
@@ -45,17 +47,46 @@ const titleKeys: Record<FormType, string> = {
   feedback: 'formContainer.titleFeedback',
 }
 
-const icon: Record<FormType, string> = {
-  bug: 'i-nimiq:exclamation',
-  idea: 'i-nimiq:leaf-2-filled',
-  feedback: 'i-nimiq:star',
+const icon: Record<FormType, 'exclamation' | 'leaf-2-filled' | 'star'> = {
+  bug: 'exclamation',
+  idea: 'leaf-2-filled',
+  feedback: 'star',
 }
 
-// @unocss-include
 const iconGradient: Record<FormType, string> = {
-  bug: 'bg-gradient-red',
-  idea: 'bg-gradient-green',
-  feedback: 'bg-gradient-gold',
+  bug: 'feedback-icon-badge--red',
+  idea: 'feedback-icon-badge--green',
+  feedback: 'feedback-icon-badge--gold',
+}
+
+async function parseErrorResponse(res: Response): Promise<FeedbackResponseError> {
+  try {
+    const data = await res.json() as FeedbackResponseError & { data?: FeedbackResponseError }
+    if (data?.data?.message) {
+      return {
+        success: false,
+        message: data.data.message,
+        issues: data.data.issues,
+        details: data.data.details ?? data,
+      }
+    }
+    if (data?.message) {
+      return data
+    }
+  }
+  catch {
+  }
+
+  return {
+    success: false,
+    message: `Request failed with ${res.status} ${res.statusText}`.trim(),
+  }
+}
+
+function setSubmissionError(nextError: FeedbackResponseError) {
+  error.value = nextError
+  status.value = 'error'
+  emit('formError', { error: nextError.message, details: nextError })
 }
 
 async function submitFeedback(event: SubmitEvent) {
@@ -75,24 +106,30 @@ async function submitFeedback(event: SubmitEvent) {
     })
     formData.delete('attachments')
     console.log('Files to be attached:', files.value)
-    Array.from(files.value).forEach(file => formData.append('attachments', file as Blob))
-    console.log('Form data after appending files:', Array.from(formData.entries()))
+    Array.from(files.value, file => file).forEach(file => formData.append('attachments', file as Blob))
+    console.log('Form data after appending files:', Array.from(formData.entries(), entry => entry))
   }
 
   // Emit before-submit hook to allow host to add additional data (like debug logs)
   communication?.emit('before-submit', { formData, type, app })
 
-  const res = await fetch(feedbackEndpoint, { method: 'POST', body: formData })
-    .catch((err) => {
-      status.value = 'error'
-      return err
+  let res: Response
+  try {
+    res = await fetch(feedbackEndpoint ?? '/api/feedback', { method: 'POST', body: formData })
+  }
+  catch (err) {
+    console.log('[Nimiq Feedback Widget] ❌ Form submission failed before a response was received')
+    setSubmissionError({
+      success: false,
+      message: err instanceof Error ? err.message : 'Unable to submit feedback. Please try again.',
+      details: err,
     })
+    return
+  }
 
   if (!res.ok) {
     console.log(`[Nimiq Feedback Widget] ❌ Form submission failed: ${res.status} ${res.statusText}`)
-    status.value = 'error'
-    error.value = await res.json() as FeedbackResponseError
-    emit('formError', { error: error.value.message, details: error.value })
+    setSubmissionError(await parseErrorResponse(res))
     return
   }
 
@@ -105,13 +142,13 @@ async function submitFeedback(event: SubmitEvent) {
 </script>
 
 <template>
-  <div flex="~ col" h-full>
-    <h2 flex="~ items-center gap-8" text-14 mb-16 h-max w-full text-balance nq-label>
+  <div class="flex h-full flex-col">
+    <h2 class="feedback-label mb-4 flex h-max w-full items-center gap-2 text-balance text-sm">
       <div
-        :class="iconGradient[type]" stack rounded-3 shrink-0 size-24
-        style="box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.07), 0px 1.5px 3px 0px rgba(0, 0, 0, 0.05), 0px 0.337px 2px 0px rgba(0, 0, 0, 0.03);"
+        :class="iconGradient[type]"
+        class="feedback-icon-badge feedback-stack h-6 w-6 shrink-0 rounded-[3px]"
       >
-        <div :class="icon[type]" text-white />
+        <WidgetIcon :name="icon[type]" class="h-3.5 w-3.5 text-white" />
       </div>
       {{ t(titleKeys[type]) }}
     </h2>
@@ -120,90 +157,53 @@ async function submitFeedback(event: SubmitEvent) {
       <p>{{ t('formContainer.successMessage') }}</p>
     </div>
 
-    <form v-else flex="~ col gap-16" px-1.5 h-full :data-app="app" @submit.prevent="submitFeedback">
+    <form v-else :data-app="app" class="flex h-full flex-col gap-4 px-1.5" @submit.prevent="submitFeedback">
       <input type="text" name="type" :value="type" sr-only>
       <input type="text" name="app" :value="app" sr-only>
       <input type="text" name="tags" :value="tags.join(',')" sr-only>
 
       <slot />
 
-      <label flex="~ items-start gap-8" f-text-sm f-mt-sm>
-        <span mt-1 shrink-0 h-1lh>
-          <input v-model="acceptTerms" type="checkbox" name="acceptTerms" border-transparent="!" required nq-switch>
+      <label class="mt-4 flex items-start gap-2 text-sm lg:mt-6">
+        <span class="mt-1 inline-flex h-[1lh] shrink-0">
+          <input v-model="acceptTerms" class="feedback-switch border-transparent" type="checkbox" name="acceptTerms" required>
         </span>
-        <span text-neutral-800 select-none>
-          {{ t('formContainer.consentTermsAndFeedback') }} <span text-orange>*</span>
+        <span class="select-none text-[var(--colors-neutral-800)]">
+          {{ t('formContainer.consentTermsAndFeedback') }} <span class="text-[var(--colors-orange)]">*</span>
         </span>
       </label>
 
-      <p text-neutral-700 f-text-sm f-mt-md>
-        <a href="https://nimiq.com/terms/" target="_blank" un-text-current underline>
+      <p class="mt-6 text-sm text-[var(--colors-neutral-700)] lg:mt-8">
+        <a href="https://nimiq.com/terms/" target="_blank" class="text-current underline">
           {{ t('formContainer.readFullTerms') }}</a>
-        <span mx-8>·</span>
-        <a href="https://nimiq.com/privacy-policy/" target="_blank" un-text-current underline>
+        <span class="mx-2">·</span>
+        <a href="https://nimiq.com/privacy-policy/" target="_blank" class="text-current underline">
           {{ t('formContainer.learnMore') }}</a> {{ t('formContainer.privacyPolicyText') }}
       </p>
 
-      <div v-if="status === 'error'" role="alert" text="f-xs red-1100" font-semibold>
+      <div v-if="status === 'error'" role="alert" class="text-xs font-semibold text-[var(--colors-red-1100)] sm:text-sm">
         <p>
           <strong>{{ t('formContainer.errorPrefix') }}</strong> {{ error?.message }}
         </p>
-        <ul v-for="issue in error.issues" :key="issue" list-disc f-px-xs>
+        <ul v-for="issue in error?.issues" :key="issue" class="list-disc px-3 sm:px-4">
           <li>{{ issue }}</li>
         </ul>
         <details>
           <summary>{{ t('formContainer.errorDetailsSummary') }}</summary>
-          <pre outline="1.5 red-500" font-mono font-normal rounded-6 bg-red-400 f-p-2xs>{{ error }}</pre>
+          <pre class="rounded-md bg-[var(--colors-red-400)] p-2 font-mono font-normal outline-[1.5px] outline-[var(--colors-red-500)] sm:p-3">{{ error }}</pre>
         </details>
       </div>
 
-      <div mt-auto flex>
-        <button type="submit" :disabled="!isFormValid || status === 'pending'" mx-0 mb-0 w-full nq-pill-xl nq-pill-blue disabled:op-60 style="background-image: radial-gradient(at 100% 100% in oklab, var(--nq-gradient-from) 0%, var(--nq-gradient-to) 100%) !important;">
-          <div v-if="status === 'pending'" i-nimiq:spinner />
+      <div class="mt-auto flex">
+        <button
+          type="submit"
+          :disabled="!isFormValid || status === 'pending'"
+          class="feedback-pill feedback-pill--blue feedback-pill--xl w-full disabled:opacity-60"
+        >
+          <WidgetIcon v-if="status === 'pending'" name="spinner" class="h-4 w-4" />
           {{ status === "pending" ? t('formContainer.sendingButton') : t('formContainer.submitButtonDefault') }}
         </button>
       </div>
     </form>
   </div>
 </template>
-
-<style>
-[nq-input-box] {
-  max-height: calc(20lh + 2 * var(--padding));
-  border-radius: 6px;
-  padding: 10px 12px;
-  border: none;
-  --border-color: var(--colors-neutral-400);
-  outline: 1.5px solid var(--border-color);
-}
-
-[nq-input-box]:placeholder {
-  --placeholder-color: var(--colors-neutral-500);
-  color: var(--placeholder-color);
-  transition: color 200ms var(--nq-ease);
-}
-
-[nq-input-box]:hover {
-  --border-color: var(--colors-blue-600);
-}
-
-[nq-input-box]:focus,
-[nq-input-box]:focus-visible {
-  --border-color: var(--colors-blue);
-  color: var(--colors-blue);
-  outline-style: solid;
-  outline-width: 1.5px;
-}
-
-[nq-pill-xl] {
-  border-radius: 9999px;
-  color: var(--colors-white);
-  width: 100%;
-  padding: 1.5lh;
-  line-height: 1;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 15px;
-}
-</style>

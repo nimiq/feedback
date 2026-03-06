@@ -1,17 +1,21 @@
 {
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
-    "jsx": "preserve",
+    "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "paths": {
       "~/*": ["./*"],
       "@/*": ["./*"],
       "#backend/*": ["../backend/shared/*"]
     },
     "resolveJsonModule": true,
-    "declaration": true,
-    "esModuleInterop": true,
+    "strict": true,
+    "noEmit": true,
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
   "include": [

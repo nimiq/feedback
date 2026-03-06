@@ -2,34 +2,25 @@
   "name": "nimiq-feedback",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
-    "build": "nr -r build",
-    "play": "pnpm -C widget build && nr -r dev",
-    "prepare": "pnpm -C backend prepare",
-    "postinstall": "nr prepare",
-    "dev": "nr -r dev",
+    "build": "pnpm -r --filter ./backend --filter ./widget run build",
+    "play": "pnpm -C widget build && pnpm -r --parallel --filter ./backend --filter ./widget run dev",
+    "prepare": "rm -rf backend/.data/db/migrations && pnpm -C backend prepare",
+    "dev": "pnpm -r --parallel --filter ./backend --filter ./widget run dev",
     "dev:widget": "pnpm -C widget dev:widget",
     "lint": "eslint . && pnpm -C backend lint",
     "lint:fix": "eslint . --fix && pnpm -C backend lint:fix",
-    "typecheck": "nr -r typecheck"
+    "typecheck": "pnpm -r --filter ./backend --filter ./widget run typecheck"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
-    "@antfu/ni": "catalog:tools",
-    "@iconify/utils": "catalog:unocss",
-    "@unocss/eslint-plugin": "catalog:unocss",
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
     "eslint-plugin-pnpm": "catalog:",
-    "eslint-plugin-pnpm-catalog": "catalog:",
     "lint-staged": "catalog:lint",
-    "nimiq-css": "catalog:unocss",
-    "pncat": "catalog:cli",
     "simple-git-hooks": "catalog:lint",
-    "typescript": "catalog:types",
-    "unocss": "catalog:unocss",
-    "unocss-preset-onmax": "catalog:unocss"
+    "typescript": "catalog:types"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"

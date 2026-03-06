@@ -1,8 +1,9 @@
 import type { InferOutput } from 'valibot'
 import consola from 'consola'
+import { blob } from 'hub:blob'
 
 export async function uploadFiles(id: string, { app, type, attachments }: InferOutput<typeof FormSchema>): Result<string[]> {
-  const { productionUrl } = useRuntimeConfig()
+  const { productionUrl } = useSafeRuntimeConfig()
   let imagesUrl: URL
   try {
     imagesUrl = new URL('/images/', productionUrl)
@@ -18,7 +19,7 @@ export async function uploadFiles(id: string, { app, type, attachments }: InferO
   const filesUrls: string[] = []
   const promises = attachments.map(async (file) => {
     const name = encodeURI(`${app}/${type}/${id}__${file.name}`)
-    const hubFile = await hubBlob().put(name, file)
+    const hubFile = await blob.put(name, file)
     try {
       filesUrls.push(new URL(`./${hubFile.pathname}`, imagesUrl).toString())
     }
@@ -43,7 +44,7 @@ export async function uploadLogs(id: string, { app, logs }: InferOutput<typeof F
   if (!logs)
     return [true, undefined, undefined] as const
 
-  const { productionUrl } = useRuntimeConfig()
+  const { productionUrl } = useSafeRuntimeConfig()
 
   let logsUrl: URL
   try {
@@ -60,7 +61,7 @@ export async function uploadLogs(id: string, { app, logs }: InferOutput<typeof F
   try {
     const name = encodeURI(`${app}/logs/${id}.txt`)
     const logBlob = new Blob([logs], { type: 'text/plain' })
-    const hubFile = await hubBlob().put(name, logBlob)
+    const hubFile = await blob.put(name, logBlob)
 
     let logUrl
     try {

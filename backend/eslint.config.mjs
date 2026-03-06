@@ -5,9 +5,14 @@ export default withNuxt(
   antfu({
     formatters: true,
     vue: true,
-    unocss: true,
     pnpm: true,
-    ignores: ['./public/widget.*'],
+    ignores: [
+      '.nuxt/**',
+      '.output/**',
+      '.wrangler/**',
+      'node_modules/**',
+      'public/widget.*',
+    ],
   // }, {
   // ...eslintCatalogPlugin.configs?.['recommended'],
   }),

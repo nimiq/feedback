@@ -33,7 +33,10 @@ For better performance, load both CSS and JS with deferred loading:
   rel="preload"
   href="https://nimiq-feedback.je-cf9.workers.dev/widget.css"
   as="style"
-  onload="this.onload=null;this.rel='stylesheet'"
+  onload="
+    this.onload = null
+    this.rel = 'stylesheet'
+  "
 />
 <noscript><link rel="stylesheet" href="https://nimiq-feedback.je-cf9.workers.dev/widget.css" /></noscript>
 
@@ -53,7 +56,7 @@ Mount the widget to any DOM element:
     const widget = window.mountFeedbackWidget('#feedback-widget', {
       app: 'nimiq-wallet', // 'nimiq-wallet' | 'nimiq-pay' | 'playground'
       lang: 'en', // 'en' | 'es' (optional, defaults to 'en')
-      feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback',
+      feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback', // optional, defaults to '/api/feedback' on the current origin
       tags: ['beta', 'mobile'], // string[] (optional, defaults to []) - custom tags for submissions
       initialForm: 'bug', // optional - directly show a specific form: 'bug' | 'idea' | 'feedback'
       dark: false, // boolean (optional, defaults to false) - enables dark theme
@@ -114,12 +117,14 @@ declare global {
   }
 }
 
-export type MountFeedbackWidgetFn = (selector: string, props?: WidgetProps) => WidgetInstance
+export type MountFeedbackWidgetFn = (selector: string, props: WidgetProps) => WidgetInstance
 
 export {}
 ```
 
 > Make sure to include the type declarations in your TypeScript configuration so they are recognized globally.
+>
+> `feedbackEndpoint` defaults to `/api/feedback` on the current origin. If the widget is embedded from another domain, pass the full backend URL explicitly.
 
 ## Advanced Usage
 
@@ -184,33 +189,47 @@ widget.goBack()
 widget.destroy()
 ```
 
-### Testing Mode
+### Linear Issue Creation
 
-For development and testing purposes, you can use the test query parameter to test listeners and UI flow without creating actual database entries, GitHub issues, or Slack messages:
+The backend can also create Linear issues through the official [`@linear/sdk`](https://linear.app/docs/sdk/getting-started). The connector is opt-in and is controlled through query parameters on `feedbackEndpoint`.
 
-```javascript
-// Configure widget with test mode
-const widget = window.mountFeedbackWidget('#feedback-widget', {
-  app: 'nimiq-wallet',
-  feedbackEndpoint: 'https://nimiq-feedback.je-cf9.workers.dev/api/feedback?test=true', // Add ?test=true
-  tags: ['testing', 'dev']
-})
+Configure one or more Linear workspaces on the backend:
 
-// All form submissions will now return mock data and trigger listeners
-// without creating actual entries in the database or external services
+```bash
+NUXT_LINEAR_DEFAULT_WORKSPACE=product
+NUXT_LINEAR_WORKSPACES='{
+  "product": {
+    "apiKey": "lin_api_xxx",
+    "team": "ENG",
+    "labels": ["customer-feedback"]
+  }
+}'
 ```
 
-When `test=true` is added to the feedback endpoint URL:
+Then point the widget at an endpoint that includes the Linear options you want:
 
-- ✅ Form validation still runs normally
-- ✅ All widget events are triggered (`form-submitted`, `before-submit`, etc.)
-- ✅ Mock response data is returned that matches the expected structure
-- ❌ No database entries are created
-- ❌ No GitHub issues are created
-- ❌ No Slack messages are sent
-- ❌ No file uploads occur
+```html
+<script>
+  window.mountFeedbackWidget('#feedback-widget', {
+    app: 'nimiq-wallet',
+    feedbackEndpoint:
+      'https://nimiq-feedback.je-cf9.workers.dev/api/feedback?linearWorkspace=product&linearTeam=ENG&linearLabels=customer-feedback,triage&linearTitle=Wallet%20feedback',
+  })
+</script>
+```
 
-This is perfect for testing your integration, event listeners, and UI flows during development.
+Supported query parameters:
+
+- `linearWorkspace`: selects one configured backend workspace
+- `linearTeam`: required unless the workspace config already defines a default team
+- `linearProject`: optional project selector
+- `linearState`: optional workflow state selector
+- `linearAssignee`: optional assignee selector
+- `linearLabels`: comma-separated list of labels
+- `linearTitle`: custom issue title
+- `linearPriority`: integer priority from `0` to `4`
+
+Selectors can use IDs, and for most resources they can also use the human-readable values exposed by Linear such as team keys, label names, project names, state names, or assignee emails.
 
 ### Theming
 

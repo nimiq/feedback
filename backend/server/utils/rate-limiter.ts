@@ -1,4 +1,5 @@
 import consola from 'consola'
+import { kv } from 'hub:kv'
 
 interface RateLimitConfig {
   windowSeconds: number
@@ -31,11 +32,11 @@ export async function checkRateLimit(identifier: string, config: RateLimitConfig
   const rateLimitKey = `${keyPrefix}:${identifier}:${windowStart}`
 
   try {
-    const existing = await hubKV().get<RateLimitData>(rateLimitKey)
+    const existing = await kv.get<RateLimitData>(rateLimitKey)
 
     if (!existing) {
       // First request in this window
-      await hubKV().set(rateLimitKey, {
+      await kv.set(rateLimitKey, {
         count: 1,
         resetTime: windowStart + windowSeconds,
         windowStart,
@@ -60,7 +61,7 @@ export async function checkRateLimit(identifier: string, config: RateLimitConfig
 
     // Increment counter
     const newCount = existing.count + 1
-    await hubKV().set(rateLimitKey, {
+    await kv.set(rateLimitKey, {
       ...existing,
       count: newCount,
     }, { ttl: windowSeconds + 60 })

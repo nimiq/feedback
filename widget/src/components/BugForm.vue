@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { inject, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { useRequiredInjection } from '../composables/useRequiredInjection'
 import { FormValidationKey } from '../types'
 import AttachmentUploader from './AttachmentUploader.vue'
 
@@ -9,34 +10,33 @@ const { t } = useI18n()
 const shareDebugInfo = ref(false)
 const description = ref('')
 
-const formValidation = inject(FormValidationKey)
-if (formValidation) {
-  watch(description, (newValue) => {
-    formValidation.description.value = newValue
-  }, { immediate: true })
-}
+const formValidation = useRequiredInjection(FormValidationKey, 'FormValidationKey')
+
+watch(description, (newValue) => {
+  formValidation.description.value = newValue
+}, { immediate: true })
 </script>
 
 <template>
-  <label flex>
+  <label class="flex">
     <textarea
       id="description" v-model="description" name="description" :placeholder="t('bugForm.descriptionPlaceholder')" rows="4" required
-      nq-input-box focus-visible:outline-blue
+      class="feedback-input"
     />
   </label>
 
   <AttachmentUploader />
 
-  <label flex="~ col">
-    <h3 mb-8 text="12 neutral-800" nq-label>{{ t('bugForm.emailLabel') }}</h3>
-    <input id="email" w-auto type="email" nq-input-box name="email" :placeholder="t('bugForm.emailPlaceholder')">
+  <label class="flex flex-col">
+    <h3 class="feedback-label mb-2 text-[var(--colors-neutral-800)]">{{ t('bugForm.emailLabel') }}</h3>
+    <input id="email" class="feedback-input w-auto" type="email" name="email" :placeholder="t('bugForm.emailPlaceholder')">
   </label>
 
-  <label flex="~ gap-8" data-input="share-debug-info" hidden f-text-sm f-mt-sm>
-    <span shrink-0 h-1lh>
-      <input v-model="shareDebugInfo" type="checkbox" name="shareDebugInfo" nq-switch border-transparent="!">
+  <label class="mt-4 hidden gap-2 text-sm lg:mt-6" data-input="share-debug-info">
+    <span class="inline-flex h-[1lh] shrink-0">
+      <input v-model="shareDebugInfo" class="feedback-switch border-transparent" type="checkbox" name="shareDebugInfo">
     </span>
-    <span text-neutral-800 select-none>
+    <span class="select-none text-[var(--colors-neutral-800)]">
       {{ t('bugForm.shareDebugInfoLabel') }}
     </span>
   </label>

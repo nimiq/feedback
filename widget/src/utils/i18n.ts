@@ -1,5 +1,7 @@
 import type { LocaleMessages } from '../locales/types'
 
+const interpolationPattern = /\{(\w+)\}/g
+
 export function createTranslationFunction(messages: LocaleMessages) {
   return function t(key: string, params?: Record<string, string | number>): string {
     const keys = key.split('.')
@@ -21,7 +23,7 @@ export function createTranslationFunction(messages: LocaleMessages) {
     }
 
     if (params) {
-      return value.replace(/\{(\w+)\}/g, (match, paramKey) => {
+      return value.replace(interpolationPattern, (match, paramKey) => {
         return paramKey in params ? String(params[paramKey]) : match
       })
     }

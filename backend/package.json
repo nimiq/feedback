@@ -2,24 +2,22 @@
   "name": "nimiq-feedback-backend",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.11.1",
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --remote",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "prepare": "nuxt prepare",
-    "postinstall": "nr prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "nuxt typecheck",
-    "db:generate": "drizzle-kit generate",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "@linear/sdk": "catalog:server",
     "@nuxt/fonts": "catalog:nuxt",
-    "@nuxt/image": "catalog:nuxt",
+    "@nuxt/icon": "catalog:nuxt",
     "@octokit/rest": "catalog:server",
     "drizzle-orm": "catalog:server",
     "nuxt": "catalog:nuxt",
@@ -29,31 +27,21 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
-    "@antfu/ni": "catalog:tools",
+    "@libsql/client": "catalog:server",
     "@nuxt/eslint": "catalog:lint",
-    "@nuxt/scripts": "catalog:dev",
-    "@nuxt/test-utils": "catalog:types",
     "@nuxthub/core": "catalog:server",
-    "@playwright/test": "catalog:types",
-    "@unocss/nuxt": "catalog:style",
+    "@tailwindcss/vite": "catalog:style",
     "@vue/tsconfig": "catalog:types",
-    "@vueuse/core": "catalog:utils",
     "@vueuse/nuxt": "catalog:nuxt",
     "consola": "catalog:node",
     "drizzle-kit": "catalog:server",
     "eslint": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
-    "lint-staged": "catalog:lint",
-    "playwright-core": "catalog:types",
+    "tailwindcss": "catalog:style",
     "typescript": "catalog:types",
-    "unocss": "catalog:unocss",
+    "unstorage": "catalog:server",
     "vue-tsc": "catalog:types",
-    "wrangler": "catalog:server"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
-  },
-  "lint-staged": {
-    "*": "eslint --fix"
+    "wrangler": "catalog:server",
+    "zod": "catalog:"
   }
 }

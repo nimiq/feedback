@@ -25,6 +25,7 @@ export const submissions = sqliteTable('submissions', {
   updatedAt: text().notNull().default(sql`(CURRENT_TIMESTAMP)`).$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 
   githubIssue: text('github_issue', { mode: 'text' }),
+  linearIssue: text('linear_issue', { mode: 'text' }),
 }, table => [
   check('rating', sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
   // index('submissions_status_idx').on(table.status),
