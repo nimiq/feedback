@@ -1,5 +1,5 @@
-import type { FormType, WidgetInstance, WidgetProps } from '#backend/types'
 import type { ComponentPublicInstance } from 'vue'
+import type { FormType, WidgetInstance, WidgetProps } from '#backend/types'
 import type { I18nContext } from './locales/types'
 import type { SimpleWidgetCommunication } from './utils/communication'
 

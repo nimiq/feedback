@@ -44,7 +44,7 @@ const runtimeConfigSchema = z.object({
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-09-09',
+  compatibilityDate: '2026-07-23',
   devtools: { enabled: true },
   modules: [
     '@nuxt/eslint',
@@ -70,6 +70,7 @@ export default defineNuxtConfig({
   },
 
   icon: {
+    serverBundle: 'local',
     customCollections: [
       {
         prefix: 'nimiq',
@@ -82,7 +83,10 @@ export default defineNuxtConfig({
     blob: true,
     cache: true,
     db: 'sqlite',
-    kv: true,
+  },
+
+  nitro: {
+    preset: 'cloudflare_module',
   },
 
   hooks: {

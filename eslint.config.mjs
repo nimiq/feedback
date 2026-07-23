@@ -5,5 +5,5 @@ export default antfu({
   formatters: true,
   vue: true,
   pnpm: true,
-  ignores: ['backend/**', 'dist/**', 'node_modules/**'],
+  ignores: ['.pnpm-store/**', 'backend/**', 'dist/**', 'node_modules/**'],
 })

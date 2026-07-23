@@ -34,3 +34,4 @@ dist-ssr
 
 backend/.data
 backend/.wrangler
+.pnpm-store

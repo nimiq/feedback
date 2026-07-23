@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 
+import type { ComponentInternalInstance } from 'vue'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
@@ -11,6 +12,9 @@ import { createTranslationFunction } from '../utils/i18n'
 import FormContainer from './FormContainer.vue'
 
 const uuidPattern = /^[0-9a-f-]{36}$/
+type FormContainerInstance = ComponentInternalInstance & {
+  setupState: { acceptTerms: boolean, description: string }
+}
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -41,7 +45,7 @@ describe('formContainer', () => {
         },
       },
     })
-    const state = wrapper.vm.$.setupState as { acceptTerms: boolean, description: string }
+    const state = (wrapper.vm.$ as FormContainerInstance).setupState
     state.acceptTerms = true
     state.description = 'Broken'
     await nextTick()

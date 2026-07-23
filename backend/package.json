@@ -2,17 +2,19 @@
   "name": "nimiq-feedback-backend",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --remote",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "prepare": "nuxt prepare",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "nuxt typecheck",
-    "db:generate": "drizzle-kit generate"
+    "lint": "node node_modules/eslint/bin/eslint.js .",
+    "lint:fix": "node node_modules/eslint/bin/eslint.js . --fix",
+    "typecheck": "nuxt prepare && vue-tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "worker:dev": "wrangler --cwd .output dev --env-file .env",
+    "deploy": "wrangler --cwd .output deploy"
   },
   "dependencies": {
     "@linear/sdk": "catalog:server",

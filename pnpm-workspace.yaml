@@ -2,71 +2,75 @@ shellEmulator: true
 
 trustPolicy: no-downgrade
 
+# Exact packages audited before allowing lower-trust registry metadata.
+trustPolicyExclude:
+  - chokidar@4.0.3
+  - semver@6.3.1
+  - undici-types@6.21.0
+
 packages:
   - ./
   - ./backend
   - ./widget
 
 catalog:
-  eslint-plugin-pnpm: ^1.6.0
-  nuxt-safe-runtime-config: ^0.1.2
-  zod: ^4.3.6
+  eslint-plugin-pnpm: ^1.7.0
+  nuxt-safe-runtime-config: ^0.1.6
+  zod: ^4.4.3
 
 catalogs:
   bundle:
-    '@vitejs/plugin-vue': ^6.0.4
+    '@vitejs/plugin-vue': ^6.0.8
     postcss-selector-parser: ^7.1.4
-    vite: ^7.3.1
-    vite-plugin-vue-devtools: ^8.0.7
+    vite: ^7.3.6
+    vite-plugin-vue-devtools: ^8.1.5
   frontend:
-    reka-ui: 2.9.0
-    vue: ^3.5.29
+    reka-ui: 2.10.1
+    vue: ^3.5.40
   lint:
-    '@antfu/eslint-config': ^7.7.0
-    '@nuxt/eslint': 1.15.2
-    eslint: ^10.0.2
+    '@antfu/eslint-config': ^7.7.3
+    '@nuxt/eslint': 1.16.0
+    eslint: ^10.7.0
     eslint-plugin-format: ^2.0.1
-    lint-staged: ^16.3.2
+    lint-staged: ^16.4.0
     simple-git-hooks: ^2.13.1
   node:
     consola: ^3.4.2
   nuxt:
     '@nuxt/fonts': ^0.14.0
-    '@nuxt/icon': ^2.2.0
-    '@vueuse/nuxt': ^14.2.1
-    nuxt: 4.3.1
+    '@nuxt/icon': ^2.3.1
+    '@vueuse/nuxt': ^14.3.0
+    nuxt: 4.5.0
   server:
-    '@libsql/client': ^0.17.0
+    '@libsql/client': ^0.17.4
     '@linear/sdk': ^76.0.0
-    '@nuxthub/core': ^0.10.7
+    '@nuxthub/core': ^0.10.8
     '@octokit/rest': ^22.0.1
-    drizzle-kit: ^0.31.9
-    drizzle-orm: ^0.45.1
-    unstorage: ^1.17.4
-    valibot: ^1.2.0
-    wrangler: ^4.71.0
+    drizzle-kit: ^0.31.10
+    drizzle-orm: ^0.45.2
+    unstorage: ^1.17.5
+    valibot: ^1.4.2
+    wrangler: ^4.113.0
   style:
-    '@tailwindcss/vite': ^4.1.13
-    tailwindcss: ^4.1.13
+    '@tailwindcss/vite': ^4.3.3
+    tailwindcss: ^4.3.3
   test:
     '@vue/test-utils': ^2.4.11
-    happy-dom: ^20.11.1
+    happy-dom: 20.11.0
     vitest: ^4.1.10
   types:
     '@tsconfig/node22': ^22.0.5
-    '@types/node': ^25.3.5
-    '@vue/tsconfig': ^0.9.0
+    '@types/node': 22.20.1
+    '@vue/tsconfig': ^0.9.1
     typescript: ^5.9.3
-    vue-tsc: ^3.2.5
+    vue-tsc: 3.3.7
 
-ignoredBuiltDependencies: null
-
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - better-sqlite3
-  - esbuild
-  - sharp
-  - simple-git-hooks
-  - unrs-resolver
-  - vue-demi
-  - workerd
+allowBuilds:
+  '@parcel/watcher': true
+  better-sqlite3: true
+  esbuild: true
+  sharp: true
+  simple-git-hooks: true
+  unrs-resolver: true
+  vue-demi: true
+  workerd: true

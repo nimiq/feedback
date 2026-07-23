@@ -2,17 +2,18 @@
   "name": "nimiq-feedback",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "build": "pnpm -C widget build && pnpm -C backend build",
     "play": "pnpm -C widget build && pnpm -r --parallel --filter ./backend --filter ./widget run dev",
     "prepare": "rm -rf backend/.data/db/migrations && pnpm -C backend prepare",
     "dev": "pnpm -r --parallel --filter ./backend --filter ./widget run dev",
     "dev:widget": "pnpm -C widget dev:widget",
-    "lint": "eslint . && pnpm -C backend lint",
-    "lint:fix": "eslint . --fix && pnpm -C backend lint:fix",
-    "test": "vitest run",
-    "typecheck": "pnpm -r --filter ./backend --filter ./widget run typecheck"
+    "lint": "node node_modules/eslint/bin/eslint.js . && pnpm -C backend lint",
+    "lint:fix": "node node_modules/eslint/bin/eslint.js . --fix && pnpm -C backend lint:fix",
+    "test": "node node_modules/vitest/vitest.mjs run",
+    "typecheck": "pnpm -r --filter ./backend --filter ./widget run typecheck",
+    "validate": "pnpm lint && pnpm typecheck && pnpm test"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",

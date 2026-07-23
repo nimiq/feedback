@@ -247,6 +247,74 @@ You can override the color scheme for a specific instance of the widget by setti
 
 By default, the widget will respect the user's system preferences and switch automatically between light and dark mode.
 
+## Development
+
+Use Node.js 22 and pnpm 10.34.5:
+
+```bash
+corepack enable
+pnpm install --frozen-lockfile
+pnpm validate
+pnpm build
+```
+
+To update dependencies, run `pnpm outdated --compatible`, update the workspace catalogs, then regenerate and verify `pnpm-lock.yaml` with `pnpm install`. Major upgrades are handled separately.
+
+Copy `backend/.env.example` to `backend/.env` for local Nuxt development. After a build, preview the Worker locally with:
+
+```bash
+pnpm -C backend worker:dev
+```
+
+The preview reads `backend/.env`. Production variables and secrets are configured in Cloudflare and are not copied into local files.
+
+## Cloudflare deployment
+
+Production runs on the existing `nimiq-feedback` Worker at `https://nimiq-feedback.je-cf9.workers.dev`. The checked-in [Wrangler configuration](backend/wrangler.json) preserves the current storage:
+
+| Binding | Resource                                                    |
+| ------- | ----------------------------------------------------------- |
+| `DB`    | Existing D1 database `170f7e79-6cdb-43ac-8071-ad4432f57184` |
+| `CACHE` | Existing KV namespace `0204cdae96eb471da05c251fbf8110bb`    |
+| `BLOB`  | Existing R2 bucket `nimiq-feedback`                         |
+
+Connect the existing Worker to `nimiq/feedback` in Workers Builds. Do not create a new Worker or storage resource. Use these build settings:
+
+- Root directory: `backend`
+- Production branch: `main`
+- Non-production builds: disabled
+- Build variable: `NODE_VERSION=22`
+- Build command: `pnpm -C .. validate && pnpm -C .. build`
+- Deploy command: `pnpm deploy`
+
+Keep these runtime variables in the Worker settings:
+
+- `NUXT_GITHUB_OWNER`
+- `NUXT_GITHUB_REPO`
+- `NUXT_PRODUCTION_URL`
+- `NUXT_LINEAR_DEFAULT_WORKSPACE`, when used
+
+Keep these secrets in the Worker settings:
+
+- `NUXT_GITHUB_TOKEN`
+- `NUXT_SLACK_WEBHOOK_URL`
+- `NUXT_LINEAR_WORKSPACES`
+
+`keep_vars` is enabled so Wrangler deploys retain dashboard-managed variables and secrets.
+
+Before the first Cloudflare build, export the existing D1 database and record the current state:
+
+```bash
+pnpm -C backend exec wrangler d1 export DB --remote --output <backup-path>
+pnpm -C backend exec wrangler d1 execute DB --remote --command "SELECT COUNT(*) AS submissions FROM submissions;"
+pnpm -C backend exec wrangler d1 execute DB --remote --command "SELECT * FROM _hub_migrations ORDER BY id;"
+pnpm -C backend exec wrangler d1 execute DB --remote --command "SELECT attachments FROM submissions WHERE attachments IS NOT NULL ORDER BY createdAt DESC LIMIT 1;"
+```
+
+Record the D1, KV, and R2 identifiers from `backend/wrangler.json`, plus one attachment URL from the last query. After deployment, verify `/`, `/widget.js`, and `/widget.css`; submit an invalid payload; confirm the submission count is unchanged; load the recorded attachment; and check Worker logs for binding, startup, or migration errors. Migration `0004_ancient_violations.sql` is additive and must apply only once.
+
+If smoke tests fail, roll back to the previous Worker version in Cloudflare. The D1 migration remains compatible with the previous version.
+
 ## Other resources
 
 - https://www.featurebase.app/

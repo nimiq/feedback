@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { imageMimeTypes, maxAttachments, maxAttachmentSize } from '#backend/utils'
 import { onBeforeUnmount, ref, shallowRef, useTemplateRef, watch } from 'vue'
+import { imageMimeTypes, maxAttachments, maxAttachmentSize } from '#backend/utils'
 import { useI18n } from '../composables/useI18n'
 import { useRequiredInjection } from '../composables/useRequiredInjection'
 import { useUniqueId } from '../composables/useUniqueId'

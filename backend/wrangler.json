@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nimiq-feedback",
+  "main": "dist/server/index.mjs",
+  "assets": {
+    "directory": "dist/public"
+  },
+  "account_id": "cf9baad7d68d7ee717f3339731e81dfb",
+  "compatibility_date": "2026-07-23",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "keep_vars": true,
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "170f7e79-6cdb-43ac-8071-ad4432f57184"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "0204cdae96eb471da05c251fbf8110bb"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "BLOB",
+      "bucket_name": "nimiq-feedback"
+    }
+  ]
+}
