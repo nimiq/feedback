@@ -40,6 +40,7 @@ const isFormValid = computed(() => {
 const error = ref<FeedbackResponseError>()
 const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
 const response = ref<FeedbackResponse>()
+const idempotencyKey = crypto.randomUUID()
 
 const titleKeys: Record<FormType, string> = {
   bug: 'formContainer.titleBug',
@@ -90,24 +91,15 @@ function setSubmissionError(nextError: FeedbackResponseError) {
 }
 
 async function submitFeedback(event: SubmitEvent) {
-  // eslint-disable-next-line no-console
-  console.log('[Nimiq Feedback Widget] 📤 Starting form submission...')
   status.value = 'pending'
 
   const formEl = event.target as HTMLFormElement
   const formData = new FormData(formEl)
+  formData.set('idempotencyKey', idempotencyKey)
 
-  /* eslint-disable no-console */
   if (type === 'bug' || type === 'idea') {
-    console.log('Submitting feedback:', {
-      type: formData.get('type'),
-      app: formData.get('app'),
-      attachments: files.value,
-    })
     formData.delete('attachments')
-    console.log('Files to be attached:', files.value)
     Array.from(files.value, file => file).forEach(file => formData.append('attachments', file as Blob))
-    console.log('Form data after appending files:', Array.from(formData.entries(), entry => entry))
   }
 
   // Emit before-submit hook to allow host to add additional data (like debug logs)
@@ -118,7 +110,6 @@ async function submitFeedback(event: SubmitEvent) {
     res = await fetch(feedbackEndpoint ?? '/api/feedback', { method: 'POST', body: formData })
   }
   catch (err) {
-    console.log('[Nimiq Feedback Widget] ❌ Form submission failed before a response was received')
     setSubmissionError({
       success: false,
       message: err instanceof Error ? err.message : 'Unable to submit feedback. Please try again.',
@@ -128,7 +119,6 @@ async function submitFeedback(event: SubmitEvent) {
   }
 
   if (!res.ok) {
-    console.log(`[Nimiq Feedback Widget] ❌ Form submission failed: ${res.status} ${res.statusText}`)
     setSubmissionError(await parseErrorResponse(res))
     return
   }
@@ -136,7 +126,6 @@ async function submitFeedback(event: SubmitEvent) {
   response.value = await res.json() as FeedbackResponse
   status.value = 'success'
 
-  console.log('[Nimiq Feedback Widget] ✅ Form submitted successfully')
   emit('formSuccess', response.value)
 }
 </script>

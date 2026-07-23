@@ -6,6 +6,9 @@ export default {
     deleteImageLabel: 'Supprimer l\'image',
     uploadHere: 'Télécharger ici',
     anyImageFormat: 'Tout format d\'image',
+    fileTooLarge: '{name} doit faire moins de 10 Mo.',
+    tooManyFiles: 'Sélectionnez au maximum {max} images.',
+    unsupportedType: '{name} n\'est pas une image prise en charge.',
     title: 'Pièces jointes',
   },
   bugForm: {

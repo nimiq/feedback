@@ -15,6 +15,7 @@ catalog:
 catalogs:
   bundle:
     '@vitejs/plugin-vue': ^6.0.4
+    postcss-selector-parser: ^7.1.4
     vite: ^7.3.1
     vite-plugin-vue-devtools: ^8.0.7
   frontend:
@@ -47,6 +48,10 @@ catalogs:
   style:
     '@tailwindcss/vite': ^4.1.13
     tailwindcss: ^4.1.13
+  test:
+    '@vue/test-utils': ^2.4.11
+    happy-dom: ^20.11.1
+    vitest: ^4.1.10
   types:
     '@tsconfig/node22': ^22.0.5
     '@types/node': ^25.3.5

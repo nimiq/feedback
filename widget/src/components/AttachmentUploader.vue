@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
+import { imageMimeTypes, maxAttachments, maxAttachmentSize } from '#backend/utils'
+import { onBeforeUnmount, ref, shallowRef, useTemplateRef, watch } from 'vue'
 import { useI18n } from '../composables/useI18n'
 import { useRequiredInjection } from '../composables/useRequiredInjection'
+import { useUniqueId } from '../composables/useUniqueId'
 import { FilesInjectionKey } from '../types'
 import WidgetIcon from './WidgetIcon.vue'
 
-const { maxFiles = 5 } = defineProps<{ maxFiles?: number }>()
+const { maxFiles = maxAttachments } = defineProps<{ maxFiles?: number }>()
 const { files, removeFile, setFiles } = useRequiredInjection(FilesInjectionKey, 'FilesInjectionKey')
 
 const previews = ref<string[]>([])
 const imageAspectRatios = ref<number[]>([])
+const validationError = shallowRef('')
 
 const { t } = useI18n()
 const fileInput = useTemplateRef<HTMLInputElement>('file-input')
+const fileInputId = useUniqueId('attachments')
 
 function resetPreviews() {
   previews.value.forEach(url => URL.revokeObjectURL(url))
@@ -34,7 +38,22 @@ function handleFileSelect() {
   if (!fileInput.value)
     return
   const selectedFiles = Array.from(fileInput.value.files ?? [], file => file)
-  const newFiles = [...files.value, ...selectedFiles].slice(0, maxFiles)
+  validationError.value = ''
+  const validFiles = selectedFiles.filter((file) => {
+    if (!imageMimeTypes.includes(file.type)) {
+      validationError.value = t('attachmentUploader.unsupportedType', { name: file.name })
+      return false
+    }
+    if (file.size > maxAttachmentSize) {
+      validationError.value = t('attachmentUploader.fileTooLarge', { name: file.name })
+      return false
+    }
+    return true
+  })
+  const combinedFiles = [...files.value, ...validFiles]
+  if (combinedFiles.length > maxFiles)
+    validationError.value = t('attachmentUploader.tooManyFiles', { max: maxFiles })
+  const newFiles = combinedFiles.slice(0, maxFiles)
   setFiles(newFiles)
   resetPreviews()
 
@@ -62,7 +81,7 @@ function handleRemoveFile(index: number) {
 </script>
 
 <template>
-  <label for="attachments" :class="{ 'cursor-pointer': files.length === 0 }" class="group w-full">
+  <label :for="fileInputId" :class="{ 'cursor-pointer': files.length === 0 }" class="group w-full">
     <h3 class="feedback-label mb-2 text-[var(--colors-neutral-800)]">{{ t('attachmentUploader.title') }}</h3>
 
     <div class="grid w-full gap-4" style="grid-template-columns: repeat(auto-fit, 8rem);">
@@ -96,8 +115,12 @@ function handleRemoveFile(index: number) {
       </div>
     </div>
 
+    <p v-if="validationError" role="alert" class="mt-2 text-sm text-[var(--colors-red-1100)]">
+      {{ validationError }}
+    </p>
+
     <input
-      id="attachments" ref="file-input" type="file" name="attachments" accept="image/*" multiple sr-only
+      :id="fileInputId" ref="file-input" type="file" name="attachments" :accept="imageMimeTypes.join(',')" multiple sr-only
       @change="handleFileSelect"
     >
   </label>

@@ -1,61 +1,59 @@
 <script setup lang="ts">
-/* eslint-disable no-console */
-
 import { DialogClose, DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
 
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, shallowRef, useId, watch } from 'vue'
 
 const { lang = 'en', feedbackEndpoint = '/api/feedback', tags = [] } = defineProps<{ lang?: string, feedbackEndpoint?: string, tags?: string[] }>()
 
+const widgetInstance = shallowRef<WidgetInstance>()
+const currentView = shallowRef<'grid' | 'form' | 'success' | 'error'>('grid')
+const successData = shallowRef<any>()
+const errorData = shallowRef<any>()
+const isModalOpen = shallowRef(false)
+
+const feedbackWidgetId = `feedback-widget-${useId()}`
+
 useHead({
   link: [{ rel: 'stylesheet', href: '/widget.css' }],
-  script: [{ src: '/widget.js', defer: true }],
+  script: [{
+    src: '/widget.js',
+    defer: true,
+    onload: () => {
+      if (isModalOpen.value)
+        mountWidget()
+    },
+  }],
 })
 
-const widgetInstance = ref<WidgetInstance | undefined>()
-const currentView = ref<'grid' | 'form' | 'success' | 'error'>('grid')
-const successData = ref<any>()
-const errorData = ref<any>()
-const isModalOpen = ref(false)
-
-const feedbackWidgetId = 'feedback-widget'
-
 function mountWidget() {
+  if (widgetInstance.value || !isModalOpen.value)
+    return
+
   if (!window.mountFeedbackWidget) {
-    console.warn('Feedback widget script is not loaded yet')
     return
   }
 
-  // Ensure #widget-container is in the DOM before mounting, especially if currentView changes could affect its presence.
-  if ((currentView.value === 'grid' || currentView.value === 'form')) {
-    nextTick().then(() => { // Use nextTick to ensure DOM is updated
-      console.log(`Mounting widget for app: playground, lang: ${lang}, feedbackEndpoint: ${feedbackEndpoint}, tags: ${tags}`)
-      widgetInstance.value = window.mountFeedbackWidget(`#${feedbackWidgetId}`, { app: 'playground', lang, feedbackEndpoint, tags })
-      setupCommunicationListeners()
-    })
-  }
-  else {
-    console.log(`Skipping mount as currentView is ${currentView.value}. Widget not mounted.`)
-  }
+  nextTick().then(() => {
+    if (widgetInstance.value || !isModalOpen.value || !document.getElementById(feedbackWidgetId))
+      return
+    widgetInstance.value = window.mountFeedbackWidget(`#${feedbackWidgetId}`, { app: 'playground', lang, feedbackEndpoint, tags })
+    setupCommunicationListeners()
+  })
 }
 
 function setupCommunicationListeners() {
   if (widgetInstance.value?.communication) {
-    widgetInstance.value.communication.on('form-selected', (type) => {
-      console.log('[playground] Form selected:', type)
+    widgetInstance.value.communication.on('form-selected', () => {
       currentView.value = 'form'
     })
     widgetInstance.value.communication.on('go-back', () => {
-      console.log('[playground] Go back event received')
       currentView.value = 'grid'
     })
     widgetInstance.value.communication.on('form-submitted', (data) => {
-      console.log('[playground] Form submitted successfully:', data)
       successData.value = data
       currentView.value = 'success'
     })
     widgetInstance.value.communication.on('form-error', (error) => {
-      console.log('[playground] Form submission error:', error)
       errorData.value = error
       currentView.value = 'error'
     })
@@ -95,8 +93,6 @@ watch(() => lang, async (newLang, oldLang) => {
   if (newLang === oldLang || !isModalOpen.value)
     return
 
-  console.log(`Language changed from ${oldLang} to ${newLang}. Modal is open, re-initializing widget.`)
-
   cleanupCommunicationListeners()
   widgetInstance.value?.destroy?.()
   widgetInstance.value = undefined
@@ -106,11 +102,10 @@ watch(() => lang, async (newLang, oldLang) => {
   }
 
   await nextTick()
-  mountWidget() // Re-mount with new language
+  mountWidget()
 }, { immediate: false })
 
 function goBack() {
-  console.log('[playground] Going back from:', currentView.value)
   if (currentView.value === 'success' || currentView.value === 'error') {
     currentView.value = 'grid'
     widgetInstance.value?.showFormGrid?.()
@@ -120,6 +115,11 @@ function goBack() {
     widgetInstance.value?.goBack()
   }
 }
+
+onBeforeUnmount(() => {
+  cleanupCommunicationListeners()
+  widgetInstance.value?.destroy()
+})
 </script>
 
 <template>
@@ -201,6 +201,7 @@ function goBack() {
                 {{ errorData?.error || 'An error occurred while submitting your feedback.' }}
               </p>
               <button
+                data-action="retry"
                 class="hover:bg-blue-700 text-white mx-auto mt-4 px-4 py-2 rounded-md bg-blue-600 block transition-colors"
                 @click="goBack"
               >
@@ -208,7 +209,7 @@ function goBack() {
               </button>
             </div>
           </div>
-          <div v-else id="feedback-widget" />
+          <div v-show="currentView === 'grid' || currentView === 'form'" :id="feedbackWidgetId" data-feedback-widget />
         </DialogContent>
       </Transition>
     </DialogPortal>

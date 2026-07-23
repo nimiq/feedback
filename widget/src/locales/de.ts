@@ -6,6 +6,9 @@ export default {
     deleteImageLabel: 'Bild löschen',
     uploadHere: 'Hier hochladen',
     anyImageFormat: 'Beliebiges Bildformat',
+    fileTooLarge: '{name} muss kleiner als 10 MB sein.',
+    tooManyFiles: 'Wähle höchstens {max} Bilder aus.',
+    unsupportedType: '{name} ist kein unterstütztes Bild.',
     title: 'Anhänge',
   },
   bugForm: {

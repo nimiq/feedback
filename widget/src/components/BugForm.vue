@@ -1,35 +1,24 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { shallowRef } from 'vue'
 import { useI18n } from '../composables/useI18n'
-import { useRequiredInjection } from '../composables/useRequiredInjection'
-import { FormValidationKey } from '../types'
+import { useUniqueId } from '../composables/useUniqueId'
 import AttachmentUploader from './AttachmentUploader.vue'
+import DescriptionField from './DescriptionField.vue'
 
 const { t } = useI18n()
 
-const shareDebugInfo = ref(false)
-const description = ref('')
-
-const formValidation = useRequiredInjection(FormValidationKey, 'FormValidationKey')
-
-watch(description, (newValue) => {
-  formValidation.description.value = newValue
-}, { immediate: true })
+const shareDebugInfo = shallowRef(false)
+const emailId = useUniqueId('email')
 </script>
 
 <template>
-  <label class="flex">
-    <textarea
-      id="description" v-model="description" name="description" :placeholder="t('bugForm.descriptionPlaceholder')" rows="4" required
-      class="feedback-input"
-    />
-  </label>
+  <DescriptionField placeholder-key="bugForm.descriptionPlaceholder" />
 
   <AttachmentUploader />
 
   <label class="flex flex-col">
     <h3 class="feedback-label mb-2 text-[var(--colors-neutral-800)]">{{ t('bugForm.emailLabel') }}</h3>
-    <input id="email" class="feedback-input w-auto" type="email" name="email" :placeholder="t('bugForm.emailPlaceholder')">
+    <input :id="emailId" class="feedback-input w-auto" type="email" name="email" :placeholder="t('bugForm.emailPlaceholder')">
   </label>
 
   <label class="mt-4 hidden gap-2 text-sm lg:mt-6" data-input="share-debug-info">

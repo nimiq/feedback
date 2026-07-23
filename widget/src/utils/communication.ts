@@ -6,7 +6,14 @@ export class SimpleWidgetCommunication {
   }> = {}
 
   emit<K extends keyof WidgetEvents>(event: K, data: WidgetEvents[K]): void {
-    this.listeners[event]?.forEach(listener => listener(data))
+    this.listeners[event]?.forEach((listener) => {
+      try {
+        listener(data)
+      }
+      catch (error) {
+        console.error(`[Nimiq Feedback Widget] "${event}" listener failed`, error)
+      }
+    })
   }
 
   on<K extends keyof WidgetEvents>(event: K, callback: (data: WidgetEvents[K]) => void): void {

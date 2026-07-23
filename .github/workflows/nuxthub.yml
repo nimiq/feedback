@@ -1,5 +1,9 @@
 name: Deploy to NuxtHub
-on: push
+
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -26,6 +30,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Validate
+        run: pnpm run lint && pnpm run typecheck && pnpm run test
+
+      - name: Build widget
+        run: pnpm -C widget build
 
       - name: Build & Deploy to NuxtHub
         uses: nuxt-hub/action@v2

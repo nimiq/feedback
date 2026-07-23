@@ -1,14 +1,96 @@
+import type { InferOutput } from 'valibot'
+import type { Submission } from '../utils/drizzle'
 import { randomUUID } from 'node:crypto'
 import consola from 'consola'
 import { safeParse } from 'valibot'
-import { tables } from '../utils/drizzle'
+import { eq, tables } from '../utils/drizzle'
+import { FormSchema } from '../utils/valibot-schemas'
 
-// In the backend we don't distinguish between the different types of forms,
-// instead we treat them as a single form with different types.
+function toResponse(submission: Submission): FeedbackResponse {
+  return {
+    success: true,
+    github: submission.githubIssue ? { issueUrl: submission.githubIssue } : null,
+    linear: submission.linearIssue && submission.linearIdentifier
+      ? { identifier: submission.linearIdentifier, issueUrl: submission.linearIssue }
+      : null,
+    slack: submission.slackSent,
+    submission: {
+      app: submission.app,
+      attachments: submission.attachments,
+      createdAt: submission.createdAt,
+      description: submission.description,
+      email: submission.email,
+      githubIssue: submission.githubIssue,
+      id: submission.id,
+      linearIssue: submission.linearIssue,
+      meta: submission.meta,
+      rating: submission.rating,
+      type: submission.type,
+      updatedAt: submission.updatedAt,
+    },
+  }
+}
+
+async function saveSubmission(id: string, values: Partial<Submission>): Promise<Submission> {
+  return useDrizzle()
+    .update(tables.submissions)
+    .set(values)
+    .where(eq(tables.submissions.id, id))
+    .returning()
+    .get()
+}
+
+async function reserveSubmission(form: InferOutput<typeof FormSchema>): Promise<{ row: Submission, resume: boolean }> {
+  const database = useDrizzle()
+  const idempotencyKey = form.idempotencyKey ?? randomUUID()
+  const id = randomUUID()
+  const inserted = await database.insert(tables.submissions).values({
+    app: form.app,
+    attachments: [],
+    description: form.description,
+    email: form.email || null,
+    id,
+    idempotencyKey,
+    meta: form.meta || null,
+    rating: form.rating || null,
+    status: 'processing',
+    type: form.type,
+  }).onConflictDoNothing({
+    target: tables.submissions.idempotencyKey,
+  }).returning().get()
+
+  if (inserted)
+    return { row: inserted, resume: false }
+
+  const existing = await database.select()
+    .from(tables.submissions)
+    .where(eq(tables.submissions.idempotencyKey, idempotencyKey))
+    .get()
+
+  if (!existing)
+    throw createError({ statusCode: 500, statusMessage: 'Unable to reserve submission' })
+  if (existing.status === 'completed')
+    return { row: existing, resume: false }
+  if (existing.status === 'processing') {
+    throw createError({
+      statusCode: 409,
+      statusMessage: 'Submission is already processing',
+      data: { success: false, message: 'This submission is already processing' },
+    })
+  }
+
+  return { row: await saveSubmission(existing.id, { status: 'processing' }), resume: true }
+}
+
+// The backend treats all form variants as one durable submission workflow.
 export default defineEventHandler(async (event) => {
   const { output: query, issues: queryIssues, success: querySuccess } = await getValidatedQuery(event, body => safeParse(QuerySchema, body))
   if (!querySuccess || !query) {
-    return createError({ message: 'Invalid query parameters', status: 400, cause: JSON.stringify(queryIssues) })
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid query parameters',
+      data: { success: false, message: 'Invalid query parameters', issues: queryIssues?.map(issue => issue.message) },
+    })
   }
 
   const formData = await readFormData(event)
@@ -19,7 +101,6 @@ export default defineEventHandler(async (event) => {
 
   const { output: form, issues } = safeParse(FormSchema, submission)
   if (issues) {
-    consola.error('Validation issues:', issues)
     throw createError({
       statusCode: 400,
       statusMessage: 'Invalid submission data',
@@ -27,61 +108,76 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const id = randomUUID()
-  consola.info(`Creating submission with ID ${id} - [${form.type}] ${form.app}`)
-  consola.info(form)
-  const [fileUploadOk, errorUpload, filesUrls] = await uploadFiles(id, form)
-  if (!fileUploadOk) {
-    consola.error('File upload error:', errorUpload)
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'File upload error',
-      data: { success: false, message: 'There was an error uploading the files', details: errorUpload },
-    })
+  const reservation = await reserveSubmission(form)
+  let current = reservation.row
+  if (!reservation.resume && current.status === 'completed')
+    return toResponse(current)
+
+  consola.info(`Processing submission ${current.id}`)
+
+  try {
+    let filesUrls = current.attachments ?? []
+    if (filesUrls.length === 0 && form.attachments.length > 0) {
+      const [ok, uploadError, urls] = await uploadFiles(current.id, form)
+      if (!ok)
+        throw createError({ statusCode: 400, statusMessage: 'File upload error', data: { success: false, message: 'There was an error uploading the files' }, cause: uploadError })
+      filesUrls = urls
+      current = await saveSubmission(current.id, { attachments: filesUrls })
+    }
+
+    let logsUrl = current.logsUrl ?? undefined
+    if (!logsUrl && form.logs) {
+      const [ok, uploadError, url] = await uploadLogs(current.id, form)
+      if (!ok)
+        throw createError({ statusCode: 400, statusMessage: 'Logs upload error', data: { success: false, message: 'There was an error uploading the logs' }, cause: uploadError })
+      logsUrl = url
+      current = await saveSubmission(current.id, { logsUrl: logsUrl ?? null })
+    }
+
+    const markdown = submissionToMarkdown(current.id, form, filesUrls, logsUrl)
+
+    if (!current.githubIssue) {
+      const [ok, issueError, github] = await createGitHubIssue({ form, markdown })
+      if (ok) {
+        current = await saveSubmission(current.id, { githubIssue: github.issueUrl })
+      }
+      else {
+        consola.warn('GitHub issue creation failed:', issueError)
+      }
+    }
+
+    if (!current.linearIssue) {
+      const [ok, issueError, linear] = await createLinearIssue({ form, markdown, query })
+      if (ok && linear) {
+        current = await saveSubmission(current.id, {
+          linearIdentifier: linear.identifier,
+          linearIssue: linear.issueUrl,
+        })
+      }
+      else if (!ok) {
+        consola.warn('Linear issue creation failed:', issueError)
+      }
+    }
+
+    if (!current.slackSent) {
+      const [ok, messageError] = await createSlackMessage({
+        form,
+        github: current.githubIssue ? { issueUrl: current.githubIssue } : undefined,
+        linear: current.linearIssue && current.linearIdentifier
+          ? { identifier: current.linearIdentifier, issueUrl: current.linearIssue }
+          : undefined,
+      })
+      if (ok)
+        current = await saveSubmission(current.id, { slackSent: true })
+      else
+        consola.warn('Slack message creation failed:', messageError)
+    }
+
+    current = await saveSubmission(current.id, { status: 'completed' })
+    return toResponse(current)
   }
-
-  const [logsUploadOk, logsUploadError, logsUrl] = await uploadLogs(id, form)
-  if (!logsUploadOk) {
-    consola.error('Logs upload error:', logsUploadError)
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Logs upload error',
-      data: { success: false, message: 'There was an error uploading the logs', details: logsUploadError },
-    })
+  catch (error) {
+    await saveSubmission(current.id, { status: 'failed' }).catch(saveError => consola.error('Could not mark submission as failed:', saveError))
+    throw error
   }
-
-  const markdown = submissionToMarkdown(id, form, filesUrls, logsUrl)
-  const [githubIssueOk, githubIssueError, github] = await createGitHubIssue({ form, markdown })
-  if (!githubIssueOk) {
-    consola.warn('GitHub issue error:', githubIssueError)
-  }
-
-  const [linearIssueOk, linearIssueError, linear] = await createLinearIssue({ form, markdown, query })
-  if (!linearIssueOk) {
-    consola.warn('Linear issue error:', linearIssueError)
-  }
-
-  const [slack, slackMessageError] = await createSlackMessage({
-    form,
-    github: githubIssueOk ? github : undefined,
-    linear: linearIssueOk ? linear : undefined,
-  })
-  if (!slack)
-    consola.warn('Slack message error:', slackMessageError)
-
-  const fullSubmission = await useDrizzle().insert(tables.submissions).values({
-    ...form,
-    id,
-    email: form.email || null,
-    rating: form.rating || null,
-    githubIssue: github?.issueUrl || null,
-    linearIssue: linear?.issueUrl || null,
-    attachments: filesUrls,
-    logs: form.logs || null,
-    meta: form.meta || null,
-  }).returning().get()
-
-  consola.success('Submission created:', fullSubmission)
-
-  return { success: true, github: github || null, linear: linear || null, slack, submission: fullSubmission } satisfies FeedbackResponse
 })

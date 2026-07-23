@@ -6,6 +6,9 @@ export default {
     deleteImageLabel: 'Delete image',
     uploadHere: 'Upload here',
     anyImageFormat: 'Any image format',
+    fileTooLarge: '{name} must be smaller than 10 MB.',
+    tooManyFiles: 'Select at most {max} images.',
+    unsupportedType: '{name} is not a supported image.',
     title: 'Attachments',
   },
   bugForm: {

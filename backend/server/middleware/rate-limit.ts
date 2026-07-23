@@ -9,7 +9,7 @@ const rateLimitPaths = [
  * Applies rate limiting only to POST requests to /api/feedback
  */
 export default defineEventHandler(async (event) => {
-  const path = event.path
+  const path = getRequestURL(event).pathname
   const method = event.method
 
   const rateLimitPath = rateLimitPaths.find(item => item.path === path && item.method === method)
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
         data: {
           success: false,
           message: `Rate limit exceeded. Please try again in ${result.retryAfter} seconds.`,
-          retryAfter: result.resetTime,
+          retryAfter: result.retryAfter,
         },
       })
     }

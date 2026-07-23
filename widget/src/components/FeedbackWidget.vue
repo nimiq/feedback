@@ -48,11 +48,7 @@ function selectForm(type: FormType) {
 }
 
 function handleFormSuccess(data: any) {
-  // eslint-disable-next-line no-console
-  console.log('[Nimiq Feedback Widget] 📡 Notifying parent component...')
   communication.emit('form-submitted', { success: true, data })
-  // eslint-disable-next-line no-console
-  console.log('[Nimiq Feedback Widget] ✨ Event sent to host application')
 }
 
 function handleFormError({ error, details }: { error: string, details?: any }) {

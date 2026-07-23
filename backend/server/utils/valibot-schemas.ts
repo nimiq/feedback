@@ -1,13 +1,22 @@
-import { any, array, boolean, check, fallback, file, integer, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, picklist, pipe, record, string, transform } from 'valibot'
-import { imageMimeTypes } from '~~/shared/utils'
+import { any, array, boolean, check, fallback, file, forward, integer, maxBytes, maxLength, maxSize, maxValue, mimeType, minLength, minValue, object, optional, parseJson, picklist, pipe, record, string, transform, trim, uuid } from 'valibot'
+import { imageMimeTypes, maxAttachments, maxAttachmentSize } from '~~/shared/utils'
 
-export const FormSchema = object({
+function requiredText(label: string, max: number) {
+  return pipe(
+    string(`${label} must be a string`),
+    trim(),
+    minLength(1, `${label} is required`),
+    maxLength(max, `${label} is too long`),
+  )
+}
+
+export const FormSchema = pipe(object({
   type: picklist(['feedback', 'bug', 'idea'], 'Invalid submission type'),
-  app: string('App must be a string'),
+  app: requiredText('App', 64),
   tags: fallback(optional(pipe(
     string(),
     transform(value => value ? value.split(',').map(tag => tag.trim()).filter(Boolean) : []),
-    array(string(), 'Tags must be an array of strings'),
+    array(pipe(string(), maxLength(64, 'Tags must be at most 64 characters')), 'Tags must be an array of strings'),
     maxLength(10, 'Maximum 10 tags allowed'),
   )), []),
   acceptTerms: pipe(
@@ -16,38 +25,53 @@ export const FormSchema = object({
     boolean('You need to accept the legal terms'),
     check(value => value, 'You need to accept the legal terms'),
   ),
-  description: string('Description must be a string'),
-  email: optional(string('Email must be a string')),
+  description: requiredText('Description', 10_000),
+  email: optional(pipe(
+    string('Email must be a string'),
+    trim(),
+    maxLength(320, 'Email is too long'),
+  )),
   rating: optional(pipe(
     string(),
     transform(Number),
     integer('Rating must be an integer'),
-    minValue(0, 'Rating must be at least 0'),
+    minValue(1, 'Rating must be at least 1'),
     maxValue(5, 'Rating cannot exceed 5'),
   )),
   attachments: optional(pipe(
     array(pipe(
       file('Select an image file.'),
       mimeType(imageMimeTypes as `${string}/${string}`[], 'Select an image.'),
-      maxSize(1024 * 1024 * 10, 'Select a file smaller than 10 MB.'),
+      maxSize(maxAttachmentSize, 'Select a file smaller than 10 MB.'),
     ), 'Attachments must be an array of images'),
     minLength(0),
-    maxLength(5),
+    maxLength(maxAttachments),
   ), []),
-  logs: optional(string('Logs must be a string')),
+  logs: optional(pipe(
+    string('Logs must be a string'),
+    maxBytes(512 * 1024, 'Logs must be smaller than 512 KB'),
+  )),
   meta: optional(pipe(
     string(),
-    transform(value => JSON.parse(value)),
+    maxBytes(64 * 1024, 'Meta must be smaller than 64 KB'),
+    parseJson({}, 'Meta must contain valid JSON'),
     record(string(), any(), 'Meta must be a valid JSON object'),
   )),
-})
+  idempotencyKey: optional(pipe(
+    string(),
+    uuid('Idempotency key must be a UUID'),
+  )),
+}), forward(
+  check(form => form.type !== 'feedback' || form.rating !== undefined, 'Rating is required for feedback'),
+  ['rating'],
+))
 
 export const QuerySchema = object({
-  linearAssignee: optional(string('Linear assignee must be a string')),
+  linearAssignee: optional(pipe(string('Linear assignee must be a string'), maxLength(320, 'Linear assignee is too long'))),
   linearLabels: fallback(optional(pipe(
     string(),
     transform(value => value ? value.split(',').map(label => label.trim()).filter(Boolean) : []),
-    array(string(), 'Linear labels must be an array of strings'),
+    array(pipe(string(), maxLength(100, 'Linear labels must be at most 100 characters')), 'Linear labels must be an array of strings'),
     maxLength(20, 'Maximum 20 Linear labels allowed'),
   )), []),
   linearPriority: optional(pipe(
@@ -57,9 +81,9 @@ export const QuerySchema = object({
     minValue(0, 'Linear priority must be at least 0'),
     maxValue(4, 'Linear priority cannot exceed 4'),
   )),
-  linearProject: optional(string('Linear project must be a string')),
-  linearState: optional(string('Linear state must be a string')),
-  linearTeam: optional(string('Linear team must be a string')),
-  linearTitle: optional(string('Linear title must be a string')),
-  linearWorkspace: optional(string('Linear workspace must be a string')),
+  linearProject: optional(pipe(string('Linear project must be a string'), maxLength(200, 'Linear project is too long'))),
+  linearState: optional(pipe(string('Linear state must be a string'), maxLength(200, 'Linear state is too long'))),
+  linearTeam: optional(pipe(string('Linear team must be a string'), maxLength(200, 'Linear team is too long'))),
+  linearTitle: optional(pipe(string('Linear title must be a string'), maxLength(500, 'Linear title is too long'))),
+  linearWorkspace: optional(pipe(string('Linear workspace must be a string'), maxLength(100, 'Linear workspace is too long'))),
 })

@@ -6,6 +6,9 @@ export default {
     deleteImageLabel: 'Excluir imagem',
     uploadHere: 'Enviar aqui',
     anyImageFormat: 'Qualquer formato de imagem',
+    fileTooLarge: '{name} deve ter menos de 10 MB.',
+    tooManyFiles: 'Selecione no máximo {max} imagens.',
+    unsupportedType: '{name} não é uma imagem compatível.',
     title: 'Anexos',
   },
   bugForm: {

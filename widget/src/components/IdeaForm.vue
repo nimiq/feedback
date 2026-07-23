@@ -1,29 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useI18n } from '../composables/useI18n'
-import { useRequiredInjection } from '../composables/useRequiredInjection'
-import { FormValidationKey } from '../types'
 import AttachmentUploader from './AttachmentUploader.vue'
+import DescriptionField from './DescriptionField.vue'
 import WidgetIcon from './WidgetIcon.vue'
 
 const { t } = useI18n()
-
-const description = ref('')
-
-const formValidation = useRequiredInjection(FormValidationKey, 'FormValidationKey')
-
-watch(description, (newValue) => {
-  formValidation.description.value = newValue
-}, { immediate: true })
 </script>
 
 <template>
-  <label class="flex">
-    <textarea
-      id="description" v-model="description" name="description" :placeholder="t('ideaForm.descriptionPlaceholder')" rows="4" required
-      class="feedback-input"
-    />
-  </label>
+  <DescriptionField placeholder-key="ideaForm.descriptionPlaceholder" />
 
   <AttachmentUploader />
 

@@ -40,8 +40,8 @@ export async function createSlackMessage({ form: { app, type, rating, tags }, gi
   try {
     await $fetch(webhookUrl, { method: 'POST', body: payload })
   }
-  catch (error) {
-    return [false, `Network error sending to Slack: ${JSON.stringify(error)}`, undefined]
+  catch {
+    return [false, 'Slack request failed', undefined]
   }
   return [true, undefined, undefined]
 }

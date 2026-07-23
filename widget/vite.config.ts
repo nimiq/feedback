@@ -2,6 +2,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
+import selectorParser from 'postcss-selector-parser'
 import { defineConfig } from 'vite'
 
 const widgetRoot = dirname(fileURLToPath(import.meta.url))
@@ -9,35 +10,30 @@ const workspaceRoot = resolve(widgetRoot, '..')
 const entry = resolve(widgetRoot, 'src/widget-entry.ts')
 const outputFolder = resolve(workspaceRoot, 'backend/public')
 const sharedBackendDir = resolve(workspaceRoot, 'backend/shared')
+const widgetScope = '[data-nimiq-feedback-widget]'
 
 function scopeWidgetCss() {
   return {
     postcssPlugin: 'scope-widget-css',
-    Rule(rule: { selector: string }) {
-      if (
-        rule.selector.includes('#feedback-widget')
-        || rule.selector.includes('@keyframes')
-        || rule.selector.includes('@media')
-        || rule.selector.startsWith('@')
-      ) {
+    Rule(rule: { parent?: { name?: string, type?: string }, selector: string }) {
+      if (rule.parent?.type === 'atrule' && rule.parent.name?.endsWith('keyframes'))
         return
-      }
 
-      if (rule.selector === ':root') {
-        rule.selector = '#feedback-widget'
-        return
-      }
+      rule.selector = selectorParser((selectors) => {
+        selectors.each((selector) => {
+          if (selector.toString().includes(widgetScope))
+            return
 
-      const selectors = rule.selector.split(',').map(selector => selector.trim())
-      rule.selector = selectors.map((selector) => {
-        if (selector.includes('#feedback-widget'))
-          return selector
+          const first = selector.at(0)
+          if (first?.type === 'pseudo' && (first.value === ':root' || first.value === ':host')) {
+            first.replaceWith(selectorParser.attribute({ attribute: 'data-nimiq-feedback-widget' }))
+            return
+          }
 
-        if (selector.startsWith(':host'))
-          return selector.replace(':host', '#feedback-widget')
-
-        return `#feedback-widget ${selector}`
-      }).join(', ')
+          selector.prepend(selectorParser.combinator({ value: ' ' }))
+          selector.prepend(selectorParser.attribute({ attribute: 'data-nimiq-feedback-widget' }))
+        })
+      }).processSync(rule.selector)
     },
   }
 }

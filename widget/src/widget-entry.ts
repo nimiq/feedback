@@ -56,8 +56,7 @@ window.mountFeedbackWidget = (selector: string, props?: WidgetProps): WidgetInst
   if (!el)
     throw new Error(`Mount target ${selector} not found`)
 
-  // eslint-disable-next-line no-console
-  console.log(`Mounting feedback widget for app: ${app}, lang: ${lang}, tags: ${tags}`, selector)
+  el.setAttribute('data-nimiq-feedback-widget', '')
 
   try {
     const localeKey = lang in localeMessages ? lang as keyof typeof localeMessages : 'en'
@@ -91,6 +90,7 @@ window.mountFeedbackWidget = (selector: string, props?: WidgetProps): WidgetInst
       destroy() {
         try {
           vueApp.unmount()
+          el.removeAttribute('data-nimiq-feedback-widget')
         }
         catch (error) {
           console.error('Error destroying widget:', error)
@@ -99,6 +99,7 @@ window.mountFeedbackWidget = (selector: string, props?: WidgetProps): WidgetInst
     }
   }
   catch (error) {
+    el.removeAttribute('data-nimiq-feedback-widget')
     console.error('Error mounting feedback widget:', error)
     return createNoopWidgetInstance()
   }

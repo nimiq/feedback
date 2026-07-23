@@ -27,6 +27,9 @@ interface ConnectionLike<T> {
 
 type CreateLinearResult = Result<LinearIssue | undefined>
 
+const resourceCache = new Map<string, { expiresAt: number, value: Promise<unknown[]> }>()
+const resourceCacheTtl = 5 * 60 * 1000
+
 const typeTitles: Record<InferOutput<typeof FormSchema>['type'], string> = {
   bug: 'Bug report',
   feedback: 'Feedback',
@@ -71,6 +74,18 @@ async function loadAll<T>(connection: ConnectionLike<T>): Promise<T[]> {
   return connection.nodes
 }
 
+function loadCached<T>(key: string, loader: () => Promise<T[]>): Promise<T[]> {
+  const now = Date.now()
+  const cached = resourceCache.get(key)
+  if (cached && cached.expiresAt > now)
+    return cached.value as Promise<T[]>
+
+  const value = loader()
+  resourceCache.set(key, { expiresAt: now + resourceCacheTtl, value })
+  value.catch(() => resourceCache.delete(key))
+  return value
+}
+
 function normalizeValue(value: string | null | undefined): string | undefined {
   return value?.trim().toLowerCase()
 }
@@ -102,32 +117,32 @@ function resolveWorkspace(query: InferOutput<typeof QuerySchema>): [string, Line
   return configuredWorkspaces.length === 1 ? configuredWorkspaces[0] : undefined
 }
 
-async function resolveTeam(client: LinearClient, selector: string) {
-  const teams = await loadAll(await client.teams({ first: 250 }))
+async function resolveTeam(client: LinearClient, workspace: string, selector: string) {
+  const teams = await loadCached(`${workspace}:teams`, async () => loadAll(await client.teams({ first: 250 })))
   return teams.find(team => matchesSelector(selector, team.id, team.key, team.name, team.displayName))
 }
 
-async function resolveProject(client: LinearClient, selector: string) {
-  const projects = await loadAll(await client.projects({ first: 250 }))
+async function resolveProject(client: LinearClient, workspace: string, selector: string) {
+  const projects = await loadCached(`${workspace}:projects`, async () => loadAll(await client.projects({ first: 250 })))
   return projects.find(project => matchesSelector(selector, project.id, project.name, project.slugId))
 }
 
-async function resolveUser(client: LinearClient, selector: string) {
-  const users = await loadAll(await client.users({ first: 250 }))
+async function resolveUser(client: LinearClient, workspace: string, selector: string) {
+  const users = await loadCached(`${workspace}:users`, async () => loadAll(await client.users({ first: 250 })))
   return users.find(user => matchesSelector(selector, user.id, user.email, user.name, user.displayName))
 }
 
-async function resolveState(client: LinearClient, teamId: string, selector: string) {
+async function resolveState(client: LinearClient, workspace: string, teamId: string, selector: string) {
   const team = await client.team(teamId)
-  const states = await loadAll(await team.states({ first: 250 }))
+  const states = await loadCached(`${workspace}:team:${teamId}:states`, async () => loadAll(await team.states({ first: 250 })))
   return states.find(state => matchesSelector(selector, state.id, state.name))
 }
 
-async function resolveLabels(client: LinearClient, selectors: string[]) {
+async function resolveLabels(client: LinearClient, workspace: string, selectors: string[]) {
   if (selectors.length === 0)
     return []
 
-  const labels = await loadAll(await client.issueLabels({ first: 250 }))
+  const labels = await loadCached(`${workspace}:labels`, async () => loadAll(await client.issueLabels({ first: 250 })))
 
   return selectors.map((selector) => {
     const label = labels.find(candidate => matchesSelector(selector, candidate.id, candidate.name))
@@ -154,26 +169,29 @@ export async function createLinearIssue({ markdown, form, query }: CreateLinearI
     return [false, `Linear team is required for workspace "${workspaceName}".`, undefined]
 
   try {
-    const team = await resolveTeam(client, teamSelector)
+    const projectSelector = query.linearProject ?? workspaceConfig.project
+    const assigneeSelector = query.linearAssignee ?? workspaceConfig.assignee
+    const labelSelectors = uniq([...(workspaceConfig.labels ?? []), ...(query.linearLabels ?? [])])
+    const [team, project, assignee, labels] = await Promise.all([
+      resolveTeam(client, workspaceName, teamSelector),
+      projectSelector ? resolveProject(client, workspaceName, projectSelector) : undefined,
+      assigneeSelector ? resolveUser(client, workspaceName, assigneeSelector) : undefined,
+      resolveLabels(client, workspaceName, labelSelectors),
+    ])
+
     if (!team)
       return [false, `Linear team "${teamSelector}" was not found in workspace "${workspaceName}".`, undefined]
 
-    const projectSelector = query.linearProject ?? workspaceConfig.project
-    const project = projectSelector ? await resolveProject(client, projectSelector) : undefined
     if (projectSelector && !project)
       return [false, `Linear project "${projectSelector}" was not found in workspace "${workspaceName}".`, undefined]
 
-    const assigneeSelector = query.linearAssignee ?? workspaceConfig.assignee
-    const assignee = assigneeSelector ? await resolveUser(client, assigneeSelector) : undefined
     if (assigneeSelector && !assignee)
       return [false, `Linear assignee "${assigneeSelector}" was not found in workspace "${workspaceName}".`, undefined]
 
     const stateSelector = query.linearState ?? workspaceConfig.state
-    const state = stateSelector ? await resolveState(client, team.id, stateSelector) : undefined
+    const state = stateSelector ? await resolveState(client, workspaceName, team.id, stateSelector) : undefined
     if (stateSelector && !state)
       return [false, `Linear state "${stateSelector}" was not found for team "${team.name}".`, undefined]
-
-    const labels = await resolveLabels(client, uniq([...(workspaceConfig.labels ?? []), ...(query.linearLabels ?? [])]))
 
     const issuePayload = await client.createIssue({
       assigneeId: assignee?.id,

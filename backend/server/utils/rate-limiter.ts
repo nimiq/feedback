@@ -1,5 +1,4 @@
 import consola from 'consola'
-import { kv } from 'hub:kv'
 
 interface RateLimitConfig {
   windowSeconds: number
@@ -7,19 +6,38 @@ interface RateLimitConfig {
   keyPrefix?: string
 }
 
-interface RateLimitData {
-  count: number
-  resetTime: number
-  windowStart: number
+type IncrementRateLimit = (key: string, resetTime: number, now: number) => Promise<number>
+
+async function incrementRateLimit(key: string, resetTime: number, now: number): Promise<number> {
+  const database = useDrizzle()
+  const row = await database.insert(tables.rateLimits).values({
+    count: 1,
+    key,
+    resetTime,
+  }).onConflictDoUpdate({
+    target: tables.rateLimits.key,
+    set: {
+      count: sql`${tables.rateLimits.count} + 1`,
+    },
+  }).returning({ count: tables.rateLimits.count }).get()
+
+  try {
+    await database.delete(tables.rateLimits).where(lt(tables.rateLimits.resetTime, now))
+  }
+  catch (error) {
+    consola.warn('Expired rate-limit cleanup failed:', error)
+  }
+
+  return row.count
 }
 
 /**
- * Check rate limit for a given identifier using NuxtHub KV storage
+ * Check the rate limit for a given identifier using an atomic database counter.
  * @param identifier - Unique identifier (usually IP address)
  * @param config - Rate limit configuration
  * @returns Rate limit status and metadata
  */
-export async function checkRateLimit(identifier: string, config: RateLimitConfig): Promise<{
+export async function checkRateLimit(identifier: string, config: RateLimitConfig, increment: IncrementRateLimit = incrementRateLimit): Promise<{
   allowed: boolean
   remaining: number
   resetTime: number
@@ -28,49 +46,18 @@ export async function checkRateLimit(identifier: string, config: RateLimitConfig
   const { windowSeconds, maxRequests, keyPrefix = 'rate_limit' } = config
   const now = Math.floor(Date.now() / 1000)
   const windowStart = Math.floor(now / windowSeconds) * windowSeconds
-
   const rateLimitKey = `${keyPrefix}:${identifier}:${windowStart}`
+  const resetTime = windowStart + windowSeconds
 
   try {
-    const existing = await kv.get<RateLimitData>(rateLimitKey)
-
-    if (!existing) {
-      // First request in this window
-      await kv.set(rateLimitKey, {
-        count: 1,
-        resetTime: windowStart + windowSeconds,
-        windowStart,
-      }, { ttl: windowSeconds + 60 }) // TTL slightly longer than window for cleanup
-
-      return {
-        allowed: true,
-        remaining: maxRequests - 1,
-        resetTime: windowStart + windowSeconds,
-        retryAfter: 0,
-      }
-    }
-
-    if (existing.count >= maxRequests) {
-      return {
-        allowed: false,
-        remaining: 0,
-        resetTime: existing.resetTime,
-        retryAfter: Math.max(existing.resetTime - now, 0),
-      }
-    }
-
-    // Increment counter
-    const newCount = existing.count + 1
-    await kv.set(rateLimitKey, {
-      ...existing,
-      count: newCount,
-    }, { ttl: windowSeconds + 60 })
+    const count = await increment(rateLimitKey, resetTime, now)
+    const allowed = count <= maxRequests
 
     return {
-      allowed: true,
-      remaining: maxRequests - newCount,
-      resetTime: existing.resetTime,
-      retryAfter: 0,
+      allowed,
+      remaining: Math.max(maxRequests - count, 0),
+      resetTime,
+      retryAfter: allowed ? 0 : Math.max(resetTime - now, 0),
     }
   }
   catch (error) {

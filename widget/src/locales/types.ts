@@ -7,6 +7,9 @@ export interface LocaleMessages {
     deleteImageLabel: string
     uploadHere: string
     anyImageFormat: string
+    fileTooLarge: string
+    tooManyFiles: string
+    unsupportedType: string
   }
   bugForm: {
     descriptionPlaceholder: string
